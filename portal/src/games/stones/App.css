@@ -1,0 +1,176 @@
+/* Stones Game styles */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+.game-stones {
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100dvh;
+  background: #191022;
+}
+
+.game-stones .start-screen {
+  background: rgba(26, 11, 46, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(153, 66, 240, 0.18);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.game-stones h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #f0eeff;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.game-stones .start-desc {
+  color: rgba(240, 238, 255, 0.6);
+  margin-bottom: 6px;
+}
+
+.game-stones .start-rule {
+  color: rgba(240, 238, 255, 0.4);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.game-stones .color-picker-label {
+  color: rgba(153, 66, 240, 0.8);
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.game-stones .start-checkbox {
+  color: #f0eeff;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.game-stones .difficulty-row {
+  margin-bottom: 16px;
+}
+
+.game-stones .difficulty-row label {
+  color: rgba(240, 238, 255, 0.5);
+  margin-right: 8px;
+}
+
+.game-stones .diff-btn {
+  margin: 0 4px;
+  padding: 4px 12px;
+  background: rgba(153, 66, 240, 0.08);
+  color: rgba(240, 238, 255, 0.7);
+  border: 1px solid rgba(153, 66, 240, 0.18);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background 0.2s;
+}
+
+.game-stones .diff-btn.active {
+  background: rgba(153, 66, 240, 0.35);
+  color: #f0eeff;
+  border-color: rgba(153, 66, 240, 0.6);
+}
+
+.game-stones .btn-primary {
+  background: #9942f0;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.game-stones .btn-primary:hover {
+  background: #7a2fd4;
+}
+
+.game-stones .status-bar {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #f0eeff;
+}
+
+.game-stones .captures-row {
+  display: flex;
+  gap: 32px;
+  color: rgba(240, 238, 255, 0.6);
+  font-size: 13px;
+}
+
+.game-stones .game-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding: 16px;
+}
+
+.game-stones .ctrl-btn {
+  padding: 10px 20px;
+  background: rgba(153, 66, 240, 0.1);
+  color: rgba(240, 238, 255, 0.8);
+  border: 1px solid rgba(153, 66, 240, 0.2);
+  border-radius: 999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.game-stones .ctrl-btn:hover {
+  background: rgba(153, 66, 240, 0.2);
+}
+
+.game-stones .ctrl-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.game-stones .game-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-stones .game-menu-panel {
+  background: rgba(26, 11, 46, 0.95);
+  border: 1px solid rgba(153, 66, 240, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 240px;
+}
+
+.game-stones .game-menu-panel button {
+  padding: 12px 24px;
+  background: rgba(153, 66, 240, 0.1);
+  color: #f0eeff;
+  border: 1px solid rgba(153, 66, 240, 0.2);
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.game-stones .game-menu-panel button:hover {
+  background: rgba(153, 66, 240, 0.25);
+}

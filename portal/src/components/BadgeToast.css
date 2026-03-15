@@ -1,0 +1,80 @@
+.badge-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  background: rgba(26, 11, 46, 0.95);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(153, 66, 240, 0.35), 0 0 0 1px rgba(153, 66, 240, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  min-width: 280px;
+  max-width: 400px;
+  animation: toastSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  cursor: pointer;
+}
+
+.badge-toast.dismissing {
+  animation: toastSlideDown 0.3s ease forwards;
+}
+
+@keyframes toastSlideUp {
+  from { transform: translateX(-50%) translateY(120px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes toastSlideDown {
+  from { transform: translateX(-50%) translateY(0); opacity: 1; }
+  to   { transform: translateX(-50%) translateY(120px); opacity: 0; }
+}
+
+.badge-toast-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.badge-toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.badge-toast-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--primary);
+}
+
+.badge-toast-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.badge-toast-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.badge-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  animation: toastProgress 4s linear forwards;
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}

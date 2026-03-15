@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GameHub - Minimalist Desktop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#9942f0",
+              "background-light": "#f7f6f8",
+              "background-dark": "#191022",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .fluid-glow {
+            background: radial-gradient(circle at 50% 50%, rgba(153, 66, 240, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(153, 66, 240, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 10% 80%, rgba(153, 66, 240, 0.1) 0%, transparent 40%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary/30">
+<!-- Fluid Background Glow -->
+<div class="fixed inset-0 pointer-events-none fluid-glow z-0"></div>
+<div class="relative z-10 flex flex-col min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 backdrop-blur-md border-b border-primary/10 bg-background-light/80 dark:bg-background-dark/80 px-6 lg:px-20 py-4">
+<div class="max-w-7xl mx-auto flex items-center justify-between gap-8">
+<!-- Logo -->
+<div class="flex items-center gap-3 shrink-0">
+<div class="size-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+</div>
+<h1 class="text-2xl font-bold tracking-tight hidden sm:block">GameHub</h1>
+</div>
+<!-- Search Bar -->
+<div class="flex-1 max-w-2xl">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary/60 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="block w-full bg-primary/5 border border-primary/10 rounded-full py-2.5 pl-12 pr-4 text-slate-900 dark:text-slate-100 placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-primary/10 transition-all text-sm" placeholder="Find your next game..." type="text"/>
+</div>
+</div>
+<!-- User Actions -->
+<div class="flex items-center gap-4 shrink-0">
+<button class="p-2 hover:bg-primary/10 rounded-lg transition-colors text-primary">
+<span class="material-symbols-outlined">person</span>
+</button>
+<button class="p-2 hover:bg-primary/10 rounded-lg transition-colors text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="size-10 rounded-full bg-primary/20 border-2 border-primary/30 p-0.5 overflow-hidden">
+<img class="w-full h-full rounded-full object-cover" data-alt="User profile avatar icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhzuhRbsAI4D683Yz7_6NUbYPmM4yevaX2HaeCgYy1UQUsYcTaKaUvXuPKcrsurlykaE0gdAOYC0FTTwVrhl3GeUoI-U8je9OEKMjXSAHm0FjJ5s8_L_mWdmy02HLQI3KiXtq2M0YKRcYwIEPyf5STN_EnrzC8eKoT4ePL0lFeJXQPrS9L7AckR1hj0SdS75U_6IczIUkV4nxKq8p8v1l3uAXrpSf4VA6YsxSXAywzas22cWsN23yJWfeQsxbD5R7t1fG_2PULN3dL"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-10 space-y-12">
+<!-- Modern Marvels Section -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-3xl font-bold tracking-tight border-l-4 border-primary pl-4">Modern Marvels</h2>
+<span class="text-sm font-medium text-primary/60 uppercase tracking-widest">Recent Picks</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+<!-- Tree -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">forest</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Trees</h3>
+<p class="text-xs italic text-primary/50 font-normal">photosynthesis</p>
+</div>
+</div>
+<!-- Circles -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">radio_button_checked</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Circles</h3>
+<p class="text-xs italic text-primary/50 font-normal">geometry</p>
+</div>
+</div>
+<!-- Walls -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">widgets</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Walls</h3>
+<p class="text-xs italic text-primary/50 font-normal">architecture</p>
+</div>
+</div>
+<!-- Bugs -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">bug_report</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Bugs</h3>
+<p class="text-xs italic text-primary/50 font-normal">ecology</p>
+</div>
+</div>
+<!-- Stacks -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">layers</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Stacks</h3>
+<p class="text-xs italic text-primary/50 font-normal">structure</p>
+</div>
+</div>
+<!-- Towers -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">apartment</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Towers</h3>
+<p class="text-xs italic text-primary/50 font-normal">height</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Timeless Classics Section -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-3xl font-bold tracking-tight border-l-4 border-primary pl-4">Timeless Classics</h2>
+<span class="text-sm font-medium text-primary/60 uppercase tracking-widest">All Time Best</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+<!-- Hexes -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">hexagon</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Hexes</h3>
+<p class="text-xs italic text-primary/50 font-normal">strategy</p>
+</div>
+</div>
+<!-- Marbles -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">motion_photos_on</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Marbles</h3>
+<p class="text-xs italic text-primary/50 font-normal">physics</p>
+</div>
+</div>
+<!-- Bridges -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">rebase</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Bridges</h3>
+<p class="text-xs italic text-primary/50 font-normal">connection</p>
+</div>
+</div>
+<!-- Stones -->
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="aspect-square rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center overflow-hidden transition-all group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:-translate-y-1 shadow-sm">
+<span class="material-symbols-outlined text-primary transition-transform group-hover:scale-110 text-[80px] w-20 h-20 flex items-center justify-center leading-none">blur_on</span>
+</div>
+<div>
+<h3 class="font-semibold text-lg">Stones</h3>
+<p class="text-xs italic text-primary/50 font-normal">balance</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Minimalist Footer -->
+<footer class="mt-auto px-6 lg:px-20 py-8 border-t border-primary/5">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary/40">
+<p>© 2024 GameHub Studios. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

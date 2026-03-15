@@ -1,0 +1,161 @@
+.game-frame-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.game-frame-bar {
+  height: 48px;
+  flex-shrink: 0;
+  background: rgba(25, 16, 34, 0.95);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.game-frame-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.game-frame-back-btn:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.game-frame-back-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.game-frame-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+
+.game-frame-exit-btn {
+  width: 32px;
+  height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: color 0.2s, background 0.2s;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.game-frame-exit-btn:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.game-frame-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-frame-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.game-frame-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.game-frame-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.game-frame-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg);
+  text-align: center;
+  padding: 32px;
+}
+
+.game-frame-error-icon {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.game-frame-error h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.game-frame-error p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 300px;
+}
+
+.game-frame-error-btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.game-frame-error-btn:hover {
+  opacity: 0.85;
+}

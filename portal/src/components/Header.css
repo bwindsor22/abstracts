@@ -1,0 +1,78 @@
+.portal-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 64px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(25, 16, 34, 0.85);
+  border-bottom: 1px solid var(--border);
+}
+
+.portal-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.portal-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.portal-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.portal-logo-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+}
+
+.portal-logo-text {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text);
+}
+
+.portal-menu-btn {
+  width: 40px;
+  height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  transition: background 0.2s ease;
+}
+
+.portal-menu-btn:hover {
+  background: var(--surface-hover);
+}
+
+.portal-menu-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+}

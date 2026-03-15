@@ -1,0 +1,311 @@
+.library {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* Search */
+.library-search-wrap {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.library-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-secondary);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.library-search {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.library-search::placeholder {
+  color: var(--text-secondary);
+}
+
+.library-search:focus {
+  border-color: var(--primary);
+  background: rgba(153, 66, 240, 0.12);
+}
+
+/* Section */
+.library-section {
+  margin-bottom: 40px;
+}
+
+.library-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.library-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.library-section-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--primary);
+  background: var(--primary-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 600px) {
+  .library-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .library-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Game Card */
+.library-card {
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
+}
+
+.library-card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(153, 66, 240, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.library-card-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -65%);
+  font-size: 40px;
+  line-height: 1;
+  color: var(--primary);
+  filter: drop-shadow(0 0 12px rgba(153, 66, 240, 0.4));
+  transition: transform 0.3s ease, filter 0.3s ease;
+  pointer-events: none;
+  /* Material Symbols settings */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
+}
+
+.library-card:hover .library-card-icon {
+  transform: translate(-50%, -70%);
+  filter: drop-shadow(0 0 20px rgba(153, 66, 240, 0.7));
+}
+
+.library-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+  line-height: 1.2;
+}
+
+.library-card-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+/* Modal */
+.library-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 5, 20, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.library-modal {
+  background: #1e0f32;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.library-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.library-modal-game-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.library-modal-icon {
+  font-size: 36px;
+  line-height: 1;
+  color: var(--primary);
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
+}
+
+.library-modal-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.library-modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.library-modal-close {
+  width: 32px;
+  height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.library-modal-close:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.library-modal-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.library-modal-difficulties {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.library-modal-diff-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 9px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  text-transform: capitalize;
+}
+
+.library-modal-diff-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.library-modal-diff-btn.selected {
+  background: var(--primary-dim);
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.library-modal-play-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.library-modal-play-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.library-modal-play-btn:active {
+  transform: scale(0.98);
+}
+
+.library-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}

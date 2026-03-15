@@ -1,0 +1,171 @@
+.badges-view {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.badges-view-heading {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.badges-player-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.badges-player-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.badges-player-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.badges-player-level {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--primary-dim);
+  color: var(--primary);
+  border: 1px solid rgba(153, 66, 240, 0.35);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-top: 3px;
+}
+
+/* Tabs */
+.badges-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.badges-tab {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.badges-tab:hover {
+  color: var(--text);
+}
+
+.badges-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--primary);
+}
+
+/* Badge grid */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .badges-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.badge-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.badge-card.earned {
+  border-color: var(--rarity-color, var(--border));
+  background: rgba(153, 66, 240, 0.06);
+}
+
+.badge-card.locked {
+  opacity: 0.45;
+}
+
+.badge-card-icon {
+  font-size: 36px;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px var(--rarity-color, transparent));
+}
+
+.badge-card.locked .badge-card-icon {
+  filter: grayscale(1);
+}
+
+.badge-card-rarity {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  color: var(--rarity-color, var(--text-secondary));
+}
+
+.badge-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.badge-card-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.badge-card-date {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.badge-locked-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 14px;
+  opacity: 0.4;
+}
+
+.badges-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  grid-column: 1 / -1;
+}

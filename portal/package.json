@@ -1,0 +1,29 @@
+{
+  "name": "abstracts",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "bootstrap": "^4.6.0",
+    "react-bootstrap": "^1.6.1",
+    "react-dnd": "^10.0.2",
+    "react-dnd-html5-backend": "^10.0.2",
+    "react-dnd-touch-backend": "^16.0.1",
+    "@react-three/fiber": "^8.15.0",
+    "@react-three/drei": "^9.88.0",
+    "three": "^0.160.0",
+    "@tensorflow/tfjs": "^4.22.0",
+    "yaml": "2.8.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --watchAll=false"
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead"],
+    "development": ["last 1 chrome version"]
+  }
+}

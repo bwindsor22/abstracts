@@ -1,0 +1,191 @@
+.nav-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: flex-end;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.nav-drawer-overlay.open {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.nav-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 5, 20, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-drawer-overlay.open .nav-drawer-backdrop {
+  opacity: 1;
+}
+
+.nav-drawer-panel {
+  position: relative;
+  width: 300px;
+  max-width: 90vw;
+  height: 100%;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(26, 11, 46, 0.92);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-drawer-overlay.open .nav-drawer-panel {
+  transform: translateX(0);
+}
+
+.nav-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-drawer-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+}
+
+.nav-drawer-close {
+  width: 32px;
+  height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: color 0.2s, background 0.2s;
+}
+
+.nav-drawer-close:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.nav-drawer-close svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.nav-drawer-items {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 10px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-secondary);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.nav-drawer-overlay.open .nav-drawer-item {
+  animation: slideUp 0.3s ease forwards;
+}
+
+.nav-drawer-overlay.open .nav-drawer-item:nth-child(1) { animation-delay: 0.05s; }
+.nav-drawer-overlay.open .nav-drawer-item:nth-child(2) { animation-delay: 0.10s; }
+.nav-drawer-overlay.open .nav-drawer-item:nth-child(3) { animation-delay: 0.15s; }
+.nav-drawer-overlay.open .nav-drawer-item:nth-child(4) { animation-delay: 0.20s; }
+.nav-drawer-overlay.open .nav-drawer-item:nth-child(5) { animation-delay: 0.25s; }
+
+.nav-drawer-item:hover {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.nav-drawer-item.active {
+  background: var(--primary-dim);
+  color: var(--text);
+  border-color: rgba(153, 66, 240, 0.35);
+}
+
+.nav-drawer-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.07);
+  transition: background 0.2s;
+}
+
+.nav-drawer-item.active .nav-drawer-item-icon {
+  background: var(--primary);
+}
+
+.nav-drawer-item-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-drawer-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.nav-drawer-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.nav-drawer-item-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.nav-drawer-footer {
+  padding: 16px 20px 0;
+  border-top: 1px solid var(--border);
+}
+
+.nav-drawer-footer-text {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--primary);
+  opacity: 0.6;
+}
