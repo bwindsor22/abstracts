@@ -103,6 +103,7 @@ export const ALL_BADGES = [
     name: 'Grandmaster',
     description: 'Won 10 games total',
     icon: 'crown',
+    image: '/badges/grandmaster.png',
     rarity: 'EPIC',
     check: (stats) => stats.totalWins >= 10,
   },
@@ -191,6 +192,7 @@ export const ALL_BADGES = [
     name: 'Modern Specialist',
     description: 'Won any Modern Marvels game',
     icon: 'rocket_launch',
+    image: '/badges/modern_specialist.png',
     rarity: 'RARE',
     check: (stats, history) => history.some(g => g.won && ['trees','circles','walls','bugs','stacks','towers'].includes(g.gameId)),
   },
@@ -199,6 +201,7 @@ export const ALL_BADGES = [
     name: 'Completionist',
     description: 'Won at least one game in every title',
     icon: 'auto_awesome',
+    image: '/badges/completionist.png',
     rarity: 'LEGENDARY',
     check: (stats, history) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','stones'].every(id =>
       history.some(g => g.won && g.gameId === id)
