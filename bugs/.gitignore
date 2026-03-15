@@ -1,0 +1,5 @@
+
+# Local-only game metadata (contains actual game names)
+resources/name.txt
+resources/research.md
+node_modules

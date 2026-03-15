@@ -1,0 +1,19 @@
+# Never commit resources (screenshots, youtube transcripts, etc.)
+*/resources/
+
+# Node
+node_modules/
+*/node_modules/
+
+# Build output
+build/
+*/build/
+
+# Env files
+.env
+*/.env
+.env.local
+*/.env.local
+
+# OS
+.DS_Store

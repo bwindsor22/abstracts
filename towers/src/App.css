@@ -1,0 +1,194 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #1a1008;
+  font-family: 'Georgia', serif;
+  color: #e8d5a0;
+  overflow: hidden;
+}
+
+/* ── Full-screen 3D canvas ───────────────────────────────────────────────── */
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.app > canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Start screen ─────────────────────────────────────────────────────────── */
+.start-overlay {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 420px;
+  text-align: center;
+}
+
+.start-title {
+  font-size: 52px;
+  font-weight: bold;
+  letter-spacing: 12px;
+  color: #e8d5a0;
+  text-shadow: 0 2px 16px rgba(200,140,30,0.5);
+}
+
+.start-sub {
+  font-size: 15px;
+  color: #c4a96a;
+}
+
+.start-rules {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #5a3e1e;
+  border-radius: 8px;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: #a08050;
+  text-align: left;
+  width: 100%;
+  line-height: 1.5;
+}
+
+.start-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #c4a96a;
+  font-size: 14px;
+}
+
+.start-option input { cursor: pointer; }
+
+.diff-btn {
+  padding: 5px 13px;
+  background: rgba(30,20,8,0.85);
+  border: 1px solid #5a3e1e;
+  border-radius: 4px;
+  color: #c4a96a;
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.diff-btn.active {
+  background: rgba(100,70,20,0.95);
+  border-color: #e8c060;
+  color: #ffe080;
+}
+
+.start-btn {
+  padding: 12px 40px;
+  background: rgba(80,55,20,0.9);
+  border: 1px solid #aa7a38;
+  border-radius: 6px;
+  color: #ffe080;
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.start-btn:hover { background: rgba(120,85,30,0.95); }
+
+/* ── HUD overlay (top-left, same as stacks-game) ─────────────────────────── */
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hud > * { pointer-events: auto; }
+
+.hud-title {
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 6px;
+  color: #e8d5a0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.hud-status {
+  font-size: 13px;
+  color: #c4a96a;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+.cancel-btn {
+  padding: 7px 16px;
+  background: rgba(80,20,20,0.85);
+  border: 1px solid #993333;
+  border-radius: 4px;
+  color: #ff8888;
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.cancel-btn:hover { background: rgba(120,30,30,0.9); }
+
+.reset-btn {
+  padding: 9px 20px;
+  background: rgba(30,60,30,0.9);
+  border: 1px solid #3a7a3a;
+  border-radius: 4px;
+  color: #88ee88;
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.reset-btn:hover { background: rgba(40,90,40,0.9); }
+
+/* ── Legend ───────────────────────────────────────────────────────────────── */
+.legend {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #8a7050;
+  flex-wrap: wrap;
+}
+
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.leg-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.l1-box   { background: #ddd8d0; }
+.l2-box   { background: #b8c8d8; }
+.l3-box   { background: #7090b8; }
+.dome-box { background: #1a3060; border-radius: 50%; }
