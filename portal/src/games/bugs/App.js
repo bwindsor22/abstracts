@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import './App.css';
 import {
   initState, getAllMoves, applyMove, getPlacementCells,
@@ -9,7 +9,7 @@ import { DndProvider, useDrag, useDrop, useDragLayer } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 
-const BG = '#1a1a2e';
+const BG = '#191022';
 const HEX_SIZE = 36;
 const ITEM_HAND = 'HAND_PIECE';
 const ITEM_BOARD = 'BOARD_PIECE';
@@ -384,11 +384,13 @@ export default function App({ onBack, onResult }) {
   const [gs, setGs] = useState(null);
   const [selected, setSelected] = useState(null);
   const [highlights, setHighlights] = useState([]);
-  const resultFired = React.useRef(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const resultFired = useRef(false);
 
   const handleStart = useCallback((opts) => {
     setGs(initState({ ...opts, aiPlayer: 'white' }));
     setSelected(null); setHighlights([]);
+    resultFired.current = false;
   }, []);
 
   const computeHighlights = useCallback((state, sel) => {
