@@ -5,6 +5,7 @@ export const ALL_BADGES = [
     name: 'First Move',
     description: 'Played your first game',
     icon: 'sports_esports',
+    image: '/badges/first_move.png',
     rarity: 'COMMON',
     check: (stats) => stats.totalGames >= 1,
   },
@@ -13,6 +14,7 @@ export const ALL_BADGES = [
     name: 'Getting Started',
     description: 'Played 5 games',
     icon: 'star',
+    image: '/badges/getting_started.png',
     rarity: 'COMMON',
     check: (stats) => stats.totalGames >= 5,
   },
@@ -21,6 +23,7 @@ export const ALL_BADGES = [
     name: 'Dedicated',
     description: 'Played 20 games',
     icon: 'local_fire_department',
+    image: '/badges/dedicated.png',
     rarity: 'UNCOMMON',
     check: (stats) => stats.totalGames >= 20,
   },
@@ -29,6 +32,7 @@ export const ALL_BADGES = [
     name: 'Modern Explorer',
     description: 'Played every Modern Marvels game',
     icon: 'explore',
+    image: '/badges/modern_explorer.png',
     rarity: 'UNCOMMON',
     check: (stats) => ['trees','circles','walls','bugs','stacks','towers'].every(
       id => (stats.byGame[id]?.games || 0) >= 1
@@ -39,6 +43,7 @@ export const ALL_BADGES = [
     name: 'Classic Explorer',
     description: 'Played every Timeless Classic game',
     icon: 'history_edu',
+    image: '/badges/classic_explorer.png',
     rarity: 'UNCOMMON',
     check: (stats) => ['hexes','marbles','bridges','stones'].every(
       id => (stats.byGame[id]?.games || 0) >= 1
@@ -49,6 +54,7 @@ export const ALL_BADGES = [
     name: 'Full Collection',
     description: 'Played all 10 games at least once',
     icon: 'library_books',
+    image: '/badges/full_collection.png',
     rarity: 'RARE',
     check: (stats) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','stones'].every(
       id => (stats.byGame[id]?.games || 0) >= 1
@@ -61,6 +67,7 @@ export const ALL_BADGES = [
     name: 'First Victory',
     description: 'Won your first game',
     icon: 'emoji_events',
+    image: '/badges/first_victory.png',
     rarity: 'COMMON',
     check: (stats) => stats.totalWins >= 1,
   },
@@ -69,6 +76,7 @@ export const ALL_BADGES = [
     name: 'Champion',
     description: 'Won 5 games',
     icon: 'military_tech',
+    image: '/badges/champion.png',
     rarity: 'UNCOMMON',
     check: (stats) => stats.totalWins >= 5,
   },
@@ -77,6 +85,7 @@ export const ALL_BADGES = [
     name: 'Veteran',
     description: 'Won 20 games',
     icon: 'workspace_premium',
+    image: '/badges/veteran.png',
     rarity: 'RARE',
     check: (stats) => stats.totalWins >= 20,
   },
@@ -85,6 +94,7 @@ export const ALL_BADGES = [
     name: 'Polymath',
     description: 'Won games in 3 different titles',
     icon: 'psychology',
+    image: '/badges/polymath.png',
     rarity: 'RARE',
     check: (stats, history) => new Set(history.filter(g => g.won).map(g => g.gameId)).size >= 3,
   },

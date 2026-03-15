@@ -115,6 +115,26 @@
   opacity: 0.45;
 }
 
+.badge-card-icon-wrap {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-card-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 0 8px var(--rarity-color, transparent));
+}
+
+.badge-card.locked .badge-card-img {
+  filter: grayscale(1);
+}
+
 .badge-card-icon {
   font-size: 36px;
   line-height: 1;
@@ -123,6 +143,11 @@
 
 .badge-card.locked .badge-card-icon {
   filter: grayscale(1);
+}
+
+.badges-player-avatar .material-symbols-outlined {
+  font-size: 28px;
+  color: #fff;
 }
 
 .badge-card-rarity {

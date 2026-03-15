@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Full Collection - Rare Badge</title>
+<!-- BEGIN: Scripts -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'slate-deep': '#0f172a',
+            'glass-gold': '#fbbf24',
+          },
+          backdropBlur: {
+            xs: '2px',
+          }
+        }
+      }
+    }
+  </script>
+<!-- END: Scripts -->
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="glass-effects">
+    .glass-frosted {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Soft gold rim lighting effect */
+    .rim-light-gold {
+      box-shadow: inset 0 0 15px rgba(251, 191, 36, 0.2), 
+                  0 0 20px rgba(251, 191, 36, 0.1);
+    }
+
+    /* Subtle reflection on the chest surface */
+    .glass-reflection {
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+    }
+
+    /* Animation for subtle glow */
+    @keyframes pulse-gold {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .animate-glow {
+      animation: pulse-gold 4s ease-in-out infinite;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-slate-deep flex items-center justify-center min-h-screen m-0 p-4">
+<!-- BEGIN: Badge Container -->
+<main class="relative" data-purpose="badge-display">
+<!-- Outer Square Canvas (Mobile iOS optimized size) -->
+<div class="w-64 h-64 bg-slate-900 rounded-[2rem] flex items-center justify-center relative overflow-hidden shadow-2xl border border-slate-800">
+<!-- Background Decorative Elements -->
+<div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+<div class="absolute top-[-10%] right-[-10%] w-40 h-40 bg-glass-gold rounded-full blur-[60px]"></div>
+</div>
+<!-- BEGIN: Chest Icon Construction -->
+<div class="relative w-40 h-32 flex flex-col items-center" data-purpose="chest-icon">
+<!-- Chest Lid (Frosted Glass) -->
+<div class="w-full h-14 rounded-t-2xl glass-frosted rim-light-gold relative z-20 mb-1">
+<div class="absolute inset-0 rounded-t-2xl glass-reflection"></div>
+<!-- Lid Handle/Detail -->
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-glass-gold/40 rounded-full"></div>
+</div>
+<!-- Chest Base (Frosted Glass) -->
+<div class="w-full h-18 rounded-b-lg glass-frosted rim-light-gold relative z-10 flex items-center justify-center">
+<!-- Keyhole Detail -->
+<div class="w-4 h-6 bg-glass-gold/60 rounded-full flex flex-col items-center justify-center shadow-[0_0_10px_rgba(251,191,36,0.5)]">
+<div class="w-1.5 h-1.5 bg-slate-deep rounded-full mb-0.5"></div>
+<div class="w-0.5 h-2 bg-slate-deep rounded-full"></div>
+</div>
+<!-- Gold Corner Accents -->
+<div class="absolute bottom-0 left-0 w-4 h-4 border-l-2 border-b-2 border-glass-gold/30 rounded-bl-lg"></div>
+<div class="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-glass-gold/30 rounded-br-lg"></div>
+</div>
+<!-- Inner Glow (Simulating treasure inside) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-12 bg-glass-gold/20 blur-xl animate-glow z-0"></div>
+</div>
+<!-- END: Chest Icon Construction -->
+<!-- Rarity Label -->
+<div class="absolute bottom-6 w-full text-center">
+<span class="text-glass-gold text-xs font-bold tracking-[0.2em] uppercase opacity-80">Full Collection</span>
+<div class="text-[10px] text-slate-400 mt-1 font-medium tracking-widest uppercase">Rare</div>
+</div>
+</div>
+</main>
+<!-- END: Badge Container -->
+</body></html>

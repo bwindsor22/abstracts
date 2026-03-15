@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Polymath Rare Badge</title>
+<!-- Tailwind CSS v3 CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- BEGIN: Custom Styling -->
+<style data-purpose="glassmorphism-effects">
+    /* Custom glassmorphism texture and reflections */
+    .glass-frosted {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .gold-rim-glow {
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .reflection-overlay {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%);
+    }
+
+    /* Geometric Brain Path Simulation */
+    .brain-path {
+      stroke: rgba(212, 175, 55, 0.7);
+      stroke-width: 1.5;
+      fill: rgba(255, 255, 255, 0.03);
+    }
+  </style>
+<!-- END: Custom Styling -->
+</head>
+<body class="bg-[#0f172a] flex items-center justify-center min-h-screen m-0 p-4">
+<!-- BEGIN: Badge Container -->
+<main class="relative group" data-purpose="badge-display-area">
+<!-- Outer Square Canvas (Deep Slate Background) -->
+<div class="w-64 h-64 bg-[#1e293b] rounded-3xl flex items-center justify-center relative overflow-hidden shadow-2xl border border-slate-700">
+<!-- Subtle Background Texture -->
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#475569 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- BEGIN: Polymath Icon Content -->
+<section class="relative z-10 w-40 h-40 flex items-center justify-center" data-purpose="polymath-icon-wrapper">
+<!-- Glass Geometric Brain Icon -->
+<div class="glass-frosted gold-rim-glow w-full h-full rounded-[2.5rem] relative flex items-center justify-center overflow-hidden border-t border-l border-white/20">
+<!-- Glossy Reflection -->
+<div class="reflection-overlay absolute inset-0 pointer-events-none"></div>
+<!-- SVG Geometric Brain -->
+<svg class="w-3/4 h-3/4 drop-shadow-lg" viewbox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<!-- Left Lobe -->
+<path class="brain-path" d="M50 20 C30 20 15 35 15 55 C15 70 25 80 40 82 L50 82 Z"></path>
+<!-- Right Lobe -->
+<path class="brain-path" d="M50 20 C70 20 85 35 85 55 C85 70 75 80 60 82 L50 82 Z"></path>
+<!-- Internal Geometric Nodes -->
+<circle cx="35" cy="45" fill="#d4af37" r="2"></circle>
+<circle cx="65" cy="45" fill="#d4af37" r="2"></circle>
+<circle cx="50" cy="35" fill="#d4af37" r="2"></circle>
+<circle cx="50" cy="65" fill="#d4af37" r="2"></circle>
+<line opacity="0.5" stroke="#d4af37" stroke-width="0.5" x1="35" x2="50" y1="45" y2="35"></line>
+<line opacity="0.5" stroke="#d4af37" stroke-width="0.5" x1="65" x2="50" y1="45" y2="35"></line>
+<line opacity="0.5" stroke="#d4af37" stroke-width="0.5" x1="35" x2="50" y1="45" y2="65"></line>
+<line opacity="0.5" stroke="#d4af37" stroke-width="0.5" x1="65" x2="50" y1="45" y2="65"></line>
+</svg>
+</div>
+</section>
+<!-- END: Polymath Icon Content -->
+<!-- BEGIN: Rare Rarity Label -->
+<div class="absolute bottom-4 left-0 right-0 flex justify-center">
+<span class="px-3 py-1 bg-slate-800/80 border border-amber-500/30 text-amber-500 text-[10px] uppercase tracking-[0.2em] font-bold rounded-full backdrop-blur-sm">
+          Rare Polymath
+        </span>
+</div>
+<!-- END: Rare Rarity Label -->
+</div>
+<!-- Background Ambient Glow -->
+<div class="absolute -inset-4 bg-amber-500/10 blur-3xl rounded-full -z-10 opacity-50"></div>
+</main>
+<!-- END: Badge Container -->
+</body></html>
