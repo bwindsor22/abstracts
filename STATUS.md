@@ -14,7 +14,7 @@
 | `portal/src/App.css` | ✅ Done | Design tokens, fluid glow background |
 | `portal/src/components/GameWrapper.jsx` | ✅ Done | Lazy-loads all 10 games, passes onBack/onResult |
 | `portal/src/data/games.js` | ✅ Done | 10 games with Material Symbols icons (no emoji) |
-| `portal/src/data/badges.js` | ✅ Done | 21 badges defined |
+| `portal/src/data/badges.js` | ✅ Done | 13 badges (all with artwork) |
 | `portal/src/utils/storage.js` | ✅ Done | localStorage, ELO per game, badge tracking |
 | `portal/src/components/Header.jsx` | ✅ Done | ABSTRACTS branding, hamburger |
 | `portal/src/components/NavDrawer.jsx` | ✅ Done | Full-screen nav overlay |
