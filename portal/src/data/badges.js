@@ -1,5 +1,5 @@
 export const ALL_BADGES = [
-  // ── Participation ──────────────────────────────────────────────────────────
+  // ── Experience ─────────────────────────────────────────────────────────────
   {
     id: 'first_game',
     name: 'First Move',
