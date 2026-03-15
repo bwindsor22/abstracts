@@ -267,7 +267,7 @@ function GameBoard({ gs, selected, highlights, handleHexClick, handleHandClick, 
       {/* position:relative wrapper — SVG renders visuals, HTML divs handle DnD */}
       <div style={{ position: 'relative', display: 'inline-block' }}>
         <svg width={viewWidth} height={viewHeight}
-          style={{ display: 'block', background: '#16213e', borderRadius: 8, border: '1px solid #2a2a4a' }}>
+          style={{ display: 'block', background: '#1a1030', borderRadius: 8, border: '1px solid rgba(153,66,240,0.2)' }}>
           <g transform={`translate(${offsetX},${offsetY})`}>
             {/* Highlight polygons (for click-based interaction) */}
             {highlights.map(([hq, hr]) => {
@@ -481,7 +481,13 @@ export default function App({ onBack, onResult }) {
   useEffect(() => {
     if (!gs || !gs.winner || resultFired.current) return;
     resultFired.current = true;
-    if (onResult) onResult({ won: gs.winner === 'black', moves: 0, difficulty: gs.difficulty || 'medium' });
+    if (onResult) onResult({
+      gameId: 'bugs',
+      gameName: 'Bugs',
+      won: gs.winner === 'black',
+      moves: gs.moveCount || 0,
+      difficulty: gs.difficulty || 'medium',
+    });
   }, [gs, onResult]);
 
   // Auto-pass: if the human player has no valid moves, switch turns automatically
@@ -505,7 +511,7 @@ export default function App({ onBack, onResult }) {
   if (!gs) {
     return (
       <DndProvider backend={backend} options={backendOptions}>
-        <div style={{ minHeight: '100vh', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="game-bugs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
           <StartScreen onStart={handleStart} onBack={onBack} />
         </div>
       </DndProvider>
@@ -514,7 +520,7 @@ export default function App({ onBack, onResult }) {
 
   return (
     <DndProvider backend={backend} options={backendOptions}>
-      <div style={{ minHeight: '100vh', background: BG, padding: 16 }}>
+      <div className="game-bugs" style={{ padding: 16 }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
           <GameBoard
             gs={gs}
@@ -525,25 +531,30 @@ export default function App({ onBack, onResult }) {
             handleDrop={handleDrop}
           />
           {selected && (
-            <div style={{ color: '#ffe066', fontSize: 13 }}>
+            <div className="selected-hint">
               {selected.type === 'hand'
                 ? `Selected: ${selected.pieceType} — click or drag to a highlighted cell`
                 : `Selected piece — click or drag to a highlighted cell, or click another piece`}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => { resultFired.current = false; setGs(null); setSelected(null); setHighlights([]); }}
-              style={{ padding: '8px 20px', background: '#5a3a8a', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
-              New Game
-            </button>
-            {onBack && (
-              <button onClick={onBack}
-                style={{ padding: '8px 20px', background: 'transparent', color: '#c8b8e8', border: '1px solid #5a3a8a', borderRadius: 6, cursor: 'pointer' }}>
-                ← Library
-              </button>
-            )}
+
+          {/* Bottom controls */}
+          <div className="game-controls">
+            <button className="ctrl-btn" disabled>UNDO</button>
+            <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
           </div>
         </div>
+
+        {/* In-game menu overlay */}
+        {menuOpen && (
+          <div className="game-menu-overlay" onClick={() => setMenuOpen(false)}>
+            <div className="game-menu-panel" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setMenuOpen(false)}>Resume</button>
+              <button onClick={() => { resultFired.current = false; setGs(null); setSelected(null); setHighlights([]); setMenuOpen(false); }}>New Game</button>
+              {onBack && <button onClick={onBack}>Back to Library</button>}
+            </div>
+          </div>
+        )}
       </div>
     </DndProvider>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 import {
   BOARD_SVG_SIZE, VALID_CELL_KEYS, DIRECTIONS,
@@ -130,7 +130,7 @@ function BoardCell({ cellKey, x, y, cell, state, onCellClick, onCellDrop, isDrag
       {/* Empty node */}
       {!cell && (
         <circle cx={x} cy={y} r={4}
-          fill={isValidForDrop ? '#ffe066' : '#8aad8c'}
+          fill={isValidForDrop ? '#ffe066' : 'rgba(153,66,240,0.35)'}
           stroke="none"
         />
       )}
@@ -170,11 +170,11 @@ function Board({ state, onCellClick, onCellDrop }) {
   return (
     <svg
       width={BOARD_SVG_SIZE} height={BOARD_SVG_SIZE}
-      style={{ display: 'block', maxWidth: '100%', background: '#2c5f2e', borderRadius: 8 }}
+      style={{ display: 'block', maxWidth: '100%', background: '#1a1030', borderRadius: 8, border: '1px solid rgba(153,66,240,0.2)' }}
     >
       {LINES.map((l, i) => (
         <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
-          stroke="#4a7c59" strokeWidth="1.5" />
+          stroke="rgba(153,66,240,0.25)" strokeWidth="1.5" />
       ))}
 
       {VALID_CELL_KEYS.map(key => {
@@ -198,15 +198,15 @@ function Board({ state, onCellClick, onCellDrop }) {
 
 // ─── Score track ─────────────────────────────────────────────────────────────
 function ScoreTrack({ player, scored }) {
-  const color = player === 'white' ? '#f0ede0' : '#1a1a1a';
-  const bg = player === 'white' ? '#333' : '#eee';
+  const color = player === 'white' ? '#f0ede0' : '#c8b8f8';
+  const pieceColor = player === 'white' ? '#f0ede0' : '#1a1a1a';
   return (
-    <div style={{ textAlign: 'center', padding: '8px 16px', background: bg, borderRadius: 8 }}>
-      <div style={{ color, fontWeight: 'bold', marginBottom: 6, textTransform: 'capitalize' }}>{player}</div>
+    <div className="score-track">
+      <div className="player-label" style={{ color }}>{player}</div>
       {[0, 1, 2].map(i => (
         <div key={i} style={{
           width: 28, height: 28, borderRadius: '50%', border: `3px solid ${color}`,
-          background: i < scored ? color : 'transparent',
+          background: i < scored ? pieceColor : 'transparent',
           display: 'inline-block', margin: '0 4px',
         }} />
       ))}
@@ -232,59 +232,66 @@ function InfoPanel({ state }) {
     msg = winner ? `${winner.toUpperCase()} WINS!` : 'DRAW — equal rings scored.';
   }
   return (
-    <div style={{ padding: 12, background: '#1a2e1c', color: '#cde8cf', borderRadius: 8, minHeight: 60 }}>
-      <div style={{ marginBottom: 4, fontSize: 13, color: '#6aab6e' }}>Markers remaining: {markersPool}</div>
+    <div className="info-panel">
+      <div className="markers-line">Markers remaining: {markersPool}</div>
       <div style={{ fontSize: 15 }}>{msg}</div>
     </div>
   );
 }
 
 // ─── Start screen ────────────────────────────────────────────────────────────
-function StartScreen({ onStart }) {
+function StartScreen({ onStart, onBack }) {
   const [vsAI, setVsAI] = useState(false);
   const [difficulty, setDifficulty] = useState('medium');
   const [blitz, setBlitz] = useState(false);
   return (
-    <div style={{ textAlign: 'center', padding: 40, maxWidth: 400, margin: '0 auto' }}>
-      <h1 style={{ color: '#cde8cf', marginBottom: 8 }}>YINSH</h1>
-      <p style={{ color: '#8aad8c', marginBottom: 24 }}>Abstract strategy — first to score 3 rings wins</p>
+    <div className="start-screen" style={{ textAlign: 'center' }}>
+      <h1>YINSH</h1>
+      <p className="start-desc">Abstract strategy — first to score 3 rings wins</p>
       <div style={{ marginBottom: 16 }}>
-        <label style={{ color: '#cde8cf' }}>
+        <label className="start-checkbox">
           <input type="checkbox" checked={vsAI} onChange={e => setVsAI(e.target.checked)} style={{ marginRight: 8 }} />
           Play vs AI (Black)
         </label>
       </div>
       {vsAI && (
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ color: '#8aad8c', marginRight: 8 }}>Difficulty:</label>
+        <div className="difficulty-row">
+          <label>Difficulty:</label>
           {['easy', 'medium', 'hard'].map(d => (
             <button key={d} onClick={() => setDifficulty(d)}
-              style={{ margin: '0 4px', padding: '4px 12px', background: difficulty === d ? '#4a7c59' : '#1a2e1c', color: '#cde8cf', border: '1px solid #4a7c59', borderRadius: 4, cursor: 'pointer' }}>
+              className={`diff-btn${difficulty === d ? ' active' : ''}`}>
               {d}
             </button>
           ))}
         </div>
       )}
       <div style={{ marginBottom: 24 }}>
-        <label style={{ color: '#cde8cf' }}>
+        <label className="blitz-row">
           <input type="checkbox" checked={blitz} onChange={e => setBlitz(e.target.checked)} style={{ marginRight: 8 }} />
           Blitz mode (1 ring to win)
         </label>
       </div>
-      <button onClick={() => onStart({ vsAI, difficulty, blitz })}
-        style={{ padding: '12px 32px', background: '#4a7c59', color: '#fff', border: 'none', borderRadius: 8, fontSize: 18, cursor: 'pointer' }}>
+      <button onClick={() => onStart({ vsAI, difficulty, blitz })} className="btn-primary">
         Start Game
       </button>
+      {onBack && (
+        <div style={{ marginTop: 16 }}>
+          <button onClick={onBack} className="diff-btn">← Library</button>
+        </div>
+      )}
     </div>
   );
 }
 
 // ─── App ─────────────────────────────────────────────────────────────────────
-export default function App() {
+export default function App({ onBack, onResult }) {
   const [gameState, setGameState] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const resultReported = useRef(false);
 
   const handleStart = useCallback((opts) => {
     setGameState(initState(opts));
+    resultReported.current = false;
   }, []);
 
   const handleCellClick = useCallback((key) => {
@@ -353,6 +360,21 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [gameState]);
 
+  // Report result once when game ends
+  useEffect(() => {
+    if (!gameState || gameState.phase !== 'end' || !gameState.winner || resultReported.current) return;
+    resultReported.current = true;
+    if (onResult) {
+      onResult({
+        gameId: 'circles',
+        gameName: 'Circles',
+        won: gameState.winner === 'white',
+        moves: gameState.moveCount || 0,
+        difficulty: gameState.difficulty || 'medium',
+      });
+    }
+  }, [gameState, onResult]);
+
   const touch = isTouchDevice();
   const backend = touch ? TouchBackend : HTML5Backend;
   const backendOptions = touch ? { enableMouseEvents: true } : {};
@@ -360,8 +382,8 @@ export default function App() {
   if (!gameState) {
     return (
       <DndProvider backend={backend} options={backendOptions}>
-        <div style={{ minHeight: '100vh', background: '#1a2e1c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <StartScreen onStart={handleStart} />
+        <div className="game-circles" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+          <StartScreen onStart={handleStart} onBack={onBack} />
         </div>
       </DndProvider>
     );
@@ -369,25 +391,38 @@ export default function App() {
 
   return (
     <DndProvider backend={backend} options={backendOptions}>
-      <div style={{ minHeight: '100vh', background: '#1a2e1c', padding: 20 }}>
+      <div className="game-circles" style={{ padding: 20 }}>
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' }}>
           <ScoreTrack player="white" scored={gameState.ringsScored.white} />
-          <div style={{ flex: '0 0 auto' }}>
+          <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Board
               state={gameState}
               onCellClick={handleCellClick}
               onCellDrop={handleCellDrop}
             />
+
+            {/* Bottom controls */}
+            <div className="game-controls">
+              <button className="ctrl-btn" disabled>UNDO</button>
+              <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
+            </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 160 }}>
             <ScoreTrack player="black" scored={gameState.ringsScored.black} />
             <InfoPanel state={gameState} />
-            <button onClick={() => setGameState(null)}
-              style={{ padding: '8px 16px', background: '#4a7c59', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
-              New Game
-            </button>
           </div>
         </div>
+
+        {/* In-game menu overlay */}
+        {menuOpen && (
+          <div className="game-menu-overlay" onClick={() => setMenuOpen(false)}>
+            <div className="game-menu-panel" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setMenuOpen(false)}>Resume</button>
+              <button onClick={() => { setGameState(null); setMenuOpen(false); }}>New Game</button>
+              {onBack && <button onClick={onBack}>Back to Library</button>}
+            </div>
+          </div>
+        )}
       </div>
     </DndProvider>
   );
