@@ -2,13 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 import { SIZE, initState, getPawnMoves, canPlaceWall, applyMove } from './Game';
 import { getAIMove } from './AI/ai';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { TouchBackend } from 'react-dnd-touch-backend';
-
-function isTouchDevice() {
-  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
+import { useDrag, useDrop } from 'react-dnd';
 
 const ITEM_TYPES = { WALL: 'wall' };
 
@@ -393,13 +387,6 @@ function GameUI({ onBack, onResult }) {
   );
 }
 
-const _backend = isTouchDevice() ? TouchBackend : HTML5Backend;
-const _options = isTouchDevice() ? { enableMouseEvents: true } : undefined;
-
 export default function App({ onBack, onResult }) {
-  return (
-    <DndProvider backend={_backend} options={_options}>
-      <GameUI onBack={onBack} onResult={onResult} />
-    </DndProvider>
-  );
+  return <GameUI onBack={onBack} onResult={onResult} />;
 }

@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { DndProvider } from "react-dnd";
-import HTML5Backend from "react-dnd-html5-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
 import Board from "./view/board/Board";
 import Inventory from "./view/inventory/index";
 import Available from "./view/available/index";
@@ -11,9 +8,6 @@ import StartScreen from "./view/StartScreen";
 import { GameProvider, useGameState, COLOR_FILTERS } from "./view/board/GameContext";
 import "./App.css";
 
-const isTouchDevice = () =>
-  typeof window !== 'undefined' &&
-  ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
 // Color swatch shown next to the player label
 const COLOR_SWATCHES = {
@@ -390,14 +384,11 @@ const App = ({ onBack, onResult }) => {
     );
   }
 
-  const touch = isTouchDevice();
   return (
     <div className="game-trees">
-      <DndProvider backend={touch ? TouchBackend : HTML5Backend} options={touch ? { enableMouseEvents: true } : {}}>
-        <GameProvider initialColor={gameConfig.color} initialDifficulty={gameConfig.difficulty} numAI={gameConfig.numAI} maxRevolutions={gameConfig.rounds || 3}>
-          <GameContent playerColor={gameConfig.color} onResult={onResult} onBack={onBack} gameConfig={gameConfig} />
-        </GameProvider>
-      </DndProvider>
+      <GameProvider initialColor={gameConfig.color} initialDifficulty={gameConfig.difficulty} numAI={gameConfig.numAI} maxRevolutions={gameConfig.rounds || 3}>
+        <GameContent playerColor={gameConfig.color} onResult={onResult} onBack={onBack} gameConfig={gameConfig} />
+      </GameProvider>
     </div>
   );
 };

@@ -220,7 +220,9 @@ function resolveAfterMove(state) {
     ...oppRows.map(cells => ({ player: opponent, cells })),
   ];
 
-  return { ...state, phase: 'resolveRows', resolvingPlayer: state.currentPlayer, pendingRows, resolveStep: 'selectRow' };
+  // Moving player resolves first; if they have no rows, opponent resolves
+  const firstResolver = myRows.length > 0 ? state.currentPlayer : opponent;
+  return { ...state, phase: 'resolveRows', resolvingPlayer: firstResolver, pendingRows, resolveStep: 'selectRow' };
 }
 
 // ─── Row Resolution ───────────────────────────────────────────────────────────

@@ -6,9 +6,7 @@ import {
   key, parseKey, topPiece
 } from './Game';
 import { getAIMove } from './AI/ai';
-import { DndProvider, useDrag, useDrop, useDragLayer } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { TouchBackend } from 'react-dnd-touch-backend';
+import { useDrag, useDrop, useDragLayer } from 'react-dnd';
 
 const BG = '#191022';
 const HEX_SIZE = 36;
@@ -23,9 +21,6 @@ const MOVEMENT_GUIDE = [
   { type: 'B', name: 'Beetle', color: '#9B59B6', desc: 'Moves 1 space. Can climb on top of other pieces.' },
 ];
 
-function isTouchDevice() {
-  return typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-}
 
 function hexToPixel(q, r) {
   const x = HEX_SIZE * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r);
@@ -515,22 +510,15 @@ export default function App({ onBack, onResult }) {
     }
   }, [gs]);
 
-  const touch = isTouchDevice();
-  const backend = touch ? TouchBackend : HTML5Backend;
-  const backendOptions = touch ? { enableMouseEvents: true } : {};
-
   if (!gs) {
     return (
-      <DndProvider backend={backend} options={backendOptions}>
-        <div className="game-bugs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-          <StartScreen onStart={handleStart} onBack={onBack} />
-        </div>
-      </DndProvider>
+      <div className="game-bugs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+        <StartScreen onStart={handleStart} onBack={onBack} />
+      </div>
     );
   }
 
   return (
-    <DndProvider backend={backend} options={backendOptions}>
       <div className="game-bugs" style={{ padding: 16 }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
           <GameBoard
@@ -596,6 +584,5 @@ export default function App({ onBack, onResult }) {
           </div>
         )}
       </div>
-    </DndProvider>
   );
 }

@@ -1,7 +1,18 @@
 import React, { lazy, Suspense, useState, useCallback } from 'react';
+import { DndProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 import GameGuide from './GameGuide';
 import './GameWrapper.css';
 import './GameGuide.css';
+
+function isTouchDevice() {
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+const _touch = isTouchDevice();
+const _backend = _touch ? TouchBackend : HTML5Backend;
+const _backendOptions = _touch ? { enableMouseEvents: true } : undefined;
 
 // Lazy-load each game to keep initial bundle small
 const GAME_COMPONENTS = {
@@ -35,7 +46,7 @@ export default function GameWrapper({ game, onBack, onResult }) {
   }
 
   return (
-    <>
+    <DndProvider key={game.id} backend={_backend} options={_backendOptions}>
       <Suspense fallback={
         <div className="game-wrapper-loading">
           <div className="game-wrapper-spinner" />
@@ -60,6 +71,6 @@ export default function GameWrapper({ game, onBack, onResult }) {
           </div>
         </div>
       )}
-    </>
+    </DndProvider>
   );
 }

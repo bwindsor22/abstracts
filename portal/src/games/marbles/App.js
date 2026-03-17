@@ -1,7 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { DndProvider, useDrag } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { TouchBackend } from 'react-dnd-touch-backend';
+import { useDrag } from 'react-dnd';
 import './App.css';
 import WinOverlay from '../../components/WinOverlay';
 import {
@@ -32,11 +30,6 @@ for (let q = -RADIUS; q <= RADIUS; q++)
 // ─── Colours ─────────────────────────────────────────────────────────────────
 const MARBLE_COLOR = { black: '#222', white: '#f5f5f5' };
 const MARBLE_STROKE = { black: '#555', white: '#aaa' };
-
-// ─── Touch detection ─────────────────────────────────────────────────────────
-function isTouchDevice() {
-  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
 
 // ─── Direction arrow geometry ─────────────────────────────────────────────────
 function getArrowDescriptors(cx, cy) {
@@ -458,14 +451,6 @@ function AppInner({ onBack, onResult }) {
   );
 }
 
-// ─── App root with DndProvider ────────────────────────────────────────────────
-const backend = isTouchDevice() ? TouchBackend : HTML5Backend;
-const backendOptions = isTouchDevice() ? { enableMouseEvents: true } : undefined;
-
 export default function App({ onBack, onResult }) {
-  return (
-    <DndProvider backend={backend} options={backendOptions}>
-      <AppInner onBack={onBack} onResult={onResult} />
-    </DndProvider>
-  );
+  return <AppInner onBack={onBack} onResult={onResult} />;
 }

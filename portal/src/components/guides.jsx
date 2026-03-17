@@ -81,7 +81,7 @@ const hexesGuide = [
           {i < 5 && <line x1={x+8} y1={y} x2={x+22} y2={y+(i%2?15:-15)} stroke={yellow} strokeWidth={1.5} />}
         </React.Fragment>
       )}
-      <Txt x={120} y={128} size={9} fill="rgba(240,238,255,0.4)">← blue connects top/bottom →</Txt>
+      <Txt x={120} y={128} size={9} fill="#5599dd">← blue connects top/bottom →</Txt>
     </Svg>
   },
   {
@@ -139,13 +139,13 @@ const marblesGuide = [
       <Stone cx={114} cy={50} r={13} fill={dark} stroke="#333" />
       {arrow(132, 50, 160, 50)}
       <Txt x={172} y={50} size={9} fill={yellow}>2 → 1</Txt>
-      <Stone cx={50} cy={95} r={13} fill={white} stroke="#ddd" />
-      <Stone cx={82} cy={95} r={13} fill={white} stroke="#ddd" />
-      <Stone cx={114} cy={95} r={13} fill={white} stroke="#ddd" />
-      <Stone cx={146} cy={95} r={13} fill={dark} stroke="#333" />
-      <Stone cx={178} cy={95} r={13} fill={dark} stroke="#333" />
-      {arrow(196, 95, 220, 95)}
-      <Txt x={230} y={95} size={9} fill={yellow}>3 → 2</Txt>
+      <Stone cx={45} cy={95} r={13} fill={white} stroke="#ddd" />
+      <Stone cx={77} cy={95} r={13} fill={white} stroke="#ddd" />
+      <Stone cx={109} cy={95} r={13} fill={white} stroke="#ddd" />
+      <Stone cx={141} cy={95} r={13} fill={dark} stroke="#333" />
+      <Stone cx={173} cy={95} r={13} fill={dark} stroke="#333" />
+      {arrow(191, 95, 210, 95)}
+      <Txt x={225} y={95} size={9} fill={yellow}>3→2</Txt>
     </Svg>
   },
   {
@@ -172,7 +172,7 @@ const marblesGuide = [
       <Stone cx={225} cy={65} r={10} fill={dark} stroke="#333" />
       <Txt x={225} y={82} size={8} fill="#ff6b6b">off!</Txt>
       {/* score */}
-      <Txt x={120} y={115} size={10} fill="rgba(240,238,255,0.5)">captured: ●●●●●○ — push one more to win</Txt>
+      <Txt x={120} y={110} size={9} fill="rgba(240,238,255,0.5)">push 6 off to win</Txt>
     </Svg>
   },
 ];
@@ -408,15 +408,18 @@ const stacksGuide = [
   {
     caption: 'Place flat stones — they form your road.',
     svg: <Svg>
-      {/* grid cells */}
-      {[0,1,2,3].map(c =>
-        <rect key={c} x={45+c*42} y={55} width={38} height={30} fill={board} stroke={dim} rx={3} />
-      )}
-      {/* flat stone */}
-      <rect x={52} y={58} width={24} height={6} fill={white} rx={2} />
-      <rect x={94} y={58} width={24} height={6} fill={white} rx={2} />
-      <rect x={136} y={58} width={24} height={6} fill={dark} rx={2} />
-      <Txt x={120} y={110} size={9} fill="rgba(240,238,255,0.4)">flat stones are road pieces</Txt>
+      {/* 5x3 grid to show board context */}
+      {[0,1,2].map(r => [0,1,2,3,4].map(c =>
+        <rect key={`${r}${c}`} x={30+c*38} y={25+r*32} width={34} height={28} fill={board} stroke={dim} rx={3} />
+      ))}
+      {/* flat stones on some cells */}
+      <rect x={37} y={30} width={20} height={6} fill={white} rx={2} />
+      <rect x={75} y={30} width={20} height={6} fill={white} rx={2} />
+      <rect x={113} y={30} width={20} height={6} fill={dark} rx={2} />
+      {/* new stone being placed */}
+      <rect x={151} y={30} width={20} height={6} fill={white} rx={2} />
+      <circle cx={161} cy={33} r={18} fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="3 3" />
+      <Txt x={120} y={120} size={9} fill="rgba(240,238,255,0.4)">flat stones are road pieces</Txt>
     </Svg>
   },
   {
@@ -670,11 +673,11 @@ const bridgesGuide = [
   {
     caption: 'Connect your two sides with an unbroken chain of bridges to win.',
     svg: <Svg>
-      {/* borders */}
-      <line x1={25} y1={15} x2={25} y2={125} stroke={white} strokeWidth={3} strokeLinecap="round" />
-      <line x1={215} y1={15} x2={215} y2={125} stroke={white} strokeWidth={3} strokeLinecap="round" />
-      <line x1={35} y1={12} x2={205} y2={12} stroke={dark} strokeWidth={3} strokeLinecap="round" />
-      <line x1={35} y1={128} x2={205} y2={128} stroke={dark} strokeWidth={3} strokeLinecap="round" />
+      {/* borders — red top/bottom, blue left/right */}
+      <line x1={25} y1={15} x2={25} y2={125} stroke="#3498db" strokeWidth={3} strokeLinecap="round" />
+      <line x1={215} y1={15} x2={215} y2={125} stroke="#3498db" strokeWidth={3} strokeLinecap="round" />
+      <line x1={35} y1={12} x2={205} y2={12} stroke="#e74c3c" strokeWidth={3} strokeLinecap="round" />
+      <line x1={35} y1={128} x2={205} y2={128} stroke="#e74c3c" strokeWidth={3} strokeLinecap="round" />
       {/* chain of pegs and links */}
       {[[35,90],[65,60],[105,50],[135,30],[175,20],[205,50]].map(([x,y],i,a) =>
         <React.Fragment key={i}>
@@ -788,7 +791,7 @@ const sowingGuide = [
       {/* sow direction arrows */}
       <path d="M 101,80 L 63,80 L 63,50 L 25,50 L 25,38" fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="4 3" />
       {arrow(63, 80, 63, 50, '#ffe066')}
-      <Txt x={170} y={115} size={8} fill={yellow}>↺ counter-clockwise</Txt>
+      <Txt x={120} y={115} size={8} fill={yellow}>↺ counter-clockwise</Txt>
     </Svg>
   },
   {
@@ -881,11 +884,19 @@ const millsGuide = [
   {
     caption: 'Reduce your opponent to 2 pieces to win.',
     svg: <Svg>
-      {/* opponent's remaining pieces */}
-      <Stone cx={90} cy={55} r={12} fill={dark} stroke="#333" />
-      <Stone cx={140} cy={55} r={12} fill={dark} stroke="#333" />
-      <Txt x={115} y={80} size={9} fill="rgba(240,238,255,0.4)">only 2 left</Txt>
-      <Txt x={115} y={105} size={11} fill={yellow}>you win!</Txt>
+      {/* small board for context */}
+      <rect x={70} y={20} width={100} height={70} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={90} y={35} width={60} height={40} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      {/* your pieces */}
+      <Stone cx={70} cy={20} r={7} fill={white} />
+      <Stone cx={170} cy={20} r={7} fill={white} />
+      <Stone cx={70} cy={90} r={7} fill={white} />
+      <Stone cx={120} cy={55} r={7} fill={white} />
+      {/* opponent's 2 remaining */}
+      <Stone cx={90} cy={35} r={7} fill={dark} stroke="#333" />
+      <Stone cx={150} cy={75} r={7} fill={dark} stroke="#333" />
+      <Txt x={120} y={110} size={9} fill="rgba(240,238,255,0.4)">opponent has only 2 left</Txt>
+      <Txt x={120} y={128} size={10} fill={yellow}>you win!</Txt>
     </Svg>
   },
 ];

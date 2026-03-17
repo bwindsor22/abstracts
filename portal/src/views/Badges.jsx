@@ -43,7 +43,7 @@ function BadgeCard({ badge, earnedEntry }) {
 }
 
 export default function Badges() {
-  const [tab, setTab] = useState('all');
+  const [tab, setTab] = useState('earned');
   const earnedList = getEarnedBadges();
   const stats = getStats();
 
@@ -56,11 +56,10 @@ export default function Badges() {
   const level = earnedCount >= 8 ? 'LEGEND' : earnedCount >= 5 ? 'VETERAN' : earnedCount >= 2 ? 'PLAYER' : 'ROOKIE';
 
   const displayBadges = useMemo(() => {
-    if (tab === 'all') return ALL_BADGES;
-    if (tab === 'recent') {
-      const sorted = [...earnedList].sort((a, b) => b.earnedAt - a.earnedAt).slice(0, 6);
-      return sorted.map(e => ALL_BADGES.find(b => b.id === e.id)).filter(Boolean);
+    if (tab === 'earned') {
+      return ALL_BADGES.filter(b => earnedMap[b.id]);
     }
+    if (tab === 'all') return ALL_BADGES;
     if (tab === 'locked') return ALL_BADGES.filter(b => !earnedMap[b.id]);
     return ALL_BADGES;
   }, [tab, earnedList, earnedMap]);
@@ -85,8 +84,8 @@ export default function Badges() {
 
       <div className="badges-tabs">
         {[
-          { id: 'all', label: 'All Badges' },
-          { id: 'recent', label: 'Recent' },
+          { id: 'earned', label: 'Badges' },
+          { id: 'all', label: 'All' },
           { id: 'locked', label: 'Locked' },
         ].map(t => (
           <button
@@ -102,7 +101,7 @@ export default function Badges() {
       <div className="badges-grid">
         {displayBadges.length === 0 && (
           <div className="badges-empty">
-            {tab === 'recent' ? 'No badges earned yet.' : 'All badges earned!'}
+            {tab === 'earned' ? 'No badges earned yet. Play some games!' : tab === 'locked' ? 'All badges earned!' : 'No badges available.'}
           </div>
         )}
         {displayBadges.map(badge => (

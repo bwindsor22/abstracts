@@ -7,15 +7,10 @@ import {
   initState, placeRingSetup, getValidMoves, applyMove, removeRow, scoreRing,
 } from './Game';
 import { getAIMove } from './AI/ai';
-import { DndProvider, useDrag, useDrop, useDragLayer } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { TouchBackend } from 'react-dnd-touch-backend';
+import { useDrag, useDrop, useDragLayer } from 'react-dnd';
 
 const RING_TYPE = 'RING';
 
-function isTouchDevice() {
-  return typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-}
 
 // ─── Precompute board lines ───────────────────────────────────────────────────
 const LINES = [];
@@ -376,22 +371,15 @@ export default function App({ onBack, onResult }) {
     }
   }, [gameState, onResult]);
 
-  const touch = isTouchDevice();
-  const backend = touch ? TouchBackend : HTML5Backend;
-  const backendOptions = touch ? { enableMouseEvents: true } : {};
-
   if (!gameState) {
     return (
-      <DndProvider backend={backend} options={backendOptions}>
-        <div className="game-circles" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-          <StartScreen onStart={handleStart} onBack={onBack} />
-        </div>
-      </DndProvider>
+      <div className="game-circles" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+        <StartScreen onStart={handleStart} onBack={onBack} />
+      </div>
     );
   }
 
   return (
-    <DndProvider backend={backend} options={backendOptions}>
       <div className="game-circles" style={{ padding: 20 }}>
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' }}>
           <ScoreTrack player="white" scored={gameState.ringsScored.white} />
@@ -435,6 +423,5 @@ export default function App({ onBack, onResult }) {
           </div>
         )}
       </div>
-    </DndProvider>
   );
 }
