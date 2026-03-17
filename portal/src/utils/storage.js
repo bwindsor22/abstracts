@@ -1,6 +1,45 @@
 const KEY_HISTORY = 'stratos_history';
 const KEY_BADGES = 'stratos_badges';
 
+// ── Elo rating system ───────────────────────────────────────────────────────
+export const BASE_ELO = 500;
+export const AI_RATINGS = { easy: 500, medium: 1000, hard: 1500 };
+const K = 32; // standard K-factor
+
+function opponentRating(difficulty) {
+  return AI_RATINGS[difficulty] || AI_RATINGS.medium;
+}
+
+function expectedScore(playerElo, oppElo) {
+  return 1 / (1 + Math.pow(10, (oppElo - playerElo) / 400));
+}
+
+// Compute current Elo from a list of games (oldest first)
+export function computeElo(games) {
+  let elo = BASE_ELO;
+  for (const g of games) {
+    const opp = opponentRating(g.difficulty);
+    const expected = expectedScore(elo, opp);
+    const actual = g.won ? 1 : 0;
+    elo += K * (actual - expected);
+  }
+  return Math.round(elo);
+}
+
+// Compute full Elo history array (for charting): [startElo, afterGame1, afterGame2, ...]
+export function computeEloHistory(games) {
+  let elo = BASE_ELO;
+  const points = [elo];
+  for (const g of games) {
+    const opp = opponentRating(g.difficulty);
+    const expected = expectedScore(elo, opp);
+    const actual = g.won ? 1 : 0;
+    elo += K * (actual - expected);
+    points.push(Math.round(elo));
+  }
+  return points;
+}
+
 export function getHistory() {
   try { return JSON.parse(localStorage.getItem(KEY_HISTORY) || '[]'); } catch { return []; }
 }
@@ -35,14 +74,10 @@ export function getStats() {
     byGame[g.gameId].games++;
     if (g.won) byGame[g.gameId].wins++;
   }
-  // ELO per game: start 1200, win +25, loss -15
+  // Elo per game: proper Elo with AI opponent ratings
   for (const id of Object.keys(byGame)) {
     const gameHistory = history.filter(g => g.gameId === id);
-    let elo = 1200;
-    for (const g of [...gameHistory].reverse()) { // oldest first
-      elo += g.won ? 25 : -15;
-    }
-    byGame[id].elo = Math.max(800, elo);
+    byGame[id].elo = computeElo([...gameHistory].reverse());
   }
   return { totalGames, totalWins, byGame };
 }

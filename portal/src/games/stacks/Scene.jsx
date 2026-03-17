@@ -6,13 +6,13 @@ import * as THREE from 'three';
 import { cellIdx, SIZE } from './Game';
 
 // ── Colours ────────────────────────────────────────────────────────────────
-const P1_COLOR   = '#d9c08a';  // cream/tan
-const P2_COLOR   = '#2d2416';  // dark walnut
-const P1_EMISSIVE = '#6b5a2a';
-const P2_EMISSIVE = '#4a3d28';
+const P1_COLOR   = '#e8d5a0';  // warm cream
+const P2_COLOR   = '#6b4226';  // lighter walnut (visible on purple)
+const P1_EMISSIVE = '#7a6a35';
+const P2_EMISSIVE = '#5a3a20';
 const BOARD_COLOR = '#1a0d2e';
-const CELL_LIGHT  = '#2a1545';
-const CELL_DARK   = '#1d0e36';
+const CELL_LIGHT  = '#352055';
+const CELL_DARK   = '#281545';
 const SEL_COLOR   = '#ffe066';
 const VALID_COLOR = '#44cc88';
 const HOVER_COLOR = '#ccaa44';

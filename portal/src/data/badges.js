@@ -1,5 +1,16 @@
+const ALL_GAMES = ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','pairs','sowing','mills'];
+const CLASSICS = ['hexes','marbles','bridges','pairs'];
+const MODERNS = ['trees','circles','walls','bugs','stacks','towers'];
+
+// Helper: count distinct games won on a given difficulty (or any)
+function gamesWonOn(history, difficulty, gameList = ALL_GAMES) {
+  return gameList.filter(id =>
+    history.some(g => g.won && g.gameId === id && (!difficulty || g.difficulty === difficulty))
+  );
+}
+
 export const ALL_BADGES = [
-  // ── Experience ─────────────────────────────────────────────────────────────
+  // ── Variety ───────────────────────────────────────────────────────────────
   {
     id: 'first_game',
     name: 'First Move',
@@ -10,70 +21,6 @@ export const ALL_BADGES = [
     check: (stats) => stats.totalGames >= 1,
   },
   {
-    id: 'five_games',
-    name: 'Getting Started',
-    description: 'Played 5 games',
-    icon: 'star',
-    image: '/badges/getting_started.png',
-    rarity: 'COMMON',
-    check: (stats) => stats.totalGames >= 5,
-  },
-  {
-    id: 'twenty_games',
-    name: 'Dedicated',
-    description: 'Played 20 games',
-    icon: 'local_fire_department',
-    image: '/badges/dedicated.png',
-    rarity: 'UNCOMMON',
-    check: (stats) => stats.totalGames >= 20,
-  },
-  {
-    id: 'modern_explorer',
-    name: 'Modern Explorer',
-    description: 'Played every Modern Marvels game',
-    icon: 'explore',
-    image: '/badges/modern_explorer.png',
-    rarity: 'UNCOMMON',
-    check: (stats) => ['trees','circles','walls','bugs','stacks','towers'].every(
-      id => (stats.byGame[id]?.games || 0) >= 1
-    ),
-  },
-  {
-    id: 'classic_explorer',
-    name: 'Classic Explorer',
-    description: 'Played every Timeless Classic game',
-    icon: 'history_edu',
-    image: '/badges/classic_explorer.png',
-    rarity: 'UNCOMMON',
-    check: (stats) => ['hexes','marbles','bridges','pairs'].every(
-      id => (stats.byGame[id]?.games || 0) >= 1
-    ),
-  },
-  {
-    id: 'ancient_explorer',
-    name: 'Ancient Explorer',
-    description: 'Played every Ancient Foundations game',
-    icon: 'castle',
-    image: '/badges/ancient_explorer.png',
-    rarity: 'UNCOMMON',
-    check: (stats) => ['sowing','mills'].every(
-      id => (stats.byGame[id]?.games || 0) >= 1
-    ),
-  },
-  {
-    id: 'full_collection',
-    name: 'Full Collection',
-    description: 'Played all 12 games at least once',
-    icon: 'library_books',
-    image: '/badges/full_collection.png',
-    rarity: 'RARE',
-    check: (stats) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','pairs','sowing','mills'].every(
-      id => (stats.byGame[id]?.games || 0) >= 1
-    ),
-  },
-
-  // ── Winning — general ──────────────────────────────────────────────────────
-  {
     id: 'first_win',
     name: 'First Victory',
     description: 'Won your first game',
@@ -83,51 +30,40 @@ export const ALL_BADGES = [
     check: (stats) => stats.totalWins >= 1,
   },
   {
-    id: 'five_wins',
-    name: 'Champion',
-    description: 'Won 5 games',
-    icon: 'military_tech',
-    image: '/badges/champion.png',
-    rarity: 'UNCOMMON',
-    check: (stats) => stats.totalWins >= 5,
-  },
-  {
-    id: 'twenty_wins',
-    name: 'Veteran',
-    description: 'Won 20 games',
-    icon: 'workspace_premium',
-    image: '/badges/veteran.png',
-    rarity: 'RARE',
-    check: (stats) => stats.totalWins >= 20,
-  },
-  {
     id: 'polymath',
     name: 'Polymath',
     description: 'Won games in 3 different titles',
     icon: 'psychology',
     image: '/badges/polymath.png',
-    rarity: 'RARE',
-    check: (stats, history) => new Set(history.filter(g => g.won).map(g => g.gameId)).size >= 3,
+    rarity: 'UNCOMMON',
+    check: (stats, history) => gamesWonOn(history).length >= 3,
   },
   {
-    id: 'ten_wins',
-    name: 'Grandmaster',
-    description: 'Won 10 games total',
-    icon: 'crown',
-    image: '/badges/grandmaster.png',
-    rarity: 'EPIC',
-    check: (stats) => stats.totalWins >= 10,
+    id: 'classic_explorer',
+    name: 'Classic Explorer',
+    description: 'Played every Timeless Classic game',
+    icon: 'history_edu',
+    image: '/badges/classic_explorer.png',
+    rarity: 'UNCOMMON',
+    check: (stats) => CLASSICS.every(id => (stats.byGame[id]?.games || 0) >= 1),
   },
-
-  // ── Milestone ──────────────────────────────────────────────────────────────
   {
-    id: 'modern_specialist',
-    name: 'Modern Specialist',
-    description: 'Won any Modern Marvels game',
-    icon: 'rocket_launch',
-    image: '/badges/modern_specialist.png',
+    id: 'modern_explorer',
+    name: 'Modern Explorer',
+    description: 'Played every Modern Marvels game',
+    icon: 'explore',
+    image: '/badges/modern_explorer.png',
+    rarity: 'UNCOMMON',
+    check: (stats) => MODERNS.every(id => (stats.byGame[id]?.games || 0) >= 1),
+  },
+  {
+    id: 'full_collection',
+    name: 'Full Collection',
+    description: 'Played all 12 games at least once',
+    icon: 'library_books',
+    image: '/badges/full_collection.png',
     rarity: 'RARE',
-    check: (stats, history) => history.some(g => g.won && ['trees','circles','walls','bugs','stacks','towers'].includes(g.gameId)),
+    check: (stats) => ALL_GAMES.every(id => (stats.byGame[id]?.games || 0) >= 1),
   },
   {
     id: 'completionist',
@@ -136,9 +72,63 @@ export const ALL_BADGES = [
     icon: 'auto_awesome',
     image: '/badges/completionist.png',
     rarity: 'LEGENDARY',
-    check: (stats, history) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','pairs','sowing','mills'].every(id =>
-      history.some(g => g.won && g.gameId === id)
-    ),
+    check: (stats, history) => gamesWonOn(history).length >= ALL_GAMES.length,
+  },
+
+  // ── Beating AI levels ─────────────────────────────────────────────────────
+  {
+    id: 'easy_first',
+    name: 'Easy Win',
+    description: 'Beat an easy AI',
+    icon: 'sentiment_satisfied',
+    image: '/badges/getting_started.png',
+    rarity: 'COMMON',
+    check: (stats, history) => history.some(g => g.won && g.difficulty === 'easy'),
+  },
+  {
+    id: 'easy_five',
+    name: 'Warming Up',
+    description: 'Beat easy AI in 5 different games',
+    icon: 'local_fire_department',
+    image: '/badges/dedicated.png',
+    rarity: 'UNCOMMON',
+    check: (stats, history) => gamesWonOn(history, 'easy').length >= 5,
+  },
+  {
+    id: 'easy_classics',
+    name: 'Classic Conqueror',
+    description: 'Beat every Timeless Classic on easy',
+    icon: 'military_tech',
+    image: '/badges/champion.png',
+    rarity: 'RARE',
+    check: (stats, history) => gamesWonOn(history, 'easy', CLASSICS).length >= CLASSICS.length,
+  },
+  {
+    id: 'easy_all',
+    name: 'Easy Sweep',
+    description: 'Beat every game on easy',
+    icon: 'workspace_premium',
+    image: '/badges/veteran.png',
+    rarity: 'EPIC',
+    check: (stats, history) => gamesWonOn(history, 'easy').length >= ALL_GAMES.length,
+  },
+  {
+    id: 'medium_first',
+    name: 'Stepping Up',
+    description: 'Beat a medium AI',
+    icon: 'trending_up',
+    image: '/badges/modern_specialist.png',
+    rarity: 'RARE',
+    check: (stats, history) => history.some(g => g.won && g.difficulty === 'medium'),
+  },
+  {
+    id: 'hard_first',
+    name: 'Grandmaster',
+    description: 'Beat a hard AI',
+    icon: 'crown',
+    image: '/badges/grandmaster.png',
+    rarity: 'EPIC',
+    check: (stats, history) => history.some(g => g.won && g.difficulty === 'hard'),
   },
 ];
 

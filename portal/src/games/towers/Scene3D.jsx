@@ -13,13 +13,13 @@ const BLOCK_H = 0.35;               // each level is this tall
 
 // Colors
 const BOARD_COLOR = '#1a0d2e';
-const TILE_COLORS  = ['#2a1545', '#1d0e36'];  // alternating checker
-const BLOCK_COLORS = ['#ddd8d0', '#b8c8d8', '#7090b8'];  // L1 stone, L2 blue-gray, L3 deep blue
-const DOME_COLOR   = '#1a3060';
-const P1_COLOR     = '#f0d9b5';
-const P2_COLOR     = '#2d1a08';
-const P1_RING      = '#c0903a';
-const P2_RING      = '#c08050';
+const TILE_COLORS  = ['#352055', '#281545'];  // brighter alternating checker
+const BLOCK_COLORS = ['#e0dbd2', '#c0d0e0', '#8098c0'];  // L1 stone, L2 blue-gray, L3 deep blue
+const DOME_COLOR   = '#2a4580';
+const P1_COLOR     = '#f0ddb8';
+const P2_COLOR     = '#7a4a28';  // lighter walnut (visible on purple)
+const P1_RING      = '#d0a040';
+const P2_RING      = '#d09060';
 
 function cellXZ(r, c) {
   return [(c - HALF) * CELL, (r - HALF) * CELL];

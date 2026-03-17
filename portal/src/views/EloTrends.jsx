@@ -1,23 +1,7 @@
 import React, { useMemo } from 'react';
-import { getHistory } from '../utils/storage';
-import { GAMES, GAME_MAP } from '../data/games';
+import { getHistory, computeEloHistory, BASE_ELO, AI_RATINGS } from '../utils/storage';
+import { GAMES } from '../data/games';
 import './EloTrends.css';
-
-const WIN_DELTA  = 25;
-const LOSS_DELTA = -15;
-const DRAW_DELTA = 5;
-const BASE_ELO   = 1200;
-
-function computeEloHistory(games) {
-  let elo = BASE_ELO;
-  const points = [elo];
-  for (const g of [...games].reverse()) {
-    if (g.won) elo += WIN_DELTA;
-    else elo += LOSS_DELTA;
-    points.push(elo);
-  }
-  return points;
-}
 
 function EloChart({ points }) {
   if (points.length < 2) {
@@ -63,7 +47,7 @@ function EloChart({ points }) {
 
 function GameEloCard({ game, onClick }) {
   const history = getHistory().filter(g => g.gameId === game.id);
-  const eloPoints = useMemo(() => computeEloHistory(history), [history]);
+  const eloPoints = useMemo(() => computeEloHistory([...history].reverse()), [history]);
   const currentElo = eloPoints[eloPoints.length - 1];
   const delta = currentElo - BASE_ELO;
 
@@ -103,13 +87,13 @@ export default function EloTrends({ onNavigate }) {
 
   return (
     <div className="elo-trends">
-      <h1 className="elo-trends-heading">ELO Trends</h1>
+      <h1 className="elo-trends-heading">Elo Ratings</h1>
       <p className="elo-trends-subtext">
-        Win +{WIN_DELTA} · Loss {LOSS_DELTA} · Starting rating {BASE_ELO}
+        Easy AI {AI_RATINGS.easy} · Medium AI {AI_RATINGS.medium} · Hard AI {AI_RATINGS.hard} · You start at {BASE_ELO}
       </p>
 
       {history.length === 0 && (
-        <div className="elo-empty">Play some games to see your ELO ratings!</div>
+        <div className="elo-empty">Play some games to see your Elo ratings!</div>
       )}
 
       <div className="elo-trends-grid">
