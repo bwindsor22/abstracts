@@ -53,7 +53,7 @@ export default function Badges() {
   );
 
   const earnedCount = earnedList.length;
-  const level = earnedCount >= 10 ? 'LEGEND' : earnedCount >= 6 ? 'VETERAN' : earnedCount >= 3 ? 'PLAYER' : 'ROOKIE';
+  const level = earnedCount >= 10 ? 'LEGEND' : earnedCount >= 6 ? 'VETERAN' : earnedCount >= 3 ? 'CONTENDER' : '';
 
   const displayBadges = useMemo(() => {
     if (tab === 'earned') {

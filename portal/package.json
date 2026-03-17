@@ -25,6 +25,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-dnd-touch-backend)"
+    ]
+  },
   "browserslist": {
     "production": [">0.2%", "not dead"],
     "development": ["last 1 chrome version"]
