@@ -2,17 +2,15 @@ import React from 'react'
 const squareStyle = {
   width: '100%',
   height: '100%',
+  borderRadius: '50%',
+  overflow: 'hidden',
 }
 export const Square = ({ black, bkgd, children }) => {
-  const backgroundColor = black ? 'white' : 'white'
-  // const color = black ? 'white' : 'black'
-  const color = black ? 'white' : 'white'
   return (
     <div
       style={{
         ...squareStyle,
-        color,
-        backgroundColor,
+        backgroundColor: 'white',
       }}
     >
         <div>

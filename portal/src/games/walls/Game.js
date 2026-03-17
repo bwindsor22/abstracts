@@ -5,7 +5,7 @@ export const SIZE = 9;
 export const MAX_WALLS = 10; // walls per player
 
 // ─── State ───────────────────────────────────────────────────────────────────
-export function initState({ vsAI = false, aiPlayer = 'p2', difficulty = 'medium' } = {}) {
+export function initState({ vsAI = false, aiPlayer = 'p1', difficulty = 'medium' } = {}) {
   return {
     // Pawns: row/col (0-indexed, row 0 = top)
     pawns: { p1: { row: 0, col: 4 }, p2: { row: 8, col: 4 } },

@@ -1,0 +1,170 @@
+.game-mills {
+  min-height: 100vh;
+  background: #191022;
+  color: #f0eeff;
+  font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mills-start {
+  text-align: center;
+  max-width: 400px;
+}
+.mills-start h1 {
+  font-size: 32px;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.mills-start .start-desc {
+  color: rgba(240,238,255,0.6);
+  margin-bottom: 4px;
+}
+.mills-start .start-rule {
+  font-size: 13px;
+  color: rgba(240,238,255,0.4);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.difficulty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.difficulty-row label {
+  font-size: 13px;
+  color: rgba(240,238,255,0.5);
+}
+.diff-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(153,66,240,0.3);
+  background: transparent;
+  color: rgba(240,238,255,0.7);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+.diff-btn:hover { background: rgba(153,66,240,0.15); }
+.diff-btn.active {
+  background: rgba(153,66,240,0.3);
+  border-color: #9942f0;
+  color: #f0eeff;
+}
+.btn-primary {
+  padding: 10px 32px;
+  border-radius: 8px;
+  border: 1px solid #9942f0;
+  background: rgba(153,66,240,0.25);
+  color: #f0eeff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-primary:hover { background: rgba(153,66,240,0.4); }
+
+.mills-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.status-bar {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.piece-info {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  color: rgba(240,238,255,0.5);
+}
+
+.game-controls {
+  display: flex;
+  gap: 12px;
+}
+.ctrl-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(240,238,255,0.2);
+  background: transparent;
+  color: rgba(240,238,255,0.7);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+}
+.ctrl-btn:hover { background: rgba(240,238,255,0.08); }
+
+.winner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.winner-banner {
+  background: #1a0b2e;
+  border: 1px solid rgba(153,66,240,0.3);
+  border-radius: 16px;
+  padding: 32px 40px;
+  text-align: center;
+}
+.winner-label {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffe066;
+  margin-bottom: 8px;
+}
+.winner-reason {
+  font-size: 16px;
+  color: rgba(240,238,255,0.6);
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.menu-panel {
+  background: #1a0b2e;
+  border: 1px solid rgba(240,238,255,0.15);
+  border-radius: 12px;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 200px;
+}
+.menu-panel button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(240,238,255,0.2);
+  background: transparent;
+  color: #f0eeff;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+}
+.menu-panel button:hover { background: rgba(240,238,255,0.08); }
+
+@media (max-width: 500px) {
+  .piece-info {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+}

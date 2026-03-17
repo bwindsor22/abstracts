@@ -38,6 +38,15 @@
   font-size: 32px;
   flex-shrink: 0;
   line-height: 1;
+  color: var(--primary);
+}
+
+.badge-toast-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
 }
 
 .badge-toast-body {

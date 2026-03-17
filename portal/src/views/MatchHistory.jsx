@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { getHistory } from '../utils/storage';
+import { getHistory, getReplay } from '../utils/storage';
 import { GAME_MAP } from '../data/games';
+import ReplayViewer from '../components/ReplayViewer';
 import './MatchHistory.css';
 
 function relativeTime(ts) {
@@ -14,13 +15,10 @@ function relativeTime(ts) {
   return `${d}d ago`;
 }
 
-export default function MatchHistory() {
-  const [activeFilter, setActiveFilter] = useState('all');
+export default function MatchHistory({ viewParams }) {
+  const [activeFilter, setActiveFilter] = useState(viewParams?.filter || 'all');
+  const [replayGame, setReplayGame] = useState(null);
   const history = getHistory();
-
-  const totalGames = history.length;
-  const totalWins = history.filter(g => g.won).length;
-  const totalLosses = totalGames - totalWins;
 
   // Build filter list from games that have history
   const gameFilters = useMemo(() => {
@@ -32,6 +30,11 @@ export default function MatchHistory() {
     ? history
     : history.filter(g => g.gameId === activeFilter);
 
+  // Stats based on filtered list
+  const statsGames = filtered.length;
+  const statsWins = filtered.filter(g => g.won).length;
+  const statsLosses = statsGames - statsWins;
+
   return (
     <div className="match-history">
       <h1 className="match-history-heading">Match History</h1>
@@ -39,15 +42,15 @@ export default function MatchHistory() {
       {/* Stats */}
       <div className="match-history-stats">
         <div className="match-stat-card">
-          <div className="match-stat-value">{totalGames}</div>
+          <div className="match-stat-value">{statsGames}</div>
           <div className="match-stat-label">PLAYED</div>
         </div>
         <div className="match-stat-card">
-          <div className="match-stat-value">{totalWins}</div>
+          <div className="match-stat-value">{statsWins}</div>
           <div className="match-stat-label">WINS</div>
         </div>
         <div className="match-stat-card">
-          <div className="match-stat-value">{totalLosses}</div>
+          <div className="match-stat-value">{statsLosses}</div>
           <div className="match-stat-label">LOSSES</div>
         </div>
       </div>
@@ -103,11 +106,24 @@ export default function MatchHistory() {
                     {game.won ? 'WON' : 'LOST'}
                   </span>
                   <span className="match-row-time">{relativeTime(game.timestamp)}</span>
+                  {game.replayKey && (
+                    <button className="match-replay-btn" onClick={(e) => { e.stopPropagation(); setReplayGame(game); }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>replay</span>
+                    </button>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
+      )}
+      {replayGame && (
+        <ReplayViewer
+          gameId={replayGame.gameId}
+          gameName={replayGame.gameName}
+          snapshots={getReplay(replayGame.replayKey)}
+          onClose={() => setReplayGame(null)}
+        />
       )}
     </div>
   );

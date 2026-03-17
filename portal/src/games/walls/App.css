@@ -167,3 +167,47 @@
 .game-walls .game-menu-panel button:hover {
   background: rgba(153, 66, 240, 0.25);
 }
+
+.game-walls .winner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(25, 16, 34, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: wallsFadeIn 0.4s ease-out;
+}
+
+.game-walls .winner-banner {
+  background: rgba(26, 11, 46, 0.95);
+  border: 2px solid rgba(153, 66, 240, 0.4);
+  border-radius: 20px;
+  padding: 40px 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 60px rgba(153, 66, 240, 0.25);
+}
+
+.game-walls .winner-label {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #f0eeff;
+  text-shadow: 0 0 20px rgba(153, 66, 240, 0.6);
+}
+
+.game-walls .winner-reason {
+  font-size: 14px;
+  color: rgba(240, 238, 255, 0.5);
+  margin-bottom: 16px;
+}
+
+@keyframes wallsFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

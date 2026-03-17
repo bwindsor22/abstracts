@@ -37,7 +37,7 @@ function TowerCell({ r, c, cell, highlight, onCellClick }) {
   let hlOpacity = 0.55;
   if (highlight === 'move')   { hlColor = '#40c840'; hlOpacity = 0.50; }
   if (highlight === 'build')  { hlColor = '#4488ff'; hlOpacity = 0.50; }
-  if (highlight === 'setup')  { hlColor = '#ffff60'; hlOpacity = 0.30; }
+  if (highlight === 'setup')  { hlColor = '#ffff60'; hlOpacity = 0.15; }
   if (highlight === 'sel')    { hlColor = '#ffe030'; hlOpacity = 0.60; }
 
   const tileColor = TILE_COLORS[(r + c) % 2];
@@ -142,10 +142,10 @@ export default function Scene3D({ game, highlights, onCellClick, onWorkerClick }
       />
 
       {/* Lighting */}
-      <ambientLight color="#6633cc" intensity={0.3} />
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[6, 12, 6]}  intensity={0.9} castShadow />
-      <directionalLight position={[-4, 6, -5]} intensity={0.25} />
+      <ambientLight color="#8866dd" intensity={0.5} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[6, 12, 6]}  intensity={1.2} castShadow />
+      <directionalLight position={[-4, 6, -5]} intensity={0.4} />
 
       {/* Board base */}
       <mesh position={[0, -0.10, 0]}>
@@ -175,7 +175,7 @@ export default function Scene3D({ game, highlights, onCellClick, onWorkerClick }
         const towerLevel = board[pos.r][pos.c].level;
         const isSelected = selectedWorker === key;
         const owner = key.startsWith('p1') ? 'p1' : 'p2';
-        const canSelect = onWorkerClick && owner === game.currentPlayer && game.phase === 'select';
+        const canSelect = onWorkerClick && owner === game.currentPlayer && (game.phase === 'select' || game.phase === 'move');
         return (
           <Worker
             key={key}

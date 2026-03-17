@@ -61,14 +61,14 @@ function EloChart({ points }) {
   );
 }
 
-function GameEloCard({ game }) {
+function GameEloCard({ game, onClick }) {
   const history = getHistory().filter(g => g.gameId === game.id);
   const eloPoints = useMemo(() => computeEloHistory(history), [history]);
   const currentElo = eloPoints[eloPoints.length - 1];
   const delta = currentElo - BASE_ELO;
 
   return (
-    <div className="elo-game-card">
+    <div className="elo-game-card" onClick={() => onClick && onClick(game.id)} style={{ cursor: onClick ? 'pointer' : undefined }}>
       <div className="elo-game-header">
         <span className="material-symbols-outlined elo-game-icon">{game.icon}</span>
         <div>
@@ -86,15 +86,20 @@ function GameEloCard({ game }) {
       </div>
 
       <EloChart points={eloPoints} />
+      <div className="elo-view-history">View match history →</div>
     </div>
   );
 }
 
-export default function EloTrends() {
+export default function EloTrends({ onNavigate }) {
   const history = getHistory();
   const activeGameIds = new Set(history.map(g => g.gameId));
   const activeGames = GAMES.filter(g => activeGameIds.has(g.id));
   const inactiveGames = GAMES.filter(g => !activeGameIds.has(g.id));
+
+  const handleGameClick = (gameId) => {
+    if (onNavigate) onNavigate('history', { filter: gameId });
+  };
 
   return (
     <div className="elo-trends">
@@ -109,7 +114,7 @@ export default function EloTrends() {
 
       <div className="elo-trends-grid">
         {activeGames.map(game => (
-          <GameEloCard key={game.id} game={game} />
+          <GameEloCard key={game.id} game={game} onClick={handleGameClick} />
         ))}
         {inactiveGames.map(game => (
           <div key={game.id} className="elo-starter-card elo-game-card">

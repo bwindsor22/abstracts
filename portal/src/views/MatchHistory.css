@@ -168,6 +168,24 @@
   color: var(--text-secondary);
 }
 
+.match-replay-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(153,66,240,0.3);
+  background: rgba(153,66,240,0.1);
+  color: rgba(240,238,255,0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.match-replay-btn:hover {
+  background: rgba(153,66,240,0.25);
+  color: #f0eeff;
+}
+
 .match-history-empty {
   text-align: center;
   padding: 60px 20px;

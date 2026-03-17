@@ -9,14 +9,24 @@ function shuffle(arr) {
   return arr;
 }
 
+// Quick score for move ordering — try each candidate, evaluate, sort by score desc
+function orderCandidates(state, cands, aiPlayer) {
+  return cands
+    .map(([r, c]) => {
+      const next = applyMove(state, r, c);
+      return { rc: [r, c], score: evaluate(next, aiPlayer) };
+    })
+    .sort((a, b) => b.score - a.score)
+    .map(x => x.rc);
+}
+
 function minimax(state, depth, alpha, beta, maximizing, aiPlayer) {
   const score = evaluate(state, aiPlayer);
   if (Math.abs(score) >= 100000 || depth === 0 || state.winner) return score;
-  const cur = maximizing ? aiPlayer : (aiPlayer === 'black' ? 'white' : 'black');
   const cands = getCandidates(state.board);
   if (cands.length === 0) return score;
 
-  const limited = cands.slice(0, 15);
+  const limited = cands.slice(0, 20);
 
   if (maximizing) {
     let best = -Infinity;
@@ -45,7 +55,9 @@ export function getAIMove(state, player, difficulty = 'medium') {
   if (difficulty === 'easy') return shuffle(cands)[0];
 
   const depth = difficulty === 'hard' ? 3 : 2;
-  const limited = cands.slice(0, 20);
+  // Order candidates by quick evaluation so blocking/winning moves come first
+  const ordered = orderCandidates(state, cands, player);
+  const limited = ordered.slice(0, 25);
 
   let bestMove = limited[0], bestVal = -Infinity;
   for (const [r, c] of limited) {

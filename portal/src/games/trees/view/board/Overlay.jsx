@@ -11,6 +11,7 @@ const Overlay = ({ color }) => {
         zIndex: 1,
         opacity: 0.5,
         backgroundColor: color,
+        borderRadius: '50%',
       }}
     />
   )

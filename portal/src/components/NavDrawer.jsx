@@ -4,7 +4,7 @@ import './NavDrawer.css';
 const NAV_ITEMS = [
   {
     id: 'library',
-    title: 'Library',
+    title: 'Home',
     subtitle: 'Browse all games',
     icon: (
       <svg viewBox="0 0 24 24">
@@ -92,7 +92,7 @@ export default function NavDrawer({ open, onClose, currentView, onNavigate }) {
         </div>
 
         <div className="nav-drawer-footer">
-          <span className="nav-drawer-footer-text">TACTICS ENGINE V2.4</span>
+          <span className="nav-drawer-footer-text">ABSTRACTS</span>
         </div>
       </nav>
     </div>

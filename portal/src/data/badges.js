@@ -45,18 +45,29 @@ export const ALL_BADGES = [
     icon: 'history_edu',
     image: '/badges/classic_explorer.png',
     rarity: 'UNCOMMON',
-    check: (stats) => ['hexes','marbles','bridges','stones'].every(
+    check: (stats) => ['hexes','marbles','bridges','pairs'].every(
+      id => (stats.byGame[id]?.games || 0) >= 1
+    ),
+  },
+  {
+    id: 'ancient_explorer',
+    name: 'Ancient Explorer',
+    description: 'Played every Ancient Foundations game',
+    icon: 'castle',
+    image: '/badges/ancient_explorer.png',
+    rarity: 'UNCOMMON',
+    check: (stats) => ['sowing','mills'].every(
       id => (stats.byGame[id]?.games || 0) >= 1
     ),
   },
   {
     id: 'full_collection',
     name: 'Full Collection',
-    description: 'Played all 10 games at least once',
+    description: 'Played all 12 games at least once',
     icon: 'library_books',
     image: '/badges/full_collection.png',
     rarity: 'RARE',
-    check: (stats) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','stones'].every(
+    check: (stats) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','pairs','sowing','mills'].every(
       id => (stats.byGame[id]?.games || 0) >= 1
     ),
   },
@@ -125,7 +136,7 @@ export const ALL_BADGES = [
     icon: 'auto_awesome',
     image: '/badges/completionist.png',
     rarity: 'LEGENDARY',
-    check: (stats, history) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','stones'].every(id =>
+    check: (stats, history) => ['trees','circles','walls','bugs','stacks','towers','hexes','marbles','bridges','pairs','sowing','mills'].every(id =>
       history.some(g => g.won && g.gameId === id)
     ),
   },

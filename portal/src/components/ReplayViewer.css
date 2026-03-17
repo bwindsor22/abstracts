@@ -1,0 +1,120 @@
+.replay-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.replay-panel {
+  background: #1a0b2e;
+  border: 1px solid rgba(153,66,240,0.3);
+  border-radius: 16px;
+  padding: 20px 24px;
+  max-width: 500px;
+  width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.replay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.replay-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f0eeff;
+}
+.replay-close {
+  background: none;
+  border: none;
+  color: rgba(240,238,255,0.5);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.replay-close:hover { color: #f0eeff; }
+
+.replay-board-area {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.replay-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(240,238,255,0.5);
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.replay-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.replay-controls button {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(153,66,240,0.3);
+  background: rgba(153,66,240,0.1);
+  color: #f0eeff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.replay-controls button:hover:not(:disabled) {
+  background: rgba(153,66,240,0.25);
+}
+.replay-controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Mancala replay */
+.replay-mancala-board {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.replay-store {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.replay-store-label {
+  font-size: 10px;
+  color: rgba(240,238,255,0.4);
+  text-transform: uppercase;
+}
+.replay-pits-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.replay-pit-row {
+  display: flex;
+  gap: 4px;
+}
+.replay-pit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.replay-pit-count {
+  font-size: 10px;
+  color: rgba(240,238,255,0.4);
+}

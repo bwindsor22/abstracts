@@ -86,23 +86,6 @@ function WallSupply({ player, wallsLeft, isCurrentPlayer }) {
           {Array.from({ length: totalSlots }, (_, i) => {
             const active = i < count;
             if (active && canDrag) {
-              return <WallToken key={`h-${i}`} orient="h" color={color} small />;
-            }
-            return (
-              <div key={`h-${i}`} style={{
-                width: 34, height: 10,
-                background: active ? color : 'rgba(255,255,255,0.07)',
-                border: `2px solid ${active ? 'rgba(255,224,102,0.4)' : 'rgba(255,255,255,0.1)'}`,
-                borderRadius: 3,
-                opacity: active ? 0.5 : 0.2,
-              }} />
-            );
-          })}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center' }}>
-          {Array.from({ length: totalSlots }, (_, i) => {
-            const active = i < count;
-            if (active && canDrag) {
               return <WallToken key={`v-${i}`} orient="v" color={color} small />;
             }
             return (
@@ -122,12 +105,11 @@ function WallSupply({ player, wallsLeft, isCurrentPlayer }) {
 }
 
 // ── Board SVG ─────────────────────────────────────────────────────────────────
-function Board({ gs, onCellClick, onWallDrop }) {
+function Board({ gs, onCellClick, onWallDrop, isPlayerTurn }) {
   const { pawns, walls, currentPlayer, winner, vsAI, aiPlayer } = gs;
 
-  const validMoves = !winner && !(vsAI && currentPlayer === aiPlayer)
-    ? getPawnMoves(gs, currentPlayer)
-    : [];
+  const humanSide = vsAI ? (aiPlayer === 'p1' ? 'p2' : 'p1') : currentPlayer;
+  const validMoves = !winner ? getPawnMoves(gs, humanSide) : [];
   const validMoveSet = new Set(validMoves.map(m => `${m.row},${m.col}`));
 
   const svgSize = PAD * 2 + SIZE * CELL + (SIZE - 1) * 2;
@@ -143,8 +125,8 @@ function Board({ gs, onCellClick, onWallDrop }) {
             const isP2 = pawns.p2.row === row && pawns.p2.col === col;
             return (
               <g key={`${row},${col}`}
-                onClick={() => isValidMove && onCellClick(row, col)}
-                style={{ cursor: isValidMove ? 'pointer' : 'default' }}>
+                onClick={() => isValidMove && isPlayerTurn && onCellClick(row, col)}
+                style={{ cursor: isValidMove && isPlayerTurn ? 'pointer' : 'default' }}>
                 <rect x={x} y={y} width={CELL} height={CELL}
                   fill={isValidMove ? 'rgba(255,230,0,0.12)' : 'rgba(42,31,69,0.5)'}
                   stroke={GRID_COLOR} strokeWidth={1} />
@@ -227,13 +209,10 @@ function VWallSlot({ gs, row, col, onWallDrop }) {
 
 function WallSlotOverlays({ gs, onWallDrop, svgSize }) {
   const { currentPlayer, winner, wallsLeft, vsAI, aiPlayer } = gs;
-  const isPlayerTurn = !winner && !(vsAI && currentPlayer === aiPlayer);
-  const hasWalls = wallsLeft[currentPlayer] > 0;
-
-  if (!isPlayerTurn || !hasWalls) return null;
+  const hidden = !!winner;
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: svgSize, height: svgSize, pointerEvents: 'none' }}>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: svgSize, height: svgSize, pointerEvents: 'none', opacity: hidden ? 0 : 1, transition: 'opacity 0.15s' }}>
       {Array.from({ length: SIZE - 1 }, (_, row) =>
         Array.from({ length: SIZE - 1 }, (_, col) => (
           <React.Fragment key={`slots-${row}-${col}`}>
@@ -248,11 +227,11 @@ function WallSlotOverlays({ gs, onWallDrop, svgSize }) {
 
 // ── Start screen ─────────────────────────────────────────────────────────────
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
   return (
     <div className="start-screen" style={{ textAlign: 'center' }}>
-      <h1>QUORIDOR</h1>
+      <h1>WALLS</h1>
       <p className="start-desc">Reach the opposite side first</p>
       <p className="start-rule">
         <span style={{ color: P1_COLOR }}>Red (P1)</span> starts at top, reaches bottom row.<br />
@@ -262,7 +241,7 @@ function StartScreen({ onStart, onBack }) {
       <div style={{ marginBottom: 16 }}>
         <label className="start-checkbox">
           <input type="checkbox" checked={vsAI} onChange={e => setVsAI(e.target.checked)} style={{ marginRight: 8 }} />
-          Play vs AI (Blue)
+          Play vs AI
         </label>
       </div>
       {vsAI && (
@@ -281,7 +260,7 @@ function StartScreen({ onStart, onBack }) {
       </button>
       {onBack && (
         <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Library</button>
+          <button onClick={onBack} className="diff-btn">← Home</button>
         </div>
       )}
     </div>
@@ -334,7 +313,7 @@ function GameUI({ onBack, onResult }) {
       onResult({
         gameId: 'walls',
         gameName: 'Walls',
-        won: gs.winner === 'p1',
+        won: gs.winner === 'p2',
         moves: gs.moveCount || 0,
         difficulty: gs.difficulty || 'medium',
       });
@@ -370,14 +349,28 @@ function GameUI({ onBack, onResult }) {
           {statusMsg}
         </div>
 
-        {hint && <div className="hint-text">{hint}</div>}
+        <div className="hint-text" style={{ visibility: hint ? 'visible' : 'hidden' }}>
+          {hint || 'Click a yellow cell to move, or drag a wall token onto the board'}
+        </div>
 
-        <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} />
+        <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} isPlayerTurn={isPlayerTurn} />
 
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           <WallSupply player="p1" wallsLeft={wallsLeft} isCurrentPlayer={currentPlayer === 'p1' && !winner} />
           <WallSupply player="p2" wallsLeft={wallsLeft} isCurrentPlayer={currentPlayer === 'p2' && !winner} />
         </div>
+
+        {/* Winner overlay */}
+        {winner && (
+          <div className="winner-overlay">
+            <div className="winner-banner">
+              <div className="winner-label">{winner === 'p2' ? 'YOU WIN!' : 'AI WINS!'}</div>
+              <div className="winner-reason">{winner === 'p1' ? 'Red' : 'Blue'} reached the opposite row</div>
+              <button className="ctrl-btn" style={{ background: '#9942f0', color: '#fff', border: 'none', padding: '10px 24px' }} onClick={() => { setGs(null); }}>New Game</button>
+              {onBack && <button className="ctrl-btn" style={{ marginTop: 8 }} onClick={onBack}>← Home</button>}
+            </div>
+          </div>
+        )}
 
         {/* Bottom controls */}
         <div className="game-controls">

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import {
   BOARD_SVG_SIZE, VALID_CELL_KEYS, DIRECTIONS,
   isValidCell, cellToPixel, coordKey, parseKey,
@@ -34,10 +35,10 @@ for (const key of VALID_CELL_KEYS) {
 }
 
 // ─── Piece colours ───────────────────────────────────────────────────────────
-const RING_STROKE = { white: '#f0ede0', black: '#1a1a1a' };
-const RING_FILL   = { white: 'rgba(240,237,224,0.15)', black: 'rgba(26,26,26,0.15)' };
-const MARKER_FILL   = { white: '#f0ede0', black: '#1a1a1a' };
-const MARKER_STROKE = { white: '#1a1a1a', black: '#f0ede0' };
+const RING_STROKE = { white: '#f0ede0', black: '#6b5b8a' };
+const RING_FILL   = { white: 'rgba(240,237,224,0.15)', black: 'rgba(107,91,138,0.2)' };
+const MARKER_FILL   = { white: '#f0ede0', black: '#4a3a6a' };
+const MARKER_STROKE = { white: '#1a1a1a', black: '#9980c0' };
 
 const DROP_R = 22;  // hit-area radius for each intersection
 
@@ -241,12 +242,12 @@ function InfoPanel({ state }) {
 
 // ─── Start screen ────────────────────────────────────────────────────────────
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
   const [blitz, setBlitz] = useState(false);
   return (
     <div className="start-screen" style={{ textAlign: 'center' }}>
-      <h1>YINSH</h1>
+      <h1>CIRCLES</h1>
       <p className="start-desc">Abstract strategy — first to score 3 rings wins</p>
       <div style={{ marginBottom: 16 }}>
         <label className="start-checkbox">
@@ -276,7 +277,7 @@ function StartScreen({ onStart, onBack }) {
       </button>
       {onBack && (
         <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Library</button>
+          <button onClick={onBack} className="diff-btn">← Home</button>
         </div>
       )}
     </div>
@@ -412,6 +413,16 @@ export default function App({ onBack, onResult }) {
             <InfoPanel state={gameState} />
           </div>
         </div>
+
+        {/* Win overlay */}
+        {gameState.phase === 'end' && gameState.winner && (
+          <WinOverlay
+            title={gameState.vsAI ? (gameState.winner === 'white' ? 'YOU WIN!' : 'AI WINS!') : `${gameState.winner === 'white' ? 'White' : 'Black'} wins!`}
+            subtitle="Scored 3 rings"
+            onNewGame={() => setGameState(null)}
+            onHome={onBack}
+          />
+        )}
 
         {/* In-game menu overlay */}
         {menuOpen && (

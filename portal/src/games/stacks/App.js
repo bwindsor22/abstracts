@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import Scene from './Scene';
 import {
   initState, SIZE,
@@ -17,13 +18,13 @@ const PLACE_TYPES = [
 
 // ── Start screen ───────────────────────────────────────────────────────────────
 function StartScreen({ onStart }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
 
   return (
     <div className="start-overlay">
       <div className="start-box">
-        <div className="start-title">TAK</div>
+        <div className="start-title">STACKS</div>
         <div className="start-sub">Build a road across the board to win</div>
         <div className="start-rules">
           <div>Place flat stones to build roads</div>
@@ -85,7 +86,7 @@ export default function App({ onBack, onResult }) {
     resultReported.current = true;
     onResult?.({
       gameId: 'stacks',
-      gameName: 'Tak',
+      gameName: 'Stacks',
       won: game.winner === 'p1',
       moves: game.turn,
       difficulty: opts?.difficulty || 'medium',
@@ -145,6 +146,15 @@ export default function App({ onBack, onResult }) {
         setSelected(null);
         setValidMoves([]);
       }
+      return;
+    }
+
+    // In idle mode, clicking an empty cell places a flat stone directly
+    if (mode === 'idle' && canPlace(game, r, c)) {
+      setGame(applyPlace(game, r, c, placeType));
+      setMode('idle');
+      setSelected(null);
+      setValidMoves([]);
     }
   }, [game, mode, placeType, selected, validMoves, carryCount, isSwap, isAITurn]);
 
@@ -262,7 +272,7 @@ export default function App({ onBack, onResult }) {
 
         {/* HUD overlay */}
         <div className="hud">
-          <div className="hud-title">TAK</div>
+          <div className="hud-title">STACKS</div>
           <div className="hud-status">{statusText}</div>
 
           {!game.winner && !isSwap && !isAITurn && (
@@ -323,11 +333,21 @@ export default function App({ onBack, onResult }) {
           </div>
         </div>
 
+        {/* Win overlay */}
+        {game.winner && (
+          <WinOverlay
+            title={opts?.vsAI ? (game.winner === 'p1' ? 'YOU WIN!' : 'AI WINS!') : `${game.winner === 'p1' ? 'Player 1' : 'Player 2'} wins!`}
+            subtitle={game.winReason === 'road' ? 'Road completed' : 'Most flat stones'}
+            onNewGame={resetGame}
+            onHome={onBack}
+          />
+        )}
+
         {/* Menu overlay */}
         {menuOpen && (
           <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
             <div className="menu-panel" onClick={e => e.stopPropagation()}>
-              <div className="menu-title">TAK</div>
+              <div className="menu-title">STACKS</div>
               <button className="menu-item" onClick={() => setMenuOpen(false)}>Resume</button>
               <button className="menu-item" onClick={resetGame}>New Game</button>
               {onBack && (

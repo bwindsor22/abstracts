@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import {
   initState, getAllMoves, applyMove, getPlacementCells,
   key, parseKey, topPiece
@@ -13,6 +14,14 @@ const BG = '#191022';
 const HEX_SIZE = 36;
 const ITEM_HAND = 'HAND_PIECE';
 const ITEM_BOARD = 'BOARD_PIECE';
+
+const MOVEMENT_GUIDE = [
+  { type: 'Q', name: 'Queen', color: '#FFD700', desc: 'Moves 1 space. Must be placed by move 4. Surround to win.' },
+  { type: 'A', name: 'Ant', color: '#3498DB', desc: 'Moves any distance around the hive perimeter.' },
+  { type: 'G', name: 'Grasshopper', color: '#2ECC71', desc: 'Jumps in a straight line over adjacent pieces.' },
+  { type: 'S', name: 'Spider', color: '#E67E22', desc: 'Moves exactly 3 spaces around the hive.' },
+  { type: 'B', name: 'Beetle', color: '#9B59B6', desc: 'Moves 1 space. Can climb on top of other pieces.' },
+];
 
 function isTouchDevice() {
   return typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -39,11 +48,11 @@ const PIECE_LABELS = { queen: 'Q', beetle: 'B', grasshopper: 'G', spider: 'S', a
 const PLAYER_COLORS = { black: '#222', white: '#f5f5f5' };
 
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
   return (
     <div style={{ textAlign: 'center', padding: 40, maxWidth: 420, margin: '0 auto' }}>
-      <h1 style={{ color: '#c8b8e8', marginBottom: 8 }}>HIVE</h1>
+      <h1 style={{ color: '#c8b8e8', marginBottom: 8 }}>BUGS</h1>
       <p style={{ color: '#8a7ab0', marginBottom: 6 }}>Surround the opponent's Queen Bee to win</p>
       <p style={{ color: '#7a6ab0', fontSize: 13, marginBottom: 24 }}>
         Place and move pieces. The Queen must be placed by move 4.<br />
@@ -74,7 +83,7 @@ function StartScreen({ onStart, onBack }) {
         {onBack && (
           <button onClick={onBack}
             style={{ padding: '12px 20px', background: 'transparent', color: '#8a7ab0', border: '1px solid #5a3a8a', borderRadius: 8, fontSize: 16, cursor: 'pointer' }}>
-            ← Library
+            ← Home
           </button>
         )}
       </div>
@@ -385,6 +394,7 @@ export default function App({ onBack, onResult }) {
   const [selected, setSelected] = useState(null);
   const [highlights, setHighlights] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const resultFired = useRef(false);
 
   const handleStart = useCallback((opts) => {
@@ -468,6 +478,7 @@ export default function App({ onBack, onResult }) {
   useEffect(() => {
     window.__bugsApi = {
       getGs: () => gs,
+      getAllMoves: (player) => getAllMoves(gs, player || gs.currentPlayer),
       aiMoveForCurrent: () => {
         if (!gs || gs.winner) return 'done';
         const move = getAIMove(gs, gs.currentPlayer, 'easy');
@@ -541,9 +552,38 @@ export default function App({ onBack, onResult }) {
           {/* Bottom controls */}
           <div className="game-controls">
             <button className="ctrl-btn" disabled>UNDO</button>
+            <button className="ctrl-btn" onClick={() => setShowGuide(g => !g)}>
+              {showGuide ? 'HIDE GUIDE' : 'GUIDE'}
+            </button>
             <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
           </div>
+
+          {/* Movement guide */}
+          {showGuide && (
+            <div className="movement-guide">
+              <div className="guide-title">PIECE MOVEMENT</div>
+              {MOVEMENT_GUIDE.map(p => (
+                <div key={p.type} className="guide-row">
+                  <div className="guide-piece" style={{ background: p.color }}>{p.type}</div>
+                  <div className="guide-info">
+                    <div className="guide-name">{p.name}</div>
+                    <div className="guide-desc">{p.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* Win overlay */}
+        {gs.winner && (
+          <WinOverlay
+            title={gs.winner === 'draw' ? 'DRAW!' : gs.vsAI ? (gs.winner !== gs.aiPlayer ? 'YOU WIN!' : 'AI WINS!') : `${gs.winner === 'black' ? 'Black' : 'White'} wins!`}
+            subtitle={gs.winner === 'draw' ? 'Both queens surrounded' : 'Queen surrounded'}
+            onNewGame={() => { resultFired.current = false; setGs(null); setSelected(null); setHighlights([]); }}
+            onHome={onBack}
+          />
+        )}
 
         {/* In-game menu overlay */}
         {menuOpen && (

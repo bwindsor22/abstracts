@@ -9,17 +9,33 @@ function shuffle(arr) {
   return arr;
 }
 
-function scorePeg(player, r, c) {
-  // Prefer cells that advance toward goal
-  const center = SIZE / 2;
-  const centrality = center - Math.max(Math.abs(r - center), Math.abs(c - center));
-  const advance = player === 'red' ? -(Math.abs(r - center)) : -(Math.abs(c - center));
-  return centrality * 2 + advance * 3;
+function scorePeg(state, player, r, c) {
+  // Score by quick evaluate after placing
+  const next = applyMove(state, r, c);
+  return evaluate(next, player);
 }
 
 function getCandidates(state, player) {
   const cells = getEmptyCells(state.board, player);
-  return cells.sort((a, b) => scorePeg(player, b[0], b[1]) - scorePeg(player, a[0], a[1])).slice(0, 25);
+  // Limit initial pool, then sort by heuristic
+  const pool = cells.length > 60
+    ? cells.filter(([r, c]) => {
+        // Only consider cells near existing pegs (within knight-move distance)
+        for (const [dr, dc] of [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]]) {
+          const nr = r + dr, nc = c + dc;
+          if (state.board[`${nr},${nc}`]) return true;
+        }
+        // Also include edge cells for initial moves
+        if (player === 'red' && (r <= 2 || r >= SIZE - 3)) return true;
+        if (player === 'blue' && (c <= 2 || c >= SIZE - 3)) return true;
+        return false;
+      })
+    : cells;
+  return pool
+    .map(([r, c]) => ({ r, c, s: scorePeg(state, player, r, c) }))
+    .sort((a, b) => b.s - a.s)
+    .slice(0, 20)
+    .map(x => [x.r, x.c]);
 }
 
 function minimax(state, depth, alpha, beta, maximizing, aiPlayer) {

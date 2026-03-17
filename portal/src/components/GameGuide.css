@@ -1,0 +1,183 @@
+.game-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.game-guide-slide {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: rgba(26, 11, 46, 0.6);
+  border: 1px solid rgba(153, 66, 240, 0.15);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.game-guide-slide svg {
+  display: block;
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+}
+
+.game-guide-caption {
+  font-size: 13px;
+  color: rgba(240, 238, 255, 0.85);
+  text-align: center;
+  line-height: 1.4;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.game-guide-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.game-guide-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(153, 66, 240, 0.3);
+  background: transparent;
+  color: rgba(240, 238, 255, 0.7);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.game-guide-arrow:hover:not(:disabled) {
+  background: rgba(153, 66, 240, 0.2);
+}
+
+.game-guide-arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.game-guide-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.game-guide-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(153, 66, 240, 0.25);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.game-guide-dot.active {
+  background: #9942f0;
+}
+
+/* ── Floating in-game guide button + panel ──────────────────────── */
+
+.game-guide-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(153, 66, 240, 0.4);
+  background: rgba(30, 15, 50, 0.9);
+  color: rgba(240, 238, 255, 0.8);
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.game-guide-fab:hover {
+  background: rgba(153, 66, 240, 0.3);
+  border-color: #9942f0;
+}
+
+.game-guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 510;
+  background: rgba(10, 5, 20, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: guideIn 0.2s ease;
+}
+
+@keyframes guideIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.game-guide-panel {
+  background: #1e0f32;
+  border: 1px solid rgba(153, 66, 240, 0.2);
+  border-radius: 14px;
+  padding: 20px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  animation: guidePanelIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes guidePanelIn {
+  from { transform: translateY(16px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.game-guide-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.game-guide-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(153, 66, 240, 0.7);
+  text-transform: uppercase;
+}
+
+.game-guide-panel-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(240, 238, 255, 0.15);
+  background: transparent;
+  color: rgba(240, 238, 255, 0.5);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-guide-panel-close:hover {
+  background: rgba(240, 238, 255, 0.08);
+  color: rgba(240, 238, 255, 0.8);
+}

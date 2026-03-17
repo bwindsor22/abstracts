@@ -14,9 +14,15 @@ import { ALL_BADGES } from './data/badges';
 
 export default function App() {
   const [view, setView] = useState('library');
+  const [viewParams, setViewParams] = useState(null);
   const [playingGame, setPlayingGame] = useState(null);
   const [navOpen, setNavOpen] = useState(false);
   const [newBadges, setNewBadges] = useState([]);
+
+  const navigate = useCallback((v, params) => {
+    setView(v);
+    setViewParams(params || null);
+  }, []);
 
   const handlePlay = useCallback((game) => {
     setPlayingGame(game); // game = { id, name, icon, category }
@@ -39,7 +45,7 @@ export default function App() {
     addResult(result);
     const earned = checkAndAwardBadges(ALL_BADGES);
     if (earned.length > 0) setNewBadges(earned);
-    setPlayingGame(null);
+    // Don't exit the game — let the user view the end state and click back
   }, []);
 
   if (playingGame) {
@@ -60,15 +66,15 @@ export default function App() {
   return (
     <div className="app-root">
       <div className="fluid-glow fixed-bg" />
-      <Header onMenuOpen={() => setNavOpen(true)} />
+      <Header onMenuOpen={() => setNavOpen(true)} onHome={() => setView('library')} />
       <NavDrawer
         open={navOpen}
         onClose={() => setNavOpen(false)}
         currentView={view}
-        onNavigate={(v) => { setView(v); setNavOpen(false); }}
+        onNavigate={(v) => { navigate(v); setNavOpen(false); }}
       />
       <main className="app-main">
-        <ViewComponent onPlay={handlePlay} onNavigate={setView} />
+        <ViewComponent onPlay={handlePlay} onNavigate={navigate} viewParams={viewParams} />
       </main>
       {newBadges.map(badge => (
         <BadgeToast key={badge.id} badge={badge} onDismiss={() => setNewBadges(b => b.filter(x => x.id !== badge.id))} />

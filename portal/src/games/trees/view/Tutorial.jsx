@@ -104,7 +104,7 @@ const SunArrow = ({ dir = 'right' }) => {
 
 const STEPS = [
   {
-    title: 'Welcome to Photosynthesis 🌳',
+    title: 'Welcome to Trees',
     body: 'Grow trees on a hexagonal forest board, earn light points from the sun, and harvest large trees for scoring tokens. The player with the most points after 3 sun revolutions wins.',
     diagram: (
       <div style={{ marginTop: 10, fontFamily: 'sans-serif', fontSize: '12px', color: '#555' }}>

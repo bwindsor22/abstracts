@@ -112,7 +112,7 @@ const StartScreen = ({ onStart, onBack }) => {
           color: '#fff',
           lineHeight: 1.1,
         }}>
-          Photosynthesis
+          Trees
         </h1>
 
         {/* Subtitle */}

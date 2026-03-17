@@ -1,22 +1,30 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState, useCallback } from 'react';
+import GameGuide from './GameGuide';
 import './GameWrapper.css';
+import './GameGuide.css';
 
 // Lazy-load each game to keep initial bundle small
 const GAME_COMPONENTS = {
   hexes:   lazy(() => import('../games/hexes/App')),
   marbles: lazy(() => import('../games/marbles/App')),
   bridges: lazy(() => import('../games/bridges/App')),
-  stones:  lazy(() => import('../games/stones/App')),
+  pairs:   lazy(() => import('../games/stones/App')),
   walls:   lazy(() => import('../games/walls/App')),
   bugs:    lazy(() => import('../games/bugs/App')),
   circles: lazy(() => import('../games/circles/App')),
   stacks:  lazy(() => import('../games/stacks/App')),
   towers:  lazy(() => import('../games/towers/App')),
   trees:   lazy(() => import('../games/trees/App')),
+  sowing:  lazy(() => import('../games/sowing/App')),
+  mills:   lazy(() => import('../games/mills/App')),
 };
 
 export default function GameWrapper({ game, onBack, onResult }) {
+  const [showGuide, setShowGuide] = useState(false);
   const GameComponent = GAME_COMPONENTS[game.id];
+
+  const toggleGuide = useCallback(() => setShowGuide(g => !g), []);
+
   if (!GameComponent) {
     return (
       <div className="game-wrapper-error">
@@ -27,13 +35,31 @@ export default function GameWrapper({ game, onBack, onResult }) {
   }
 
   return (
-    <Suspense fallback={
-      <div className="game-wrapper-loading">
-        <div className="game-wrapper-spinner" />
-        <p>Loading {game.name}…</p>
-      </div>
-    }>
-      <GameComponent onBack={onBack} onResult={onResult} />
-    </Suspense>
+    <>
+      <Suspense fallback={
+        <div className="game-wrapper-loading">
+          <div className="game-wrapper-spinner" />
+          <p>Loading {game.name}…</p>
+        </div>
+      }>
+        <GameComponent onBack={onBack} onResult={onResult} />
+      </Suspense>
+
+      {/* Floating guide button */}
+      <button className="game-guide-fab" onClick={toggleGuide} aria-label="How to play">?</button>
+
+      {/* Guide overlay */}
+      {showGuide && (
+        <div className="game-guide-overlay" onClick={toggleGuide}>
+          <div className="game-guide-panel" onClick={e => e.stopPropagation()}>
+            <div className="game-guide-panel-header">
+              <span className="game-guide-panel-title">How to Play</span>
+              <button className="game-guide-panel-close" onClick={toggleGuide}>×</button>
+            </div>
+            <GameGuide gameId={game.id} />
+          </div>
+        </div>
+      )}
+    </>
   );
 }

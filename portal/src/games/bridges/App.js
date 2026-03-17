@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import { SIZE, initState, applyMove, applySwap, removePeg, removeLink, canPlace } from './Game';
 import { getAIMove } from './AI/ai';
 
@@ -18,11 +19,11 @@ function cellPos(r, c) {
 }
 
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
   return (
     <div className="start-screen" style={{ textAlign: 'center' }}>
-      <h1>TWIXT</h1>
+      <h1>BRIDGES</h1>
       <p className="start-desc">Connect your two sides with peg links</p>
       <p className="start-rule">
         <span style={{ color: RED_COLOR }}>Red</span> connects top ↕ bottom.<br />
@@ -52,7 +53,7 @@ function StartScreen({ onStart, onBack }) {
       </button>
       {onBack && (
         <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Library</button>
+          <button onClick={onBack} className="diff-btn">← Home</button>
         </div>
       )}
     </div>
@@ -245,20 +246,29 @@ export default function App({ onBack, onResult }) {
               const pegColor = placed === 'red' ? RED_COLOR : placed === 'blue' ? BLUE_COLOR :
                 isHover && placeable ? (currentPlayer === 'red' ? RED_COLOR : BLUE_COLOR) : '#3a3060';
               return (
-                <circle key={`${r},${c}`} cx={x} cy={y}
-                  r={placed ? DOT : isHover && placeable ? DOT - 1 : 2}
-                  fill={pegColor}
-                  stroke={isOwnPeg ? '#ffaa44' : 'none'}
-                  strokeWidth={isOwnPeg ? 2 : 0}
-                  opacity={placed ? 1 : isHover ? 0.7 : 1}
-                  style={{
-                    cursor: (placeable || isOwnPeg) ? 'pointer' : 'default',
-                    filter: placed ? `drop-shadow(0 0 3px ${pegColor})` : 'none',
-                  }}
-                  onMouseEnter={() => setHoverCell({ r, c })}
-                  onMouseLeave={() => setHoverCell(null)}
-                  onClick={() => handleClick(r, c)}
-                />
+                <g key={`${r},${c}`}>
+                  {/* Invisible hit area for easier clicking */}
+                  <circle cx={x} cy={y}
+                    r={CELL / 2}
+                    fill="transparent"
+                    style={{ cursor: (placeable || isOwnPeg) ? 'pointer' : 'default' }}
+                    onMouseEnter={() => setHoverCell({ r, c })}
+                    onMouseLeave={() => setHoverCell(null)}
+                    onClick={() => handleClick(r, c)}
+                  />
+                  {/* Visible dot */}
+                  <circle cx={x} cy={y}
+                    r={placed ? DOT : isHover && placeable ? DOT - 1 : 2}
+                    fill={pegColor}
+                    stroke={isOwnPeg ? '#ffaa44' : 'none'}
+                    strokeWidth={isOwnPeg ? 2 : 0}
+                    opacity={placed ? 1 : isHover ? 0.7 : 1}
+                    style={{
+                      pointerEvents: 'none',
+                      filter: placed ? `drop-shadow(0 0 3px ${pegColor})` : 'none',
+                    }}
+                  />
+                </g>
               );
             })
           )}
@@ -278,6 +288,16 @@ export default function App({ onBack, onResult }) {
           <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
         </div>
       </div>
+
+      {/* Win overlay */}
+      {winner && (
+        <WinOverlay
+          title={vsAI ? (winner !== aiPlayer ? 'YOU WIN!' : 'AI WINS!') : `${winner === 'red' ? 'Red' : 'Blue'} wins!`}
+          subtitle="Connected both sides"
+          onNewGame={() => setGs(null)}
+          onHome={onBack}
+        />
+      )}
 
       {/* In-game menu overlay */}
       {menuOpen && (

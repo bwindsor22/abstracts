@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import { SIZE, initState, applyMove, applySwap, inBounds } from './Game';
 import { getAIMove } from './AI/ai';
 
@@ -97,12 +98,12 @@ function HexCell({ row, col, owner, onClick }) {
 
 // ─── Start screen ─────────────────────────────────────────────────────────────
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
 
   return (
     <div className="start-screen" style={{ textAlign: 'center' }}>
-      <h1>HEX</h1>
+      <h1>HEXES</h1>
       <p className="start-desc">Connect your edges to win</p>
       <div className="start-rule">
         <span style={{ color: '#d94f4f' }}>Red</span> connects top↔bottom &nbsp;|&nbsp;
@@ -133,7 +134,7 @@ function StartScreen({ onStart, onBack }) {
       </button>
       {onBack && (
         <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Library</button>
+          <button onClick={onBack} className="diff-btn">← Home</button>
         </div>
       )}
     </div>
@@ -250,6 +251,16 @@ export default function App({ onBack, onResult }) {
           <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
         </div>
       </div>
+
+      {/* Win overlay */}
+      {winner && (
+        <WinOverlay
+          title={vsAI ? (winner !== aiPlayer ? 'YOU WIN!' : 'AI WINS!') : `${COLORS[winner].label} wins!`}
+          subtitle="Connected both sides"
+          onNewGame={() => { setGameState(null); }}
+          onHome={onBack}
+        />
+      )}
 
       {/* In-game menu overlay */}
       {menuOpen && (

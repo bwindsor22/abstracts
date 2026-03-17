@@ -10,8 +10,11 @@ export const GAMES = [
   // Timeless Classics
   { id: 'hexes',   name: 'Hexes',   subtitle: 'Six Sided War',      icon: 'grid_view',             port: 3004, category: 'classic' },
   { id: 'marbles', name: 'Marbles', subtitle: 'Rolling Velocity',   icon: 'bubble_chart',          port: 3005, category: 'classic' },
-  { id: 'bridges', name: 'Bridges', subtitle: 'Connector Strategy', icon: 'bridge',                port: 3001, category: 'classic' },
-  { id: 'stones',  name: 'Stones',  subtitle: 'Ancient Grounding',  icon: 'diamond',               port: 3007, category: 'classic' },
+  { id: 'bridges', name: 'Bridges', subtitle: 'Connector Strategy', icon: 'share',                port: 3001, category: 'classic' },
+  { id: 'pairs',   name: 'Pairs',   subtitle: 'Ancient Grounding',  icon: 'diamond',               port: 3007, category: 'classic' },
+  // Ancient Foundations
+  { id: 'sowing',  name: 'Sowing',  subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient' },
+  { id: 'mills',   name: 'Mills',   subtitle: 'Trap & Capture',     icon: 'token',                 port: 3012, category: 'ancient' },
 ];
 
 export const GAME_MAP = Object.fromEntries(GAMES.map(g => [g.id, g]));

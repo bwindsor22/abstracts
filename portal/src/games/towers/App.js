@@ -10,13 +10,13 @@ import Scene3D from './Scene3D';
 
 // ── Start screen ───────────────────────────────────────────────────────────────
 function StartScreen({ onStart }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
 
   return (
     <div className="start-overlay">
       <div className="start-box">
-        <div className="start-title">SANTORINI</div>
+        <div className="start-title">TOWERS</div>
         <div className="start-sub">Build towers. Climb to level 3 to win.</div>
         <div className="start-rules">
           <div>Each player has <strong>2 workers</strong> on a 5×5 grid</div>
@@ -74,7 +74,7 @@ export default function App({ onBack, onResult }) {
     // human is always p1 (aiPlayer = 'p2')
     onResult?.({
       gameId: 'towers',
-      gameName: 'Santorini',
+      gameName: 'Towers',
       won: game.winner === 'p1',
       moves: game.moveCount || 0,
       difficulty: game.difficulty || 'medium',
@@ -206,7 +206,7 @@ export default function App({ onBack, onResult }) {
 
         {/* HUD overlay */}
         <div className="hud">
-          <div className="hud-title">SANTORINI</div>
+          <div className="hud-title">TOWERS</div>
           <div className="hud-status">{statusText}</div>
 
           {game.phase === 'move' && !isAITurn && (
@@ -214,7 +214,14 @@ export default function App({ onBack, onResult }) {
           )}
 
           {game.winner && (
-            <button className="reset-btn" onClick={resetGame}>New Game</button>
+            <div className="winner-overlay">
+              <div className="winner-banner">
+                <div className="winner-label">{game.winner === 'p1' ? 'PLAYER 1' : 'PLAYER 2'} WINS!</div>
+                <div className="winner-reason">{game.winReason === 'tower' ? 'Reached level 3' : 'Opponent has no moves'}</div>
+                <button className="reset-btn" onClick={resetGame}>New Game</button>
+                <button className="reset-btn" onClick={onBack} style={{ marginTop: 8, background: 'rgba(255,255,255,0.1)' }}>← Home</button>
+              </div>
+            </div>
           )}
 
           {/* Menu button */}
@@ -233,7 +240,7 @@ export default function App({ onBack, onResult }) {
         {menuOpen && (
           <div className="menu-overlay" onClick={() => setMenuOpen(false)}>
             <div className="menu-panel" onClick={e => e.stopPropagation()}>
-              <div className="menu-title-panel">SANTORINI</div>
+              <div className="menu-title-panel">TOWERS</div>
               <button className="menu-item" onClick={() => setMenuOpen(false)}>Resume</button>
               <button className="menu-item" onClick={resetGame}>New Game</button>
               {onBack && (

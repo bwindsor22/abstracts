@@ -3,6 +3,7 @@ import { DndProvider, useDrag } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import {
   RADIUS, DIRS, isValid, key, parseKey,
   initState, getAllMoves, applyMoveFixed,
@@ -46,7 +47,7 @@ function getArrowDescriptors(cx, cy) {
     const len = Math.sqrt(dx * dx + dy * dy);
     const nx = dx / len;
     const ny = dy / len;
-    const ARROW_DIST = CELL_SIZE * 1.55;
+    const ARROW_DIST = CELL_SIZE * 2.0;
     const ax = cx + nx * ARROW_DIST;
     const ay = cy + ny * ARROW_DIST;
 
@@ -69,11 +70,11 @@ function getArrowDescriptors(cx, cy) {
 
 // ─── Start screen ─────────────────────────────────────────────────────────────
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
   return (
     <div className="start-screen" style={{ textAlign: 'center' }}>
-      <h1>ABALONE</h1>
+      <h1>MARBLES</h1>
       <p className="start-desc">Push 6 opponent marbles off the board</p>
       <p className="start-rule">
         Select 1–3 aligned marbles, then click a direction arrow to move.<br/>
@@ -104,7 +105,7 @@ function StartScreen({ onStart, onBack }) {
       </button>
       {onBack && (
         <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Library</button>
+          <button onClick={onBack} className="diff-btn">← Home</button>
         </div>
       )}
     </div>
@@ -182,12 +183,13 @@ function AppInner({ onBack, onResult }) {
         if (next.length <= 1) return next;
         const positions = next.map(parseKey);
         const isCollinear = DIRS.some(([dq, dr]) => {
+          const step = dq * dq + dr * dr; // 1 for axis-aligned, 2 for diagonal
           const scores = positions.map(([q, r]) => q * dq + r * dr);
           const min = Math.min(...scores), max = Math.max(...scores);
-          if (max - min !== next.length - 1) return false;
+          if (max - min !== (next.length - 1) * step) return false;
           const base = positions[scores.indexOf(min)];
           return positions.every(([q, r]) => {
-            const s = q * dq + r * dr - min;
+            const s = (q * dq + r * dr - min) / step;
             return q === base[0] + dq * s && r === base[1] + dr * s;
           });
         });
@@ -396,22 +398,23 @@ function AppInner({ onBack, onResult }) {
           {arrowDescriptors.map(({ dir, points, cx: ax, cy: ay }) => {
             const dirKey = `${dir[0]},${dir[1]}`;
             const available = availDirSet.has(dirKey);
+            if (!available) return null;
             return (
               <g
                 key={dirKey}
-                onClick={available ? (e) => { e.stopPropagation(); handleDirClick(dir); } : undefined}
-                style={{ cursor: available ? 'pointer' : 'default' }}
+                onClick={(e) => { e.stopPropagation(); handleDirClick(dir); }}
+                style={{ cursor: 'pointer' }}
               >
                 <circle
                   cx={ax} cy={ay} r={14}
-                  fill={available ? 'rgba(153,66,240,0.85)' : 'rgba(42,31,69,0.6)'}
-                  stroke={available ? '#9942f0' : '#3d2a5a'}
+                  fill='rgba(153,66,240,0.85)'
+                  stroke='#9942f0'
                   strokeWidth={1}
                 />
                 <polygon
                   points={points}
-                  fill={available ? '#d4a0ff' : '#444'}
-                  opacity={available ? 0.95 : 0.4}
+                  fill='#d4a0ff'
+                  opacity={0.95}
                 />
               </g>
             );
@@ -430,6 +433,16 @@ function AppInner({ onBack, onResult }) {
           <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
         </div>
       </div>
+
+      {/* Win overlay */}
+      {winner && (
+        <WinOverlay
+          title={vsAI ? (winner !== aiPlayer ? 'YOU WIN!' : 'AI WINS!') : `${winner === 'black' ? 'Black' : 'White'} wins!`}
+          subtitle="Pushed 6 marbles off the board"
+          onNewGame={() => { setGameState(null); setSelected([]); setValidMoves([]); }}
+          onHome={onBack}
+        />
+      )}
 
       {/* In-game menu overlay */}
       {menuOpen && (

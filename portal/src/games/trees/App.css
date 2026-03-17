@@ -4,6 +4,41 @@
 
 .game-trees {
   min-height: 100vh;
+  background: #191022;
+  color: #f0eeff;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Layout (replaces Bootstrap Container/Row/Col) */
+.trees-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
+  color: #f0eeff;
+}
+.trees-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.trees-col-main {
+  flex: 2;
+  min-width: 0;
+}
+.trees-col-side {
+  flex: 1;
+  min-width: 0;
+}
+
+.game-trees h2,
+.game-trees h5 {
+  color: rgba(240, 238, 255, 0.5) !important;
+}
+
+.game-trees h5 {
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* ── Board + harvest area (desktop: side by side, mobile: stacked) ────── */
@@ -24,14 +59,15 @@
   .desktop-only { display: none !important; }
 
   /* Minimal padding so board fills the full screen width */
-  .container {
+  .trees-container {
     padding-left: 4px !important;
     padding-right: 4px !important;
   }
 
   /* Stack cols vertically; board gets full width on mobile */
-  .row.mb-4 {
+  .trees-row {
     flex-direction: column;
+    gap: 8px;
   }
 
   /* Board fills full width; harvest area drops below */

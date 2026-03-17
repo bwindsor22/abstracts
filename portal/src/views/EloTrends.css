@@ -28,6 +28,24 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 18px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.elo-game-card:hover {
+  border-color: var(--primary);
+  background: rgba(153, 66, 240, 0.06);
+}
+
+.elo-view-history {
+  font-size: 12px;
+  color: var(--primary);
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.elo-game-card:hover .elo-view-history {
+  opacity: 1;
 }
 
 .elo-game-header {

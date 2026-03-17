@@ -24,7 +24,11 @@ export default function BadgeToast({ badge, onDismiss }) {
       role="status"
       aria-live="polite"
     >
-      <span className="badge-toast-icon">{badge.icon}</span>
+      {badge.image ? (
+        <img src={badge.image} alt={badge.name} className="badge-toast-img" />
+      ) : (
+        <span className="badge-toast-icon material-symbols-outlined">{badge.icon}</span>
+      )}
       <div className="badge-toast-body">
         <span className="badge-toast-label">BADGE EARNED!</span>
         <span className="badge-toast-name">{badge.name}</span>

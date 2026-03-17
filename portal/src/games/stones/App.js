@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
+import WinOverlay from '../../components/WinOverlay';
 import { SIZE, initState, applyMove } from './Game';
 import { getAIMove } from './AI/ai';
 
@@ -56,14 +57,14 @@ function ColorPicker({ label, selected, onChange, disabledColor }) {
 }
 
 function StartScreen({ onStart, onBack }) {
-  const [vsAI, setVsAI] = useState(false);
+  const [vsAI, setVsAI] = useState(true);
   const [difficulty, setDifficulty] = useState('medium');
   const [p1Color, setP1Color] = useState('#222');
   const [p2Color, setP2Color] = useState('#f5f5f0');
 
   return (
     <div className="start-screen" style={{ textAlign: 'center' }}>
-      <h1>PENTE</h1>
+      <h1>PAIRS</h1>
       <p className="start-desc">Five in a row, or capture 5 pairs</p>
       <p className="start-rule">
         Place stones on a 19×19 board. Win by 5-in-a-row OR 5 captured pairs.<br />
@@ -105,7 +106,7 @@ function StartScreen({ onStart, onBack }) {
       </button>
       {onBack && (
         <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Library</button>
+          <button onClick={onBack} className="diff-btn">← Home</button>
         </div>
       )}
     </div>
@@ -172,8 +173,8 @@ export default function App({ onBack, onResult }) {
     resultReported.current = true;
     if (onResult) {
       onResult({
-        gameId: 'stones',
-        gameName: 'Stones',
+        gameId: 'pairs',
+        gameName: 'Pairs',
         won: gs.winner === 'black',
         moves: gs.moveCount || 0,
         difficulty: gs.difficulty || 'medium',
@@ -291,6 +292,16 @@ export default function App({ onBack, onResult }) {
           <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
         </div>
       </div>
+
+      {/* Win overlay */}
+      {winner && (
+        <WinOverlay
+          title={vsAI ? (winner !== aiPlayer ? 'YOU WIN!' : 'AI WINS!') : `${winner === 'black' ? 'Player 1' : 'Player 2'} wins!`}
+          subtitle={captures[winner] >= 5 ? 'Five captures' : 'Five in a row'}
+          onNewGame={() => setGs(null)}
+          onHome={onBack}
+        />
+      )}
 
       {/* In-game menu overlay */}
       {menuOpen && (

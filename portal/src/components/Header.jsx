@@ -1,11 +1,11 @@
 import React from 'react';
 import './Header.css';
 
-export default function Header({ onMenuOpen }) {
+export default function Header({ onMenuOpen, onHome }) {
   return (
     <header className="portal-header">
       <div className="portal-header-inner">
-        <div className="portal-logo">
+        <div className="portal-logo" onClick={onHome} style={{ cursor: 'pointer' }}>
           <div className="portal-logo-icon">
             {/* Strategy/tactics icon */}
             <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { GAMES } from '../data/games';
+import GameGuide from '../components/GameGuide';
 import './Library.css';
 
 function GameIcon({ icon, className }) {
@@ -40,13 +41,12 @@ function PlayModal({ game, onPlay, onClose }) {
           <button className="library-modal-close" onClick={onClose} aria-label="Close">×</button>
         </div>
 
-        <div className="library-modal-description">
-          {game.description || game.subtitle}
-        </div>
+        <GameGuide gameId={game.id} />
 
         <button
           className="library-modal-play-btn"
           onClick={() => onPlay(game)}
+          style={{ marginTop: 16 }}
         >
           Play
         </button>
@@ -56,16 +56,11 @@ function PlayModal({ game, onPlay, onClose }) {
 }
 
 export default function Library({ onPlay }) {
-  const [search, setSearch] = useState('');
   const [selectedGame, setSelectedGame] = useState(null);
 
-  const filtered = GAMES.filter(g =>
-    g.name.toLowerCase().includes(search.toLowerCase()) ||
-    g.subtitle.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const modern = filtered.filter(g => g.category === 'modern');
-  const classic = filtered.filter(g => g.category === 'classic');
+  const modern = GAMES.filter(g => g.category === 'modern');
+  const classic = GAMES.filter(g => g.category === 'classic');
+  const ancient = GAMES.filter(g => g.category === 'ancient');
 
   const handlePlay = useCallback((game) => {
     setSelectedGame(null);
@@ -74,31 +69,11 @@ export default function Library({ onPlay }) {
 
   return (
     <div className="library">
-      {/* Search */}
-      <div className="library-search-wrap">
-        <svg className="library-search-icon" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          className="library-search"
-          type="search"
-          placeholder="Search games…"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          aria-label="Search games"
-        />
-      </div>
-
-      {filtered.length === 0 && (
-        <div className="library-empty">No games found for "{search}"</div>
-      )}
-
       {modern.length > 0 && (
         <section className="library-section">
           <div className="library-section-header">
             <h2 className="library-section-title">Modern Marvels</h2>
-            <span className="library-section-tag">NEW RELEASES</span>
+            <span className="library-section-tag">1990–PRESENT</span>
           </div>
           <div className="library-grid">
             {modern.map(game => (
@@ -112,10 +87,24 @@ export default function Library({ onPlay }) {
         <section className="library-section">
           <div className="library-section-header">
             <h2 className="library-section-title">Timeless Classics</h2>
-            <span className="library-section-tag">ALL TIME HITS</span>
+            <span className="library-section-tag">1940–1990</span>
           </div>
           <div className="library-grid">
             {classic.map(game => (
+              <GameCard key={game.id} game={game} onClick={setSelectedGame} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {ancient.length > 0 && (
+        <section className="library-section">
+          <div className="library-section-header">
+            <h2 className="library-section-title">Ancient Foundations</h2>
+            <span className="library-section-tag">PRE-1940</span>
+          </div>
+          <div className="library-grid">
+            {ancient.map(game => (
               <GameCard key={game.id} game={game} onClick={setSelectedGame} />
             ))}
           </div>

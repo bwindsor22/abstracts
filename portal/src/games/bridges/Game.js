@@ -96,19 +96,102 @@ function detectWin(board, links, player) {
   return null;
 }
 
+// Shortest-path distance for a player to connect their two sides.
+// Uses BFS over knight-move reachable positions, where existing pegs cost 0
+// and empty playable cells cost 1. Lower = closer to winning.
+function connectionDistance(state, player) {
+  const opp = player === 'red' ? 'blue' : 'red';
+  // Build adjacency from links
+  const linked = {};
+  for (const lk of state.links) {
+    if (lk.player !== player) continue;
+    const k1 = `${lk.r1},${lk.c1}`, k2 = `${lk.r2},${lk.c2}`;
+    (linked[k1] = linked[k1] || new Set()).add(k2);
+    (linked[k2] = linked[k2] || new Set()).add(k1);
+  }
+
+  const isStart = (r, c) => player === 'red' ? r === 0 : c === 0;
+  const isEnd = (r, c) => player === 'red' ? r === SIZE - 1 : c === SIZE - 1;
+
+  // Dijkstra-like BFS (costs are 0 or 1)
+  const dist = {};
+  const queue = []; // [{r, c, cost}]
+
+  // Seed from start-edge pegs (cost 0) and start-edge empty cells (cost 1)
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      if (!isStart(r, c)) continue;
+      if (!canPlace(player, r, c) && !(state.board[`${r},${c}`] === player)) continue;
+      const k = `${r},${c}`;
+      if (state.board[k] === player) {
+        dist[k] = 0;
+        queue.unshift({ r, c, cost: 0 });
+      } else if (state.board[k] === opp) {
+        continue; // blocked
+      } else {
+        dist[k] = 1;
+        queue.push({ r, c, cost: 1 });
+      }
+    }
+  }
+
+  while (queue.length) {
+    const { r, c, cost } = queue.shift();
+    const k = `${r},${c}`;
+    if (dist[k] < cost) continue;
+    if (isEnd(r, c)) return cost;
+
+    // Expand via knight moves
+    for (const [dr, dc] of KNIGHT) {
+      const nr = r + dr, nc = c + dc;
+      if (!inBounds(nr, nc)) continue;
+      const nk = `${nr},${nc}`;
+      if (state.board[nk] === opp) continue; // blocked by opponent
+
+      let ncost;
+      if (state.board[nk] === player) {
+        // If there's a link between these two pegs, cost is 0; otherwise 0 too (peg exists, potential link)
+        ncost = cost;
+      } else {
+        ncost = cost + 1;
+      }
+
+      if (ncost < (dist[nk] ?? Infinity)) {
+        dist[nk] = ncost;
+        if (ncost === cost) queue.unshift({ r: nr, c: nc, cost: ncost });
+        else queue.push({ r: nr, c: nc, cost: ncost });
+      }
+    }
+
+    // Also expand via existing links (0 cost, already connected)
+    for (const nk of (linked[k] || [])) {
+      const [nr, nc] = nk.split(',').map(Number);
+      if (cost < (dist[nk] ?? Infinity)) {
+        dist[nk] = cost;
+        queue.unshift({ r: nr, c: nc, cost });
+      }
+    }
+  }
+  return 50; // unreachable (shouldn't happen on an open board)
+}
+
 export function evaluate(state, player) {
   if (state.winner === player) return 100000;
   if (state.winner) return -100000;
-  let score = 0;
-  for (const [k, p] of Object.entries(state.board)) {
-    const [r,c] = k.split(',').map(Number);
-    const centrality = SIZE/2 - Math.max(Math.abs(r-SIZE/2), Math.abs(c-SIZE/2));
-    if (p === player) score += centrality * 2;
-    else score -= centrality;
-  }
+  const opp = player === 'red' ? 'blue' : 'red';
+
+  // Connection distance: lower is better for that player
+  const myDist = connectionDistance(state, player);
+  const oppDist = connectionDistance(state, opp);
+
+  // Score: prefer positions where my distance is short and opponent's is long
+  let score = (oppDist - myDist) * 150;
+
+  // Bonus for links (connected pegs are valuable)
   for (const lk of state.links) {
-    if (lk.player === player) score += 5; else score -= 4;
+    if (lk.player === player) score += 8; else score -= 6;
   }
+
   return score;
 }
 

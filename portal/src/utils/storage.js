@@ -6,11 +6,23 @@ export function getHistory() {
 }
 
 export function addResult(result) {
-  // result: { gameId, gameName, won, moves, difficulty, timestamp }
+  // result: { gameId, gameName, won, moves, difficulty, timestamp, snapshots? }
   const history = getHistory();
+  // Store snapshots separately to keep main history lightweight
+  if (result.snapshots) {
+    const key = `stratos_replay_${Date.now()}`;
+    try { localStorage.setItem(key, JSON.stringify(result.snapshots)); } catch {}
+    result = { ...result, replayKey: key };
+    delete result.snapshots;
+  }
   history.unshift(result);
   localStorage.setItem(KEY_HISTORY, JSON.stringify(history.slice(0, 500)));
   return history;
+}
+
+export function getReplay(replayKey) {
+  if (!replayKey) return null;
+  try { return JSON.parse(localStorage.getItem(replayKey) || 'null'); } catch { return null; }
 }
 
 export function getStats() {

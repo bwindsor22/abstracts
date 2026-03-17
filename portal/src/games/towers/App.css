@@ -278,3 +278,48 @@ body {
 .l2-box   { background: #b8c8d8; }
 .l3-box   { background: #7090b8; }
 .dome-box { background: #1a3060; border-radius: 50%; }
+
+/* ── Winner overlay ─────────────────────────────────────────────────────── */
+.winner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 16, 34, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.winner-banner {
+  background: rgba(26, 11, 46, 0.95);
+  border: 2px solid rgba(153, 66, 240, 0.4);
+  border-radius: 20px;
+  padding: 40px 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 60px rgba(153, 66, 240, 0.25);
+}
+
+.winner-label {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #f0eeff;
+  text-shadow: 0 0 20px rgba(153, 66, 240, 0.6);
+}
+
+.winner-reason {
+  font-size: 14px;
+  color: rgba(240, 238, 255, 0.5);
+  margin-bottom: 16px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

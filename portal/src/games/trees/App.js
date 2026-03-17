@@ -9,7 +9,6 @@ import CollectArea from "./view/board/CollectArea";
 import Tutorial from "./view/Tutorial";
 import StartScreen from "./view/StartScreen";
 import { GameProvider, useGameState, COLOR_FILTERS } from "./view/board/GameContext";
-import { Container, Row, Col } from "react-bootstrap";
 import "./App.css";
 
 const isTouchDevice = () =>
@@ -24,7 +23,7 @@ const COLOR_SWATCHES = {
   orange: '#e65100',
 };
 
-const GameContent = ({ playerColor, onResult, gameConfig }) => {
+const GameContent = ({ playerColor, onResult, onBack, gameConfig }) => {
   const {
     boardState,
     piecesInInventory,
@@ -65,7 +64,7 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
     const maxScore = Math.max(...Object.values(finalScoresCalc));
     onResult?.({
       gameId: 'trees',
-      gameName: 'Photosynthesis',
+      gameName: 'Trees',
       won: p1Final >= maxScore,
       moves: sunRevolutions,
       difficulty: gameConfig?.difficulty || 'medium',
@@ -73,6 +72,7 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
   }, [isGameOver, onResult, scoreAll, lpAll, sunRevolutions, gameConfig]);
 
   const [showTutorial, setShowTutorial] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const isHumanTurn = currentPlayer === 'p1' && !aiThinking && isSetupComplete;
   const finalScores = Object.fromEntries(
@@ -82,24 +82,28 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
   const swatch = COLOR_SWATCHES[playerColor] || COLOR_SWATCHES.green;
 
   return (
-    <Container>
+    <div className="trees-container">
       {showTutorial && <Tutorial onDone={() => setShowTutorial(false)} />}
-      <Row className="mb-4">
-        <Col md={8}>
+      <div className="trees-row">
+        <div className="trees-col-main">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
-            <h2 style={{ margin: 0 }}>Game Board</h2>
+            <h2 style={{ margin: 0, color: '#f0eeff' }}>Game Board</h2>
             <button
               onClick={() => setShowTutorial(v => !v)}
-              style={{ fontSize: '12px', padding: '3px 10px', borderRadius: '6px', border: '1px solid #ccc', background: '#fff', cursor: 'pointer', color: '#666' }}
+              style={{ fontSize: '12px', padding: '3px 10px', borderRadius: '6px', border: '1px solid rgba(56,142,60,0.3)', background: 'rgba(56,142,60,0.1)', cursor: 'pointer', color: 'rgba(240,238,255,0.7)', fontFamily: "'Space Grotesk', sans-serif" }}
             >? How to Play</button>
+            <button
+              onClick={() => setMenuOpen(true)}
+              style={{ fontSize: '12px', padding: '3px 10px', borderRadius: '6px', border: '1px solid rgba(240,238,255,0.2)', background: 'rgba(240,238,255,0.05)', cursor: 'pointer', color: 'rgba(240,238,255,0.7)', fontFamily: "'Space Grotesk', sans-serif" }}
+            >MENU</button>
           </div>
 
           {/* Mobile-only top bar: End My Turn + LP */}
           <div className="mobile-only" style={{
             alignItems: 'center', gap: '8px', flexWrap: 'wrap',
             padding: '5px 6px', marginBottom: '6px',
-            background: aiThinking ? '#f5f5f5' : '#fffde7',
-            border: '1px solid #f9a825', borderRadius: '8px',
+            background: aiThinking ? 'rgba(153,66,240,0.08)' : 'rgba(45,122,71,0.15)',
+            border: '1px solid rgba(45,122,71,0.3)', borderRadius: '8px',
           }}>
             <button
               onClick={endPlayerTurn}
@@ -109,14 +113,15 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
                 cursor: (!isHumanTurn || isGameOver) ? 'default' : 'pointer',
                 background: 'transparent', border: 'none', padding: '0',
                 opacity: (!isHumanTurn || isGameOver) ? 0.6 : 1,
+                color: '#f0eeff',
               }}
             >
-              {aiThinking ? '🤖 AI thinking…' : '☀️ End My Turn'}
+              {aiThinking ? 'AI thinking...' : 'End My Turn'}
             </button>
-            <span style={{ fontSize: '12px', color: '#555' }}>
-              <strong>{lp}</strong> LP · 🏆 <strong>{score}</strong>
+            <span style={{ fontSize: '12px', color: 'rgba(240,238,255,0.6)' }}>
+              <strong>{lp}</strong> LP · <strong>{score}</strong> pts
             </span>
-            <span style={{ fontSize: '12px', color: isFinalRound ? '#e65100' : '#888', marginLeft: 'auto' }}>
+            <span style={{ fontSize: '12px', color: isFinalRound ? '#ff8a65' : 'rgba(240,238,255,0.4)', marginLeft: 'auto' }}>
               Sun {sunPosition + 1}/6 · Rev {sunRevolutions + 1}/3{isFinalRound ? ' · Final!' : ''}
             </span>
           </div>
@@ -133,23 +138,23 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
             <h5 style={{ marginBottom: '4px', fontSize: '13px', color: '#555' }}>Available</h5>
             <Available piecesAvailable={piecesAvailable} lp={lp} owner="p1" disabled={aiThinking || currentPlayer !== 'p1'} />
           </div>
-        </Col>
+        </div>
 
-        <Col md={4}>
+        <div className="trees-col-side">
           {/* Game over panel */}
           {isGameOver && (
             <div style={{
-              background: '#e8f5e9', border: '2px solid #2e7d32', borderRadius: '10px',
+              background: 'rgba(26,11,46,0.9)', border: '2px solid rgba(153,66,240,0.4)', borderRadius: '10px',
               padding: '12px 16px', marginTop: '12px', marginBottom: '8px', textAlign: 'center',
             }}>
-              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#2e7d32', marginBottom: '6px' }}>
-                {finalP1 >= Math.max(...Object.values(finalScores)) ? '🎉 You Win!' : '🤖 AI Wins!'}
+              <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#f0eeff', marginBottom: '6px' }}>
+                {finalP1 >= Math.max(...Object.values(finalScores)) ? 'You Win!' : 'AI Wins!'}
               </div>
-              <div style={{ fontSize: '13px', color: '#555', marginBottom: '2px' }}>
+              <div style={{ fontSize: '13px', color: 'rgba(240,238,255,0.6)', marginBottom: '2px' }}>
                 You: <strong>{score}</strong> pts + {Math.floor(lp / 3)} bonus = <strong>{finalP1}</strong>
               </div>
               {aiPlayers.map((p, i) => (
-                <div key={p} style={{ fontSize: '13px', color: '#555', marginBottom: i === aiPlayers.length - 1 ? '8px' : '2px' }}>
+                <div key={p} style={{ fontSize: '13px', color: 'rgba(240,238,255,0.6)', marginBottom: i === aiPlayers.length - 1 ? '8px' : '2px' }}>
                   AI {i + 1}: <strong>{scoreAll[p] || 0}</strong> pts + {Math.floor((lpAll[p] || 0) / 3)} bonus = <strong>{finalScores[p] || 0}</strong>
                 </div>
               ))}
@@ -157,31 +162,32 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
                 onClick={resetGame}
                 style={{
                   fontSize: '13px', padding: '5px 16px', borderRadius: '8px',
-                  border: 'none', background: '#2e7d32', color: '#fff', cursor: 'pointer', fontWeight: 'bold',
+                  border: 'none', background: '#9942f0', color: '#fff', cursor: 'pointer', fontWeight: 'bold',
+                  fontFamily: "'Space Grotesk', sans-serif",
                 }}
-              >🌱 Play Again</button>
+              >Play Again</button>
             </div>
           )}
 
           {/* Final round banner */}
           {isFinalRound && !isGameOver && (
             <div style={{
-              background: '#fff3e0', border: '2px solid #f57c00', borderRadius: '8px',
+              background: 'rgba(255,138,65,0.1)', border: '2px solid rgba(255,138,65,0.4)', borderRadius: '8px',
               padding: '8px 12px', marginTop: '12px', marginBottom: '8px', fontSize: '13px',
-              color: '#e65100', fontWeight: 'bold', textAlign: 'center',
+              color: '#ff8a65', fontWeight: 'bold', textAlign: 'center',
             }}>
-              🌅 Final Round! Everyone takes one last turn.
+              Final Round — everyone takes one last turn.
             </div>
           )}
 
           {/* Setup banner */}
           {!isSetupComplete && !isGameOver && (
             <div style={{
-              background: '#e8f5e9', border: '1px solid #66bb6a', borderRadius: '8px',
-              padding: '8px 12px', marginTop: '12px', marginBottom: '8px', fontSize: '13px', color: '#2e7d32',
+              background: 'rgba(45,122,71,0.1)', border: '1px solid rgba(45,122,71,0.3)', borderRadius: '8px',
+              padding: '8px 12px', marginTop: '12px', marginBottom: '8px', fontSize: '13px', color: 'rgba(240,238,255,0.7)',
             }}>
               {aiThinking
-                ? '🤖 AI is placing its starting trees…'
+                ? 'AI is placing its starting trees...'
                 : <><strong>Setup:</strong> Place 2 small trees on the outer ring to begin.</>
               }
             </div>
@@ -196,41 +202,42 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
                 style={{
                   fontSize: '15px',
                   cursor: (!isHumanTurn || isGameOver) ? 'default' : 'pointer',
-                  background: aiThinking ? '#f5f5f5' : '#fffde7',
-                  border: '1px solid #f9a825',
+                  background: aiThinking ? 'rgba(56,142,60,0.1)' : 'rgba(56,142,60,0.2)',
+                  border: '1px solid rgba(56,142,60,0.5)',
                   borderRadius: '8px',
                   padding: '5px 16px',
                   fontWeight: 'bold',
-                  opacity: (!isHumanTurn || isGameOver) ? 0.6 : 1,
+                  color: '#f0eeff',
+                  opacity: (!isHumanTurn || isGameOver) ? 0.5 : 1,
                 }}
               >
-                {aiThinking ? '🤖 AI thinking…' : '☀️ End My Turn'}
+                {aiThinking ? 'AI thinking...' : 'End My Turn'}
               </button>
-              <span style={{ fontSize: '13px', color: isFinalRound ? '#e65100' : '#666' }}>
+              <span style={{ fontSize: '13px', color: isFinalRound ? '#ff9800' : 'rgba(240,238,255,0.5)' }}>
                 Sun: {sunPosition + 1}/6 · Rev. {sunRevolutions + 1}/3{isFinalRound ? ' · Final!' : ''}
               </span>
               <span style={{
                 fontSize: '11px', padding: '2px 7px', borderRadius: '4px',
-                background: difficulty === 'easy' ? '#e8f5e9' : difficulty === 'hard' ? '#fff3e0' : difficulty === 'expert' ? '#fce4ec' : '#f3e5f5',
-                color: difficulty === 'easy' ? '#2e7d32' : difficulty === 'hard' ? '#e65100' : difficulty === 'expert' ? '#880e4f' : '#6a1b9a',
-                border: '1px solid currentColor', fontWeight: 'bold',
+                background: 'rgba(56,142,60,0.15)',
+                color: 'rgba(240,238,255,0.7)',
+                border: '1px solid rgba(56,142,60,0.3)', fontWeight: 'bold',
               }}>
-                {difficulty === 'easy' ? '🌱 Easy' : difficulty === 'hard' ? '⚔️ Hard' : difficulty === 'expert' ? '🏆 Expert' : '🌳 Med'}
+                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
               </span>
             </div>
 
             {/* Turn order indicator */}
             {isSetupComplete && (
-              <div style={{ fontSize: '11px', color: '#777', marginBottom: '4px' }}>
+              <div style={{ fontSize: '11px', color: 'rgba(240,238,255,0.4)', marginBottom: '4px' }}>
                 <span style={{ marginRight: 4 }}>Order:</span>
                 {playerOrder.map((p, i) => {
                   const label = p === 'p1' ? 'You' : `AI ${aiPlayers.indexOf(p) + 1}`;
                   const isFirst = i === 0;
                   return (
                     <span key={p}>
-                      {i > 0 && <span style={{ color: '#bbb', margin: '0 3px' }}>→</span>}
-                      <span style={{ fontWeight: isFirst ? 'bold' : 'normal', color: isFirst ? '#2e7d32' : '#777' }}>
-                        {isFirst && '🌱 '}{label}
+                      {i > 0 && <span style={{ color: 'rgba(240,238,255,0.25)', margin: '0 3px' }}>→</span>}
+                      <span style={{ fontWeight: isFirst ? 'bold' : 'normal', color: isFirst ? '#66bb6a' : 'rgba(240,238,255,0.4)' }}>
+                        {label}
                       </span>
                     </span>
                   );
@@ -241,26 +248,26 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
             {/* Round summary */}
             {Object.keys(lastLpGainedAll).length > 0 && isSetupComplete && (
               <div style={{
-                fontSize: '12px', color: '#555', padding: '4px 8px',
-                background: '#f9f9f9', borderRadius: '6px', border: '1px solid #e0e0e0',
-                marginBottom: '6px', fontFamily: 'sans-serif',
+                fontSize: '12px', color: 'rgba(240,238,255,0.6)', padding: '4px 8px',
+                background: 'rgba(56,142,60,0.1)', borderRadius: '6px', border: '1px solid rgba(56,142,60,0.2)',
+                marginBottom: '6px',
               }}>
-                <span style={{ color: '#888', marginRight: 6 }}>Last round:</span>
-                <span style={{ color: '#388e3c', marginRight: 6 }}>
+                <span style={{ color: 'rgba(240,238,255,0.4)', marginRight: 6 }}>Last round:</span>
+                <span style={{ color: '#66bb6a', marginRight: 6 }}>
                   You +{lastLpGainedAll.p1 || 0} LP
                 </span>
                 {aiPlayers.map((p, i) => (
-                  <span key={p} style={{ color: '#1565c0', marginRight: 6 }}>
+                  <span key={p} style={{ color: 'rgba(240,238,255,0.5)', marginRight: 6 }}>
                     AI {i + 1} +{lastLpGainedAll[p] || 0} LP
                   </span>
                 ))}
-                <div style={{ marginTop: '3px', borderTop: '1px solid #e0e0e0', paddingTop: '3px' }}>
-                  <span style={{ color: '#888', marginRight: 6 }}>Victory points:</span>
-                  <span style={{ color: '#388e3c', marginRight: 6 }}>
+                <div style={{ marginTop: '3px', borderTop: '1px solid rgba(56,142,60,0.2)', paddingTop: '3px' }}>
+                  <span style={{ color: 'rgba(240,238,255,0.4)', marginRight: 6 }}>Victory points:</span>
+                  <span style={{ color: '#66bb6a', marginRight: 6 }}>
                     You <strong>{score}</strong>
                   </span>
                   {aiPlayers.map((p, i) => (
-                    <span key={p} style={{ color: '#1565c0', marginRight: 6 }}>
+                    <span key={p} style={{ color: 'rgba(240,238,255,0.5)', marginRight: 6 }}>
                       AI {i + 1} <strong>{scoreAll[p] || 0}</strong>
                     </span>
                   ))}
@@ -275,27 +282,27 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
             <div style={{
               display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px',
               padding: '4px 8px', borderRadius: '6px',
-              background: currentPlayer === 'p1' && !aiThinking ? '#e8f5e9' : 'transparent',
-              border: currentPlayer === 'p1' && !aiThinking ? '1px solid #66bb6a' : '1px solid transparent',
+              background: currentPlayer === 'p1' && !aiThinking ? 'rgba(56,142,60,0.15)' : 'transparent',
+              border: currentPlayer === 'p1' && !aiThinking ? '1px solid rgba(102,187,106,0.4)' : '1px solid transparent',
             }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontWeight: 'bold', fontSize: '14px' }}>
                 <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: swatch, display: 'inline-block' }} />
                 You
-                {firstPlayer === 'p1' && <span title="Goes first this revolution" style={{ fontSize: '11px' }}>🌱</span>}
+                {firstPlayer === 'p1' && <span title="Goes first this revolution" style={{ fontSize: '11px', color: '#66bb6a' }}>1st</span>}
               </span>
               <span style={{ fontSize: '14px' }}>
                 <strong>{lp}</strong> light points
                 {lastLpGained !== null && lastLpGained > 0 && (
-                  <span style={{ color: '#388e3c', marginLeft: '4px' }}>+{lastLpGained}</span>
+                  <span style={{ color: '#66bb6a', marginLeft: '4px' }}>+{lastLpGained}</span>
                 )}
               </span>
-              <span style={{ fontSize: '14px' }}>🏆 <strong>{score}</strong> pts</span>
+              <span style={{ fontSize: '14px' }}><strong>{score}</strong> pts</span>
             </div>
-            <h5 className="desktop-only" style={{ marginBottom: '4px', fontSize: '13px', color: '#555' }}>Available</h5>
+            <h5 className="desktop-only" style={{ marginBottom: '4px', fontSize: '13px', color: 'rgba(240,238,255,0.5)' }}>Available</h5>
             <div className="desktop-only">
               <Available piecesAvailable={piecesAvailable} lp={lp} owner="p1" disabled={aiThinking || currentPlayer !== 'p1'} />
             </div>
-            <h5 style={{ marginBottom: '4px', fontSize: '13px', color: '#555' }}>Store</h5>
+            <h5 style={{ marginBottom: '4px', fontSize: '13px', color: 'rgba(240,238,255,0.5)' }}>Store</h5>
             <Inventory piecesInInventory={piecesInInventory} lp={lp} owner="p1" disabled={aiThinking || currentPlayer !== 'p1'} />
           </div>
 
@@ -314,38 +321,61 @@ const GameContent = ({ playerColor, onResult, gameConfig }) => {
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px',
                   padding: '4px 8px', borderRadius: '6px',
-                  background: isActive ? '#e3f2fd' : 'transparent',
-                  border: isActive ? '1px solid #42a5f5' : '1px solid transparent',
+                  background: isActive ? 'rgba(66,165,245,0.15)' : 'transparent',
+                  border: isActive ? '1px solid rgba(66,165,245,0.4)' : '1px solid transparent',
                 }}>
                   <span style={{ fontWeight: 'bold', fontSize: '14px' }}>
-                    <span style={{ filter: COLOR_FILTERS[colorKey], display: 'inline-block' }}>🤖</span> AI {i + 1}
-                    {firstPlayer === p && <span title="Goes first this revolution" style={{ fontSize: '11px' }}>🌱</span>}
+                    AI {i + 1}
+                    {firstPlayer === p && <span title="Goes first this revolution" style={{ fontSize: '11px', color: '#66bb6a' }}> 1st</span>}
                   </span>
                   <span style={{ fontSize: '14px' }}><strong>{aiLp}</strong> LP</span>
-                  <span style={{ fontSize: '14px' }}>🏆 <strong>{aiScore}</strong> pts</span>
+                  <span style={{ fontSize: '14px' }}><strong>{aiScore}</strong> pts</span>
                 </div>
-                <h5 style={{ marginBottom: '4px', fontSize: '13px', color: '#555' }}>Available</h5>
+                <h5 style={{ marginBottom: '4px', fontSize: '13px', color: 'rgba(240,238,255,0.5)' }}>Available</h5>
                 <Available piecesAvailable={aiAvail} lp={aiLp} owner={p} disabled={true} />
-                <h5 style={{ marginBottom: '4px', fontSize: '13px', color: '#555' }}>Store</h5>
+                <h5 style={{ marginBottom: '4px', fontSize: '13px', color: 'rgba(240,238,255,0.5)' }}>Store</h5>
                 <Inventory piecesInInventory={aiInv} lp={aiLp} owner={p} disabled={true} />
               </div>
             );
           })}
-        </Col>
-      </Row>
+        </div>
+      </div>
       <div style={{
         marginTop: '32px',
         padding: '8px 12px',
-        borderTop: '1px solid #e0e0e0',
+        borderTop: '1px solid rgba(240,238,255,0.1)',
         fontSize: '10px',
-        color: '#aaa',
+        color: 'rgba(240,238,255,0.3)',
         textAlign: 'center',
         lineHeight: 1.5,
-        fontFamily: 'sans-serif',
       }}>
         Our games are original digital implementations of classic abstract strategy mechanics. We are fans of the tabletop industry and encourage players to support the official physical releases of the games that inspired us.
       </div>
-    </Container>
+      {menuOpen && (
+        <div onClick={() => setMenuOpen(false)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: '#1a0b2e', border: '1px solid rgba(240,238,255,0.15)', borderRadius: '12px',
+            padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: '12px', minWidth: '200px',
+          }}>
+            <button onClick={() => setMenuOpen(false)} style={{
+              padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(240,238,255,0.2)',
+              background: 'transparent', color: '#f0eeff', cursor: 'pointer', fontSize: '14px',
+            }}>Resume</button>
+            <button onClick={() => { resetGame(); setMenuOpen(false); }} style={{
+              padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(240,238,255,0.2)',
+              background: 'transparent', color: '#f0eeff', cursor: 'pointer', fontSize: '14px',
+            }}>New Game</button>
+            {onBack && <button onClick={onBack} style={{
+              padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(240,238,255,0.2)',
+              background: 'transparent', color: '#f0eeff', cursor: 'pointer', fontSize: '14px',
+            }}>Back to Library</button>}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -365,7 +395,7 @@ const App = ({ onBack, onResult }) => {
     <div className="game-trees">
       <DndProvider backend={touch ? TouchBackend : HTML5Backend} options={touch ? { enableMouseEvents: true } : {}}>
         <GameProvider initialColor={gameConfig.color} initialDifficulty={gameConfig.difficulty} numAI={gameConfig.numAI} maxRevolutions={gameConfig.rounds || 3}>
-          <GameContent playerColor={gameConfig.color} onResult={onResult} gameConfig={gameConfig} />
+          <GameContent playerColor={gameConfig.color} onResult={onResult} onBack={onBack} gameConfig={gameConfig} />
         </GameProvider>
       </DndProvider>
     </div>

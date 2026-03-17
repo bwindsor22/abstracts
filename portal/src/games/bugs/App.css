@@ -171,3 +171,57 @@
 .game-bugs .game-menu-panel button:hover {
   background: rgba(153, 66, 240, 0.25);
 }
+
+/* Movement guide */
+.game-bugs .movement-guide {
+  background: rgba(26, 11, 46, 0.8);
+  border: 1px solid rgba(153, 66, 240, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.game-bugs .guide-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(153, 66, 240, 0.7);
+  margin-bottom: 10px;
+}
+
+.game-bugs .guide-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.game-bugs .guide-row:last-child {
+  margin-bottom: 0;
+}
+
+.game-bugs .guide-piece {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #191022;
+  flex-shrink: 0;
+}
+
+.game-bugs .guide-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f0eeff;
+}
+
+.game-bugs .guide-desc {
+  font-size: 11px;
+  color: rgba(240, 238, 255, 0.5);
+  line-height: 1.4;
+}

@@ -27,9 +27,11 @@ export default function Profile({ onNavigate }) {
   return (
     <div className="profile-view">
       <div className="profile-header">
-        <div className="profile-avatar">🎮</div>
+        <div className="profile-avatar">
+          <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'var(--primary)' }}>person</span>
+        </div>
         <div className="profile-info">
-          <div className="profile-username">Stratos Player</div>
+          <div className="profile-username">Player</div>
           <div className="profile-tagline">
             {stats.totalGames === 0
               ? 'Ready to play — start your first game!'
@@ -76,7 +78,11 @@ export default function Profile({ onNavigate }) {
           <div className="profile-badges-row">
             {recentBadges.map(badge => (
               <div key={badge.id} className="profile-badge-mini">
-                <span className="profile-badge-mini-icon">{badge.icon}</span>
+                {badge.image ? (
+                  <img src={badge.image} alt={badge.name} className="profile-badge-mini-img" />
+                ) : (
+                  <span className="profile-badge-mini-icon material-symbols-outlined">{badge.icon}</span>
+                )}
                 <span className="profile-badge-mini-name">{badge.name}</span>
               </div>
             ))}
@@ -95,7 +101,7 @@ export default function Profile({ onNavigate }) {
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
-            Game Library
+            Home
           </button>
           <button className="profile-nav-btn" onClick={() => onNavigate('history')}>
             <svg viewBox="0 0 24 24">
