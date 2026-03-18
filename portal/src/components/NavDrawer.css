@@ -180,6 +180,9 @@
 .nav-drawer-footer {
   padding: 16px 20px 0;
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .nav-drawer-footer-text {
@@ -188,4 +191,91 @@
   letter-spacing: 0.2em;
   color: var(--primary);
   opacity: 0.6;
+}
+
+.nav-drawer-signin-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.nav-drawer-signin-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+}
+
+.nav-drawer-signin-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-drawer-auth-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-drawer-user-icon {
+  font-size: 18px;
+  color: var(--primary);
+}
+
+.nav-drawer-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nav-drawer-auth-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-drawer-auth-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-drawer-auth-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.nav-drawer-signout {
+  border-color: rgba(240, 60, 60, 0.2);
+  color: #f06060;
+}
+
+.nav-drawer-signout:hover {
+  background: rgba(240, 60, 60, 0.1);
+  color: #f06060;
 }

@@ -196,9 +196,95 @@ A `profiles` table (username, avatar URL) would be added, populated on first sig
 
 ---
 
-## What's NOT in scope
+## Domain Registration
+
+You have two options:
+
+### Option A: Buy through Vercel (simplest)
+
+1. Go to Vercel dashboard → Domains → Buy
+2. Search for your domain (e.g. `abstracts.games`, `playabstracts.com`)
+3. Purchase — DNS is auto-configured, zero setup
+4. Typical cost: ~$10–20/year depending on TLD
+
+### Option B: Buy from a registrar, point to Vercel
+
+1. Buy from Namecheap, Cloudflare Registrar, or Google Domains (~$8–15/year for `.com`)
+2. In Vercel: Project Settings → Domains → Add your domain
+3. Vercel gives you DNS records (either nameservers or A/CNAME records)
+4. Add those records at your registrar
+5. SSL is automatic either way
+
+**Recommendation:** Option A if you want zero friction. Option B if you want Cloudflare's DNS/CDN or already have a registrar account.
+
+---
+
+## Multiplayer Capability (Supabase Realtime)
+
+Supabase includes **Realtime** — WebSocket channels with presence and broadcast — on the free tier. This is well-suited for turn-based multiplayer in abstract games.
+
+### What Supabase Realtime provides
+
+| Feature | How it helps |
+|---|---|
+| **Broadcast** | Send game moves between players in real time (JSON messages over WebSocket) |
+| **Presence** | Track who's online, show "opponent connected" status |
+| **Postgres Changes** | Listen for database row changes (e.g. new move inserted → opponent notified) |
+
+### How multiplayer would work
+
+```
+Player A creates a game → gets a room code (e.g. "ABCD")
+Player B joins with the room code
+Both subscribe to Supabase channel: `game:ABCD`
+
+On each move:
+  1. Player sends move via channel.send({ type: 'move', data: {...} })
+  2. Opponent receives it instantly via channel.on('move', ...)
+  3. Move is also persisted to a `game_moves` table for reconnection/replay
+```
+
+### Additional schema for multiplayer
+
+```sql
+-- Active games (matchmaking + reconnection)
+create table games (
+  id          text primary key,              -- room code
+  game_type   text not null,                 -- 'hexes', 'walls', etc.
+  player1     uuid references auth.users,
+  player2     uuid references auth.users,
+  state       jsonb,                         -- current game state (for reconnection)
+  status      text default 'waiting',        -- waiting, active, finished
+  created_at  timestamptz default now()
+);
+
+-- Move log (for replay and reconnection)
+create table game_moves (
+  id          uuid primary key default gen_random_uuid(),
+  game_id     text references games on delete cascade,
+  player      uuid references auth.users,
+  move_data   jsonb not null,
+  move_number integer not null,
+  created_at  timestamptz default now()
+);
+```
+
+### Free tier limits
+
+- **Realtime:** 200 concurrent connections, 2M messages/month — plenty for early multiplayer
+- **Database:** 500 MB storage, 50K monthly active users
+- **No separate WebSocket server needed** — Supabase handles it
+
+### Implementation effort
+
+Multiplayer would be a **Phase 4** after auth is working. Each game's `Game.js` already has pure `initState` / `applyMove` functions, so the core logic is ready — only the UI layer needs to send/receive moves over the channel instead of calling the AI.
+
+---
+
+## What's NOT in scope (for now)
 
 - Server-side rendering (CRA is pure SPA, Vercel handles it fine)
 - Paid tiers (free tiers are sufficient for early users)
 - Custom backend / API routes (Supabase client SDK is called directly from the browser)
 - Mobile apps (web-only for now)
+- Matchmaking system (Phase 4+ — room codes are sufficient to start)

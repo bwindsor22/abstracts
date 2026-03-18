@@ -58,7 +58,9 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function NavDrawer({ open, onClose, currentView, onNavigate }) {
+export default function NavDrawer({ open, onClose, currentView, onNavigate, user, onSignInClick, onSignOut, onImportGuest }) {
+  const displayName = user?.email?.split('@')[0] || null;
+
   return (
     <div className={`nav-drawer-overlay${open ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Navigation menu">
       <div className="nav-drawer-backdrop" onClick={onClose} />
@@ -92,6 +94,31 @@ export default function NavDrawer({ open, onClose, currentView, onNavigate }) {
         </div>
 
         <div className="nav-drawer-footer">
+          {user ? (
+            <div className="nav-drawer-auth-section">
+              <div className="nav-drawer-user">
+                <span className="material-symbols-outlined nav-drawer-user-icon">person</span>
+                <span className="nav-drawer-user-name">{displayName}</span>
+              </div>
+              <div className="nav-drawer-auth-actions">
+                <button className="nav-drawer-auth-btn" onClick={onImportGuest}>
+                  Import guest data
+                </button>
+                <button className="nav-drawer-auth-btn nav-drawer-signout" onClick={onSignOut}>
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button className="nav-drawer-signin-btn" onClick={onSignInClick}>
+              <svg viewBox="0 0 24 24">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <polyline points="10 17 15 12 10 7" />
+                <line x1="15" y1="12" x2="3" y2="12" />
+              </svg>
+              Sign In
+            </button>
+          )}
           <span className="nav-drawer-footer-text">ABSTRACTS</span>
         </div>
       </nav>

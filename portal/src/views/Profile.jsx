@@ -4,7 +4,7 @@ import { GAME_MAP } from '../data/games';
 import { ALL_BADGES } from '../data/badges';
 import './Profile.css';
 
-export default function Profile({ onNavigate }) {
+export default function Profile({ onNavigate, user }) {
   const stats = getStats();
   const history = getHistory();
   const earnedList = getEarnedBadges();
@@ -31,7 +31,7 @@ export default function Profile({ onNavigate }) {
           <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'var(--primary)' }}>person</span>
         </div>
         <div className="profile-info">
-          <div className="profile-username">Player</div>
+          <div className="profile-username">{user?.email?.split('@')[0] || 'Guest'}</div>
           <div className="profile-tagline">
             {stats.totalGames === 0
               ? 'Ready to play — start your first game!'
