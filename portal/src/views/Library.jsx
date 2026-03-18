@@ -15,6 +15,11 @@ function GameCard({ game, onClick }) {
   return (
     <button className="library-card card-hover" onClick={() => onClick(game)}>
       <div className="library-card-glow" />
+      {game.complexity && (
+        <span className={`library-card-complexity complexity-${game.complexity}`}>
+          {game.complexity}
+        </span>
+      )}
       <GameIcon icon={game.icon} className="library-card-icon" />
       <span className="library-card-name">{game.name}</span>
       <span className="library-card-subtitle">{game.subtitle}</span>
