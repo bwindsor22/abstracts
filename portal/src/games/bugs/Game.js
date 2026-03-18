@@ -159,8 +159,27 @@ export function getAllMoves(state, player) {
   return moves;
 }
 
+// Validate a move against the current state before applying it
+export function isValidMove(state, move) {
+  const validMoves = getAllMoves(state, state.currentPlayer);
+  if (move.type === 'place') {
+    return validMoves.some(m => m.type === 'place' && m.pieceId === move.pieceId && m.q === move.q && m.r === move.r);
+  }
+  if (move.type === 'move') {
+    return validMoves.some(m => m.type === 'move' && m.fromKey === move.fromKey && m.q === move.q && m.r === move.r);
+  }
+  return false;
+}
+
 export function applyMove(state, move) {
   const player = state.currentPlayer;
+
+  // Safety check: reject invalid moves to prevent hive disconnection bugs
+  if (!isValidMove(state, move)) {
+    console.warn('[Hive] Rejected invalid move:', move, 'for player', player);
+    return state; // Return unchanged state
+  }
+
   const board={};
   for (const [k,v] of Object.entries(state.board)) board[k]=[...v];
   const hand={black:{...state.hand.black}, white:{...state.hand.white}};
@@ -194,6 +213,11 @@ export function applyMove(state, move) {
     }
     return false;
   };
+
+  // Post-move connectivity assertion (pass undefined so no key is skipped)
+  if (!isConnected(board, undefined)) {
+    console.error('[Hive] Board disconnected after move!', move);
+  }
 
   const opp = player==='black'?'white':'black';
   const oppSurrounded = surrounded(opp);

@@ -185,3 +185,21 @@
   color: var(--text);
   border-color: var(--text-secondary);
 }
+
+.auth-username-status {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: -2px;
+}
+
+.auth-username-status.checking {
+  color: var(--text-secondary);
+}
+
+.auth-username-status.available {
+  color: #2ecc71;
+}
+
+.auth-username-status.taken {
+  color: #f06060;
+}

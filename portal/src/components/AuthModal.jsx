@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { checkUsernameAvailable } from '../utils/supabase';
 import './AuthModal.css';
 
 function suggestUsername(email) {
@@ -15,6 +16,8 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [signupDone, setSignupDone] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState(null); // null | 'checking' | 'available' | 'taken'
+  const usernameTimer = useRef(null);
 
   // Auto-suggest username from email (only if user hasn't manually edited it)
   useEffect(() => {
@@ -22,6 +25,20 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
       setUsername(suggestUsername(email));
     }
   }, [email, mode, usernameTouched]);
+
+  // Debounced username availability check
+  useEffect(() => {
+    if (mode !== 'signup') return;
+    const name = username.trim();
+    if (name.length < 2) { setUsernameStatus(null); return; }
+    setUsernameStatus('checking');
+    clearTimeout(usernameTimer.current);
+    usernameTimer.current = setTimeout(async () => {
+      const available = await checkUsernameAvailable(name);
+      setUsernameStatus(available ? 'available' : 'taken');
+    }, 400);
+    return () => clearTimeout(usernameTimer.current);
+  }, [username, mode]);
 
   if (!open) return null;
 
@@ -35,6 +52,14 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
         onClose();
       } else {
         const name = username.trim() || suggestUsername(email) || 'Player';
+        // Final uniqueness check before submitting
+        const available = await checkUsernameAvailable(name);
+        if (!available) {
+          setUsernameStatus('taken');
+          setError('That username is already taken. Please choose another.');
+          setLoading(false);
+          return;
+        }
         await onSignUp(email, password, name);
         setSignupDone(true);
       }
@@ -112,6 +137,9 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
                   autoComplete="username"
                   placeholder="Choose a display name"
                 />
+                {usernameStatus === 'checking' && <span className="auth-username-status checking">Checking...</span>}
+                {usernameStatus === 'available' && <span className="auth-username-status available">Available</span>}
+                {usernameStatus === 'taken' && <span className="auth-username-status taken">Username taken</span>}
               </label>
             )}
             <label className="auth-label">
@@ -130,7 +158,7 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
 
             {error && <div className="auth-error">{error}</div>}
 
-            <button type="submit" className="auth-btn auth-btn-primary" disabled={loading}>
+            <button type="submit" className="auth-btn auth-btn-primary" disabled={loading || (mode === 'signup' && usernameStatus === 'taken')}>
               {loading ? 'Loading...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
             </button>
           </form>

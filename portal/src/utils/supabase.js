@@ -63,6 +63,17 @@ export async function getUsername(user) {
   return user.user_metadata?.username || user.email?.split('@')[0] || 'Player';
 }
 
+export async function checkUsernameAvailable(username) {
+  if (!username || username.trim().length < 2) return false;
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .ilike('username', username.trim())
+    .limit(1);
+  if (error) { console.warn('Username check failed:', error.message); return true; } // fail open
+  return !data || data.length === 0;
+}
+
 // ── Cloud sync ──────────────────────────────────────────────────────────────
 
 export async function pushResult(userId, result) {
