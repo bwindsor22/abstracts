@@ -20,6 +20,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: portal/package-lock.json
       - run: npm ci --legacy-peer-deps
-      - run: npm test -- --watchAll=false --passWithNoTests
+      - run: npm test -- --watchAll=false --passWithNoTests --coverage
         env:
           CI: true
