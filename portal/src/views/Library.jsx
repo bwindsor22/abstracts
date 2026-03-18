@@ -46,6 +46,17 @@ function PlayModal({ game, onPlay, onClose }) {
           <button className="library-modal-close" onClick={onClose} aria-label="Close">×</button>
         </div>
 
+        {game.complexity && (
+          <div className={`library-modal-complexity complexity-${game.complexity}`}>
+            <span className="library-modal-complexity-label">{game.complexity} complexity</span>
+            <span className="library-modal-complexity-desc">
+              {game.complexity === 'low' && '— pick up and play in under a minute'}
+              {game.complexity === 'medium' && '— a few rules to learn before you start'}
+              {game.complexity === 'high' && '— multiple systems to learn, best with the guide below'}
+            </span>
+          </div>
+        )}
+
         <GameGuide gameId={game.id} />
 
         <button
