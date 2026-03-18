@@ -14,7 +14,7 @@ export const GAMES = [
   { id: 'bridges', name: 'Bridges', subtitle: 'Connector Strategy', icon: 'share',                port: 3001, category: 'classic', complexity: 'low' },
   { id: 'pairs',   name: 'Pairs',   subtitle: 'Ancient Grounding',  icon: 'diamond',               port: 3007, category: 'classic', complexity: 'low' },
   // Ancient Foundations
-  { id: 'sowing',  name: 'Sowing',  subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient', complexity: 'low' },
+  { id: 'sowing',  name: 'Sowing',  subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient', complexity: 'medium' },
   { id: 'mills',   name: 'Mills',   subtitle: 'Trap & Capture',     icon: 'token',                 port: 3012, category: 'ancient', complexity: 'low' },
 ];
 
