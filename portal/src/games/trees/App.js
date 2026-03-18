@@ -5,7 +5,7 @@ import Available from "./view/available/index";
 import CollectArea from "./view/board/CollectArea";
 import Tutorial from "./view/Tutorial";
 import StartScreen from "./view/StartScreen";
-import { GameProvider, useGameState, COLOR_FILTERS } from "./view/board/GameContext";
+import { GameProvider, useGameState } from "./view/board/GameContext";
 import "./App.css";
 
 
@@ -307,9 +307,7 @@ const GameContent = ({ playerColor, onResult, onBack, gameConfig }) => {
             const aiInv = inventoriesAll[p] || {};
             const aiAvail = availablesAll[p] || {};
             const isActive = currentPlayer === p && aiThinking;
-            const aiColorOrder = ['blue', 'orange', 'purple', 'green'];
-            const available = aiColorOrder.filter(c => c !== playerColor);
-            const colorKey = available[i % available.length] || 'blue';
+
             return (
               <div key={p} style={{ marginBottom: '16px' }}>
                 <div style={{

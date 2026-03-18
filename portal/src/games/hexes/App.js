@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 import WinOverlay from '../../components/WinOverlay';
-import { SIZE, initState, applyMove, applySwap, inBounds } from './Game';
+import { SIZE, initState, applyMove, applySwap } from './Game';
 import { getAIMove } from './AI/ai';
 
 // ─── Board geometry ───────────────────────────────────────────────────────────

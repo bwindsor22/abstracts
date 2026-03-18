@@ -1,5 +1,5 @@
 // ai.js — Hex AI: easy (random), medium (depth-2 minimax), hard (depth-3)
-import { applyMove, evaluate, getAllMoves, SIZE, shortestPath } from '../Game.js';
+import { evaluate, getAllMoves, SIZE } from '../Game.js';
 
 function minimax(board, depth, alpha, beta, maximizing, aiPlayer) {
   const opp = aiPlayer === 'red' ? 'blue' : 'red';
@@ -68,7 +68,6 @@ export function getAIMove(state, player, difficulty = 'medium') {
 
   let bestMove = candidates[0];
   let bestVal = -Infinity;
-  const opp = player === 'red' ? 'blue' : 'red';
 
   for (const [r, c] of candidates) {
     const newBoard = state.board.map(row => [...row]);

@@ -9,7 +9,6 @@ const PAD = 36;
 const DOT = 6;      // peg radius
 const BAND = 12;    // border band thickness
 
-const BG = '#191022';
 const SVG_BG = '#1a1030';
 const RED_COLOR = '#e05555';
 const BLUE_COLOR = '#5588e0';

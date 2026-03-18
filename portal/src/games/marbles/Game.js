@@ -202,7 +202,6 @@ export function applyMoveFixed(state, move) {
   const newCaptured = { ...captured };
 
   if (move.type === 'inline') {
-    const marbleSet = new Set(move.marbles);
     const marbles = move.marbles.map(parseKey);
 
     // Find the leading marble (furthest in dir)

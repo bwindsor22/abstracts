@@ -1,5 +1,5 @@
 // ai.js — Quoridor AI
-import { getAllMoves, applyMove, evaluate, SIZE } from '../Game.js';
+import { getAllMoves, applyMove, evaluate } from '../Game.js';
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -11,7 +11,6 @@ function shuffle(arr) {
 
 function scoreMove(state, move, player) {
   if (move.type === 'move') {
-    const goal = player === 'p1' ? SIZE - 1 : 0;
     const cur = state.pawns[player].row;
     const delta = player === 'p1' ? move.row - cur : cur - move.row;
     return 10 + delta * 5;

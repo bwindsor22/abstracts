@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ALL_BADGES, RARITY_COLORS } from '../data/badges';
-import { getEarnedBadges, getStats } from '../utils/storage';
+import { getEarnedBadges } from '../utils/storage';
 import './Badges.css';
 
 function formatDate(ts) {
@@ -45,7 +45,6 @@ function BadgeCard({ badge, earnedEntry }) {
 export default function Badges() {
   const [tab, setTab] = useState('earned');
   const earnedList = getEarnedBadges();
-  const stats = getStats();
 
   const earnedMap = useMemo(() =>
     Object.fromEntries(earnedList.map(e => [e.id, e])),

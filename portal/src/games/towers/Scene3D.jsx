@@ -1,5 +1,5 @@
 // Scene3D.jsx — Santorini 3D board using react-three-fiber
-import React, { useRef } from 'react';
+import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 
@@ -29,9 +29,6 @@ function cellXZ(r, c) {
 function TowerCell({ r, c, cell, highlight, onCellClick }) {
   const [x, z] = cellXZ(r, c);
   const { level, dome } = cell;
-
-  // Total tower height (Y top of last block)
-  const towerTopY = level * BLOCK_H;
 
   let hlColor = null;
   let hlOpacity = 0.55;

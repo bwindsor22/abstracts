@@ -1,9 +1,8 @@
 // ai.js — Tak AI
 import {
-  SIZE, cellIdx, cellRC,
+  cellIdx, cellRC,
   canPlace, applyPlace,
   canPickUp, getValidMoveSquares, applyMoveStack,
-  DIRS,
 } from '../Game';
 
 // ── Move generation ────────────────────────────────────────────────────────────

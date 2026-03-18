@@ -10,7 +10,6 @@ const CELL = 52;
 const WALL_W = 10;
 const PAD = 24;
 
-const BG = '#191022';
 const GRID_COLOR = 'rgba(153,66,240,0.2)';
 const P1_COLOR = '#d94f4f';
 const P2_COLOR = '#4f7fd9';
@@ -202,7 +201,7 @@ function VWallSlot({ gs, row, col, onWallDrop }) {
 }
 
 function WallSlotOverlays({ gs, onWallDrop, svgSize }) {
-  const { currentPlayer, winner, wallsLeft, vsAI, aiPlayer } = gs;
+  const { winner } = gs;
   const hidden = !!winner;
 
   return (

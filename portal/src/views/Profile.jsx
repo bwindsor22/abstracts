@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { getStats, getHistory, getEarnedBadges } from '../utils/storage';
+import { getStats, getEarnedBadges } from '../utils/storage';
 import { GAME_MAP } from '../data/games';
 import { ALL_BADGES } from '../data/badges';
 import './Profile.css';
 
 export default function Profile({ onNavigate, user }) {
   const stats = getStats();
-  const history = getHistory();
   const earnedList = getEarnedBadges();
 
   const winRate = stats.totalGames > 0

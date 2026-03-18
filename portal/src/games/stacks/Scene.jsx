@@ -1,9 +1,9 @@
 // Scene.jsx — 3D board rendered with react-three-fiber
-import React, { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useState } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
-import { cellIdx, SIZE } from './Game';
+import { cellIdx } from './Game';
 
 // ── Colours ────────────────────────────────────────────────────────────────
 const P1_COLOR   = '#e8d5a0';  // warm cream

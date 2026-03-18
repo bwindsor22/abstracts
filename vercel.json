@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd portal && npm install --legacy-peer-deps && CI=false npm run build",
+  "buildCommand": "cd portal && npm install --legacy-peer-deps && GENERATE_SOURCEMAP=false npm run build",
   "outputDirectory": "portal/build",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

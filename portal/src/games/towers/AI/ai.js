@@ -1,5 +1,5 @@
 // ai.js — Santorini AI (minimax with alpha-beta pruning)
-import { getAllMoves, applyFullMove, evaluate, getWorkerKeys, getValidMoves } from '../Game';
+import { getAllMoves, applyFullMove, evaluate } from '../Game';
 
 function minimax(state, depth, alpha, beta, maximizing, player) {
   if (state.winner || depth === 0) return evaluate(state, player);

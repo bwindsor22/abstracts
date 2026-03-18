@@ -1,7 +1,7 @@
 // ai.js — YINSH AI player (easy / medium / hard)
 import {
   getAllLegalMoves, applyMove, placeRingSetup,
-  removeRow, scoreRing, detectRows, parseKey, coordKey, isValidCell, DIRECTIONS,
+  removeRow, scoreRing, parseKey, coordKey, isValidCell, DIRECTIONS,
 } from '../Game.js';
 
 // ─── Heuristic ────────────────────────────────────────────────────────────────

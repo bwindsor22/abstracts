@@ -82,11 +82,6 @@ function checkMill(board, pos, player) {
   return MILL_SET.some(m => m.includes(pos) && m.every(i => board[i] === player));
 }
 
-function allInMills(board, player) {
-  const pieces = board.map((v,i) => v === player ? i : -1).filter(i => i >= 0);
-  return pieces.every(p => checkMill(board, p, player));
-}
-
 // ── Game state ─────────────────────────────────────────────────────────────────
 function initState({ vsAI = true, difficulty = 'medium' } = {}) {
   return {
@@ -166,7 +161,6 @@ function applyMove(state, move) {
   }
 
   // Check winner
-  const opp = 1 - s.currentPlayer;
   const oppOnBoard = s.board.filter(v => v === s.currentPlayer).length;
   const oppInHand = s.piecesInHand[s.currentPlayer];
   if (oppOnBoard + oppInHand < 3 && oppInHand === 0) {
@@ -289,7 +283,7 @@ const LINES = [
 ];
 
 function MillsBoard({ state, selected, onPosClick, validTargets, removable }) {
-  const { board, pendingRemove, currentPlayer } = state;
+  const { board, currentPlayer } = state;
   const removableSet = new Set(removable);
   const validSet = new Set(validTargets);
 

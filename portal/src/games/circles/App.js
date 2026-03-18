@@ -158,11 +158,6 @@ function BoardCell({ cellKey, x, y, cell, state, onCellClick, onCellDrop, isDrag
 function Board({ state, onCellClick, onCellDrop }) {
   const { isDragging } = useDragLayer(m => ({ isDragging: m.isDragging() }));
 
-  const validMoves = state.phase === 'play' && state.selectedRing
-    ? getValidMoves(state, state.selectedRing)
-    : [];
-  const validSet = new Set(validMoves);
-
   return (
     <svg
       width={BOARD_SVG_SIZE} height={BOARD_SVG_SIZE}
