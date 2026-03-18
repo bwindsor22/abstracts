@@ -15,8 +15,14 @@ export async function signInWithEmail(email, password) {
   return data;
 }
 
-export async function signUpWithEmail(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export async function signUpWithEmail(email, password, username) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { username: username || email.split('@')[0] },
+    },
+  });
   if (error) throw error;
   return data;
 }
@@ -35,6 +41,26 @@ export async function signOut() {
 export async function getSession() {
   const { data: { session } } = await supabase.auth.getSession();
   return session;
+}
+
+// ── Profiles ────────────────────────────────────────────────────────────────
+
+export async function ensureProfile(user) {
+  const username = user.user_metadata?.username || user.email?.split('@')[0] || 'Player';
+  const { error } = await supabase.from('profiles').upsert({
+    id: user.id,
+    username,
+  }, { onConflict: 'id', ignoreDuplicates: true });
+  if (error) console.warn('Failed to ensure profile:', error.message);
+}
+
+export async function getUsername(user) {
+  if (!user) return 'Guest';
+  // Try profiles table first
+  const { data } = await supabase.from('profiles').select('username').eq('id', user.id).single();
+  if (data?.username) return data.username;
+  // Fall back to user_metadata
+  return user.user_metadata?.username || user.email?.split('@')[0] || 'Player';
 }
 
 // ── Cloud sync ──────────────────────────────────────────────────────────────
@@ -97,7 +123,6 @@ export async function syncFromCloud(userId) {
   const KEY_HISTORY = 'stratos_history';
   const KEY_BADGES = 'stratos_badges';
 
-  // Fetch cloud data
   const [cloudHistory, cloudBadges] = await Promise.all([
     fetchCloudHistory(userId),
     fetchCloudBadges(userId),
@@ -141,7 +166,6 @@ export async function pushLocalToCloud(userId) {
   let localBadges = [];
   try { localBadges = JSON.parse(localStorage.getItem(KEY_BADGES) || '[]'); } catch {}
 
-  // Push history in batches
   if (localHistory.length > 0) {
     const rows = localHistory.map(r => ({
       user_id: userId,
@@ -152,15 +176,34 @@ export async function pushLocalToCloud(userId) {
       difficulty: r.difficulty,
       played_at: new Date(r.timestamp).toISOString(),
     }));
-    // Upsert in chunks of 100
     for (let i = 0; i < rows.length; i += 100) {
       const chunk = rows.slice(i, i + 100);
       await supabase.from('match_history').insert(chunk);
     }
   }
 
-  // Push badges
   for (const b of localBadges) {
     await pushBadge(userId, b.id, b.earnedAt);
   }
+}
+
+// ── Leaderboard ─────────────────────────────────────────────────────────────
+
+export async function fetchLeaderboard(gameId) {
+  // gameId: specific game or null for overall
+  let query = supabase
+    .from('leaderboard')
+    .select('*')
+    .order('elo', { ascending: false })
+    .limit(50);
+
+  if (gameId) {
+    query = query.eq('game_id', gameId);
+  } else {
+    query = query.eq('game_id', '_overall');
+  }
+
+  const { data, error } = await query;
+  if (error) { console.warn('Failed to fetch leaderboard:', error.message); return []; }
+  return data || [];
 }

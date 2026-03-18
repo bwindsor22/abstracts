@@ -56,10 +56,21 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    id: 'leaderboard',
+    title: 'Leaderboard',
+    subtitle: 'Top players',
+    icon: (
+      <svg viewBox="0 0 24 24">
+        <rect x="2" y="14" width="6" height="8" rx="1" />
+        <rect x="9" y="6" width="6" height="16" rx="1" />
+        <rect x="16" y="10" width="6" height="12" rx="1" />
+      </svg>
+    ),
+  },
 ];
 
-export default function NavDrawer({ open, onClose, currentView, onNavigate, user, onSignInClick, onSignOut, onImportGuest }) {
-  const displayName = user?.email?.split('@')[0] || null;
+export default function NavDrawer({ open, onClose, currentView, onNavigate, user, displayName, onSignInClick, onSignOut, onImportGuest }) {
 
   return (
     <div className={`nav-drawer-overlay${open ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Navigation menu">

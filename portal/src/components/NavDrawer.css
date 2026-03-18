@@ -121,6 +121,7 @@
 .nav-drawer-overlay.open .nav-drawer-item:nth-child(3) { animation-delay: 0.15s; }
 .nav-drawer-overlay.open .nav-drawer-item:nth-child(4) { animation-delay: 0.20s; }
 .nav-drawer-overlay.open .nav-drawer-item:nth-child(5) { animation-delay: 0.25s; }
+.nav-drawer-overlay.open .nav-drawer-item:nth-child(6) { animation-delay: 0.30s; }
 
 .nav-drawer-item:hover {
   background: var(--surface);

@@ -30,7 +30,7 @@ export default function Profile({ onNavigate, user }) {
           <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'var(--primary)' }}>person</span>
         </div>
         <div className="profile-info">
-          <div className="profile-username">{user?.email?.split('@')[0] || 'Guest'}</div>
+          <div className="profile-username">{user?.user_metadata?.username || 'Guest'}</div>
           <div className="profile-tagline">
             {stats.totalGames === 0
               ? 'Ready to play — start your first game!'

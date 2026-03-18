@@ -12,6 +12,7 @@ import Badges from './views/Badges';
 import Profile from './views/Profile';
 import { addResult, checkAndAwardBadges } from './utils/storage';
 import { ALL_BADGES } from './data/badges';
+import Leaderboard from './views/Leaderboard';
 import {
   supabase,
   signInWithEmail,
@@ -21,6 +22,8 @@ import {
   pushBadge,
   syncFromCloud,
   pushLocalToCloud,
+  ensureProfile,
+  getUsername,
 } from './utils/supabase';
 
 export default function App() {
@@ -30,6 +33,7 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [newBadges, setNewBadges] = useState([]);
   const [user, setUser] = useState(null);
+  const [displayName, setDisplayName] = useState('Guest');
   const [authOpen, setAuthOpen] = useState(false);
   const [authReason, setAuthReason] = useState(null); // 'game-end' | null
   const pendingResult = useRef(null);
@@ -38,15 +42,20 @@ export default function App() {
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        syncFromCloud(session.user.id).catch(() => {});
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) {
+        ensureProfile(u).catch(() => {});
+        getUsername(u).then(setDisplayName).catch(() => {});
+        syncFromCloud(u.id).catch(() => {});
       }
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const newUser = session?.user ?? null;
       setUser(newUser);
       if (newUser) {
+        ensureProfile(newUser).catch(() => {});
+        getUsername(newUser).then(setDisplayName).catch(() => {});
         syncFromCloud(newUser.id).then(() => {
           // If there's a pending result from a game that just ended, save it now
           if (pendingResult.current) {
@@ -111,8 +120,8 @@ export default function App() {
     // onAuthStateChange handles saving pendingResult
   }, []);
 
-  const handleSignUp = useCallback(async (email, password) => {
-    await signUpWithEmail(email, password);
+  const handleSignUp = useCallback(async (email, password, username) => {
+    await signUpWithEmail(email, password, username);
   }, []);
 
   const handleSignOut = useCallback(async () => {
@@ -150,6 +159,7 @@ export default function App() {
     elo: EloTrends,
     badges: Badges,
     profile: Profile,
+    leaderboard: Leaderboard,
   };
   const ViewComponent = views[view] || Library;
 
@@ -163,6 +173,7 @@ export default function App() {
         currentView={view}
         onNavigate={(v) => { navigate(v); setNavOpen(false); }}
         user={user}
+        displayName={displayName}
         onSignInClick={() => { setNavOpen(false); setAuthOpen(true); }}
         onSignOut={handleSignOut}
         onImportGuest={handleImportGuest}

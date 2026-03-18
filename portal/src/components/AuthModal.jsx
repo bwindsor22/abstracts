@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AuthModal.css';
+
+function suggestUsername(email) {
+  if (!email || !email.includes('@')) return '';
+  return email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
+}
 
 export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason }) {
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [usernameTouched, setUsernameTouched] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [signupDone, setSignupDone] = useState(false);
+
+  // Auto-suggest username from email (only if user hasn't manually edited it)
+  useEffect(() => {
+    if (mode === 'signup' && !usernameTouched) {
+      setUsername(suggestUsername(email));
+    }
+  }, [email, mode, usernameTouched]);
 
   if (!open) return null;
 
@@ -20,7 +34,8 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
         await onSignIn(email, password);
         onClose();
       } else {
-        await onSignUp(email, password);
+        const name = username.trim() || suggestUsername(email) || 'Player';
+        await onSignUp(email, password, name);
         setSignupDone(true);
       }
     } catch (err) {
@@ -32,6 +47,8 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
 
   const resetAndClose = () => {
     setEmail('');
+    setUsername('');
+    setUsernameTouched(false);
     setPassword('');
     setError('');
     setSignupDone(false);
@@ -82,6 +99,21 @@ export default function AuthModal({ open, onClose, onSignIn, onSignUp, reason })
                 placeholder="you@example.com"
               />
             </label>
+            {mode === 'signup' && (
+              <label className="auth-label">
+                Username
+                <input
+                  type="text"
+                  className="auth-input"
+                  value={username}
+                  onChange={e => { setUsername(e.target.value); setUsernameTouched(true); }}
+                  required
+                  maxLength={30}
+                  autoComplete="username"
+                  placeholder="Choose a display name"
+                />
+              </label>
+            )}
             <label className="auth-label">
               Password
               <input
