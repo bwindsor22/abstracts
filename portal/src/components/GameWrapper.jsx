@@ -28,6 +28,7 @@ const GAME_COMPONENTS = {
   trees:   lazy(() => import('../games/trees/App')),
   sowing:  lazy(() => import('../games/sowing/App')),
   mills:   lazy(() => import('../games/mills/App')),
+  blocks:  lazy(() => import('../games/blocks/App')),
 };
 
 export default function GameWrapper({ game, onBack, onResult }) {
@@ -54,6 +55,9 @@ export default function GameWrapper({ game, onBack, onResult }) {
         </div>
       }>
         <GameComponent onBack={onBack} onResult={onResult} />
+        <div className="game-wrapper-disclaimer">
+          Our games are original digital implementations of classic abstract strategy mechanics. We are fans of the tabletop industry and encourage players to support the official physical releases of the games that inspired us.
+        </div>
       </Suspense>
 
       {/* Floating guide button */}

@@ -332,17 +332,6 @@ const GameContent = ({ playerColor, onResult, onBack, gameConfig }) => {
           })}
         </div>
       </div>
-      <div style={{
-        marginTop: '32px',
-        padding: '8px 12px',
-        borderTop: '1px solid rgba(240,238,255,0.1)',
-        fontSize: '10px',
-        color: 'rgba(240,238,255,0.3)',
-        textAlign: 'center',
-        lineHeight: 1.5,
-      }}>
-        Our games are original digital implementations of classic abstract strategy mechanics. We are fans of the tabletop industry and encourage players to support the official physical releases of the games that inspired us.
-      </div>
       {menuOpen && (
         <div onClick={() => setMenuOpen(false)} style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000,

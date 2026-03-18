@@ -8,6 +8,7 @@ export const GAMES = [
   { id: 'bugs',    name: 'Bugs',    subtitle: 'Swarm Tactics',      icon: 'bug_report',            port: 3002, category: 'modern',  complexity: 'high' },
   { id: 'stacks',  name: 'Stacks',  subtitle: 'Vertical Advantage', icon: 'layers',                port: 3006, category: 'modern',  complexity: 'high' },
   { id: 'towers',  name: 'Towers',  subtitle: 'High Command',       icon: 'domain',                port: 3008, category: 'modern',  complexity: 'medium' },
+  { id: 'blocks',  name: 'Blocks',  subtitle: 'Territory Tiles',    icon: 'apps',                  port: 3013, category: 'modern',  complexity: 'low' },
   // Timeless Classics
   { id: 'hexes',   name: 'Hexes',   subtitle: 'Six Sided War',      icon: 'grid_view',             port: 3004, category: 'classic', complexity: 'low' },
   { id: 'marbles', name: 'Marbles', subtitle: 'Rolling Velocity',   icon: 'bubble_chart',          port: 3005, category: 'classic', complexity: 'medium' },

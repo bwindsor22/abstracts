@@ -4,7 +4,7 @@
 
 .game-trees {
   min-height: 100vh;
-  background: #191022;
+  background: linear-gradient(180deg, #0a2e1a 0%, #1a4a2a 40%, #0d3520 100%);
   color: #f0eeff;
   font-family: 'Space Grotesk', sans-serif;
 }

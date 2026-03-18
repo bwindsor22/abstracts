@@ -901,6 +901,91 @@ const millsGuide = [
   },
 ];
 
+// ── BLOCKS (Blokus) ─────────────────────────────────────────────────────────────
+const bSz = 10; // cell size for blocks guide
+const bRect = (r, c, fill) => (
+  <rect key={`${r}-${c}`} x={c * bSz} y={r * bSz} width={bSz - 1} height={bSz - 1} fill={fill} rx={1} />
+);
+const blocksGuide = [
+  {
+    caption: 'Place polyomino pieces on a 20×20 grid. First piece must cover your corner.',
+    svg: <Svg>
+      {/* Mini board corner */}
+      {[0,1,2,3,4].map(r => [0,1,2,3,4].map(c =>
+        <rect key={`g${r}${c}`} x={40+c*18} y={20+r*18} width={17} height={17} fill="rgba(42,31,69,0.5)" rx={1} />
+      ))}
+      {/* Blue L-piece in corner */}
+      {[[0,0],[1,0],[2,0],[2,1]].map(([r,c]) =>
+        <rect key={`b${r}${c}`} x={40+c*18} y={20+r*18} width={17} height={17} fill="#3B82F6" rx={1} />
+      )}
+      <Txt x={40} y={12} size={8} fill="rgba(240,238,255,0.5)" anchor="start">corner</Txt>
+      {arrow(37, 18, 37, 32)}
+      {/* Piece tray hint */}
+      <Txt x={160} y={40} size={10}>21 pieces</Txt>
+      <Txt x={160} y={55} size={10}>per color</Txt>
+      {/* Mini pieces */}
+      {[[0,0]].map(([r,c]) => <rect key="p1" x={140} y={70} width={9} height={9} fill="#3B82F6" rx={1} />)}
+      {[[0,0],[0,1]].map(([r,c],i) => <rect key={`p2${i}`} x={155+c*10} y={70+r*10} width={9} height={9} fill="#3B82F6" rx={1} />)}
+      {[[0,0],[0,1],[0,2]].map(([r,c],i) => <rect key={`p3${i}`} x={140+c*10} y={85+r*10} width={9} height={9} fill="#3B82F6" rx={1} />)}
+    </Svg>
+  },
+  {
+    caption: 'Each new piece must touch your color diagonally — never along an edge.',
+    svg: <Svg>
+      {/* Two pieces showing corner connection */}
+      {[[0,0],[0,1],[1,0]].map(([r,c],i) =>
+        <rect key={`a${i}`} x={60+c*20} y={30+r*20} width={19} height={19} fill="#3B82F6" rx={1} />
+      )}
+      {[[0,0],[0,1],[1,1]].map(([r,c],i) =>
+        <rect key={`b${i}`} x={100+c*20} y={70+r*20} width={19} height={19} fill="#3B82F6" rx={1} />
+      )}
+      {/* Corner touch indicator */}
+      <circle cx={100} cy={70} r={3} fill="#ffe066" />
+      <Txt x={100} y={58} size={8} fill={yellow}>diagonal OK</Txt>
+      {/* Edge touch X */}
+      <rect x={160} y={40} width={19} height={19} fill="#3B82F6" rx={1} />
+      <rect x={180} y={40} width={19} height={19} fill="#3B82F6" rx={1} />
+      <Txt x={180} y={72} size={8} fill="#f07070">edge = NO</Txt>
+      <line x1={175} y1={34} x2={205} y2={65} stroke="#f07070" strokeWidth={2} />
+    </Svg>
+  },
+  {
+    caption: 'Different colors CAN touch edges. Rotate and flip pieces to fit.',
+    svg: <Svg>
+      {/* Blue and yellow touching edges — OK */}
+      {[[0,0],[0,1]].map(([r,c],i) =>
+        <rect key={`bl${i}`} x={50+c*20} y={40+r*20} width={19} height={19} fill="#3B82F6" rx={1} />
+      )}
+      {[[0,0],[0,1]].map(([r,c],i) =>
+        <rect key={`yl${i}`} x={90+c*20} y={40+r*20} width={19} height={19} fill="#FACC15" rx={1} />
+      )}
+      <Txt x={95} y={35} size={8} fill="rgba(240,238,255,0.5)">different colors: OK</Txt>
+      {/* Rotation arrows */}
+      <Txt x={180} y={50} size={9}>rotate</Txt>
+      <Txt x={180} y={65} size={9}>+ flip</Txt>
+      <Txt x={180} y={80} size={9}>to fit</Txt>
+      {/* T-piece in two orientations */}
+      {[[0,0],[0,1],[0,2],[1,1]].map(([r,c],i) =>
+        <rect key={`t1${i}`} x={40+c*12} y={85+r*12} width={11} height={11} fill="#22C55E" rx={1} />
+      )}
+      {arrow(85, 95, 100, 95)}
+      {[[0,0],[1,0],[1,1],[2,0]].map(([r,c],i) =>
+        <rect key={`t2${i}`} x={110+c*12} y={82+r*12} width={11} height={11} fill="#22C55E" rx={1} />
+      )}
+    </Svg>
+  },
+  {
+    caption: 'Game ends when no one can place. Fewest remaining squares wins!',
+    svg: <Svg>
+      <Txt x={120} y={30} size={11}>scoring</Txt>
+      <Txt x={120} y={55} size={9} fill="rgba(240,238,255,0.6)">count squares left in hand</Txt>
+      <Txt x={120} y={75} size={9} fill="rgba(240,238,255,0.6)">fewer = better</Txt>
+      <Txt x={120} y={100} size={9} fill={yellow}>place ALL pieces = +15 bonus</Txt>
+      <Txt x={120} y={118} size={8} fill="rgba(240,238,255,0.4)">play big pieces early!</Txt>
+    </Svg>
+  },
+];
+
 // ── Export all guides ───────────────────────────────────────────────────────────
 export const GUIDES = {
   hexes: hexesGuide,
@@ -916,4 +1001,5 @@ export const GUIDES = {
   pairs: stonesGuide,   // pairs uses stones game
   sowing: sowingGuide,
   mills: millsGuide,
+  blocks: blocksGuide,
 };
