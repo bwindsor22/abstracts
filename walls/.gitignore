@@ -1,7 +1,0 @@
-node_modules/
-build/
-.env
-.DS_Store
-resources/
-!resources/game-screenshots/
-!resources/game-screenshots/**

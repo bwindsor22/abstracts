@@ -1,5 +1,13 @@
-# Never commit resources (screenshots, youtube transcripts, etc.)
-*/resources/
+# Large binary resources (PDFs, images, videos, youtube frames)
+resources/**/*.pdf
+resources/**/*.png
+resources/**/*.jpg
+resources/**/*.jpeg
+resources/**/*.psd
+resources/**/*.zip
+resources/**/youtube/
+resources/**/game-screenshots/
+resources/mockups/
 
 # Node
 node_modules/
