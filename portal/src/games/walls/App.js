@@ -5,6 +5,7 @@ import { getAIMove } from './AI/ai';
 import { useDrag, useDrop } from 'react-dnd';
 
 const ITEM_TYPES = { WALL: 'wall' };
+const IS_TOUCH = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
 const CELL = 52;
 const WALL_W = 10;
@@ -73,12 +74,12 @@ function WallSupply({ player, wallsLeft, isCurrentPlayer }) {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         <div style={{ color: 'rgba(240,238,255,0.35)', fontSize: 11, textAlign: 'center' }}>
-          {isCurrentPlayer && count > 0 ? 'drag to place →' : ''}
+          {isCurrentPlayer && count > 0 ? (IS_TOUCH ? 'use buttons below' : 'drag to place →') : ''}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center' }}>
           {Array.from({ length: totalSlots }, (_, i) => {
             const active = i < count;
-            if (active && canDrag) {
+            if (active && canDrag && !IS_TOUCH) {
               return <WallToken key={`v-${i}`} orient="v" color={color} small />;
             }
             return (
@@ -161,7 +162,7 @@ function HWallSlot({ gs, row, col, onWallDrop, wallMode, onSlotTap }) {
   });
 
   const wy = y + CELL - 2;
-  const slotH = WALL_W + 6;
+  const slotH = tappable && IS_TOUCH ? WALL_W + 14 : WALL_W + 6;
   const slotW = CELL * 2 + 2;
   const highlighted = tappable || (isOver && canDrop);
 
@@ -169,9 +170,9 @@ function HWallSlot({ gs, row, col, onWallDrop, wallMode, onSlotTap }) {
     <div ref={drop}
       onClick={() => tappable && onSlotTap(row, col, 'h')}
       style={{
-        position: 'absolute', left: x, top: wy - 3, width: slotW, height: slotH,
-        background: highlighted ? 'rgba(255,224,102,0.35)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : 'rgba(255,224,102,0.08)',
-        border: `1px solid ${highlighted ? '#ffe066' : isOver ? '#f55' : 'rgba(255,224,102,0.2)'}`,
+        position: 'absolute', left: x, top: wy - (tappable && IS_TOUCH ? 7 : 3), width: slotW, height: slotH,
+        background: highlighted ? 'rgba(255,224,102,0.35)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : tappable ? 'rgba(255,224,102,0.12)' : 'rgba(255,224,102,0.08)',
+        border: `1px solid ${highlighted ? '#ffe066' : isOver ? '#f55' : tappable ? 'rgba(255,224,102,0.4)' : 'rgba(255,224,102,0.2)'}`,
         borderRadius: 2, pointerEvents: (valid || tappable) ? 'auto' : 'none',
         cursor: tappable ? 'pointer' : isOver && canDrop ? 'copy' : 'default', transition: 'background 0.1s', boxSizing: 'border-box',
       }} />
@@ -191,7 +192,7 @@ function VWallSlot({ gs, row, col, onWallDrop, wallMode, onSlotTap }) {
   });
 
   const wx = x + CELL - 2;
-  const slotW = WALL_W + 6;
+  const slotW = tappable && IS_TOUCH ? WALL_W + 14 : WALL_W + 6;
   const slotH = CELL * 2 + 2;
   const highlighted = tappable || (isOver && canDrop);
 
@@ -199,9 +200,9 @@ function VWallSlot({ gs, row, col, onWallDrop, wallMode, onSlotTap }) {
     <div ref={drop}
       onClick={() => tappable && onSlotTap(row, col, 'v')}
       style={{
-        position: 'absolute', left: wx - 3, top: y, width: slotW, height: slotH,
-        background: highlighted ? 'rgba(255,224,102,0.35)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : 'rgba(255,224,102,0.08)',
-        border: `1px solid ${highlighted ? '#ffe066' : isOver ? '#f55' : 'rgba(255,224,102,0.2)'}`,
+        position: 'absolute', left: wx - (tappable && IS_TOUCH ? 7 : 3), top: y, width: slotW, height: slotH,
+        background: highlighted ? 'rgba(255,224,102,0.35)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : tappable ? 'rgba(255,224,102,0.12)' : 'rgba(255,224,102,0.08)',
+        border: `1px solid ${highlighted ? '#ffe066' : isOver ? '#f55' : tappable ? 'rgba(255,224,102,0.4)' : 'rgba(255,224,102,0.2)'}`,
         borderRadius: 2, pointerEvents: (valid || tappable) ? 'auto' : 'none',
         cursor: tappable ? 'pointer' : isOver && canDrop ? 'copy' : 'default', transition: 'background 0.1s', boxSizing: 'border-box',
       }} />
@@ -364,40 +365,43 @@ function GameUI({ onBack, onResult }) {
           {hint || 'Click a yellow cell to move, or drag a wall token onto the board'}
         </div>
 
-        <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} isPlayerTurn={isPlayerTurn} wallMode={wallMode} onSlotTap={handleWallSlotTap} />
-
-        {/* Tap-to-place wall buttons (useful on mobile) */}
+        {/* Wall mode buttons */}
         {isPlayerTurn && wallsLeft[currentPlayer] > 0 && (
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ color: 'rgba(240,238,255,0.5)', fontSize: 12 }}>Place wall:</span>
+          <div style={{ display: 'flex', gap: IS_TOUCH ? 10 : 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <span style={{ color: 'rgba(240,238,255,0.5)', fontSize: IS_TOUCH ? 13 : 12 }}>Place wall:</span>
             <button
               onClick={() => setWallMode(wallMode === 'h' ? null : 'h')}
               style={{
-                padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                padding: IS_TOUCH ? '10px 20px' : '6px 14px', borderRadius: 6, fontSize: IS_TOUCH ? 14 : 12, fontWeight: 600, cursor: 'pointer',
                 background: wallMode === 'h' ? 'rgba(255,224,102,0.25)' : 'rgba(255,255,255,0.08)',
-                border: `1px solid ${wallMode === 'h' ? '#ffe066' : 'rgba(255,255,255,0.15)'}`,
+                border: `2px solid ${wallMode === 'h' ? '#ffe066' : 'rgba(255,255,255,0.15)'}`,
                 color: wallMode === 'h' ? '#ffe066' : '#c8b8e8',
+                minHeight: IS_TOUCH ? 44 : undefined,
               }}>
               ━ Horizontal
             </button>
             <button
               onClick={() => setWallMode(wallMode === 'v' ? null : 'v')}
               style={{
-                padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                padding: IS_TOUCH ? '10px 20px' : '6px 14px', borderRadius: 6, fontSize: IS_TOUCH ? 14 : 12, fontWeight: 600, cursor: 'pointer',
                 background: wallMode === 'v' ? 'rgba(255,224,102,0.25)' : 'rgba(255,255,255,0.08)',
-                border: `1px solid ${wallMode === 'v' ? '#ffe066' : 'rgba(255,255,255,0.15)'}`,
+                border: `2px solid ${wallMode === 'v' ? '#ffe066' : 'rgba(255,255,255,0.15)'}`,
                 color: wallMode === 'v' ? '#ffe066' : '#c8b8e8',
+                minHeight: IS_TOUCH ? 44 : undefined,
               }}>
               ┃ Vertical
             </button>
             {wallMode && (
               <button onClick={() => setWallMode(null)} style={{
-                padding: '6px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer',
-                background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#c8b8e8',
-              }}>✕</button>
+                padding: IS_TOUCH ? '10px 14px' : '6px 10px', borderRadius: 6, fontSize: IS_TOUCH ? 14 : 12, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.08)', border: '2px solid rgba(255,255,255,0.15)', color: '#c8b8e8',
+                minHeight: IS_TOUCH ? 44 : undefined,
+              }}>Cancel</button>
             )}
           </div>
         )}
+
+        <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} isPlayerTurn={isPlayerTurn} wallMode={wallMode} onSlotTap={handleWallSlotTap} />
 
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           <WallSupply player="p1" wallsLeft={wallsLeft} isCurrentPlayer={currentPlayer === 'p1' && !winner} />
