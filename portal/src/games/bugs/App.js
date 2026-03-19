@@ -88,23 +88,24 @@ function StartScreen({ onStart, onBack }) {
 
 // ── Draggable hand piece ──────────────────────────────────────────────────────
 // item must be a plain object in react-dnd v10 (not a factory function)
-function DraggableHandPiece({ pid, type, player, isCurrentHand, isSelected, onHandClick }) {
+function DraggableHandPiece({ pid, type, player, isCurrentHand, isSelected, onHandClick, mustPlayQueen }) {
+  const canUse = isCurrentHand && (!mustPlayQueen || type === 'queen');
   const [{ isDragging }, drag] = useDrag({
     item: { type: ITEM_HAND, pieceId: pid, pieceType: type, player },
-    canDrag: () => isCurrentHand,
+    canDrag: () => canUse,
     collect: m => ({ isDragging: m.isDragging() }),
   });
 
   return (
     <div ref={drag}
-      onClick={() => isCurrentHand && onHandClick(pid, type)}
+      onClick={() => canUse && onHandClick(pid, type)}
       style={{
         width: 38, height: 38, borderRadius: '50%',
         background: PLAYER_COLORS[player],
         border: `2px solid ${isSelected ? '#ffe066' : PIECE_COLORS[type]}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        cursor: isCurrentHand ? (isDragging ? 'grabbing' : 'grab') : 'default',
-        opacity: isDragging ? 0.35 : (isCurrentHand ? 1 : 0.5),
+        cursor: canUse ? (isDragging ? 'grabbing' : 'grab') : 'default',
+        opacity: isDragging ? 0.35 : (canUse ? 1 : 0.3),
         color: PIECE_COLORS[type], fontWeight: 'bold', fontSize: 14,
         userSelect: 'none',
       }}>
@@ -116,11 +117,12 @@ function DraggableHandPiece({ pid, type, player, isCurrentHand, isSelected, onHa
 // ── Drop target overlay for a hex position (HTML div, absolutely positioned) ──
 // Accepts hand pieces and board pieces. canDrop validates the specific item.
 // Shows green when canDrop + hovered, red when hovered but invalid.
-function HexDropOverlay({ q, r, offsetX, offsetY, placementCells, moveMap, onDrop, onHexClick, active }) {
+function HexDropOverlay({ q, r, offsetX, offsetY, placementCells, moveMap, onDrop, onHexClick, active, mustPlayQueen }) {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: [ITEM_HAND, ITEM_BOARD],
     canDrop: (item) => {
       if (item.type === ITEM_HAND) {
+        if (mustPlayQueen && item.pieceType !== 'queen') return false;
         return placementCells.some(([hq, hr]) => hq === q && hr === r);
       }
       if (item.type === ITEM_BOARD) {
@@ -129,7 +131,7 @@ function HexDropOverlay({ q, r, offsetX, offsetY, placementCells, moveMap, onDro
       }
       return false;
     },
-    drop: (item) => onDrop(q, r, item),
+    drop: (item) => { onDrop(q, r, item); },
     collect: m => ({ isOver: m.isOver(), canDrop: m.canDrop() }),
   });
 
@@ -201,6 +203,7 @@ function GameBoard({ gs, selected, highlights, handleHexClick, handleHandClick, 
   const { board, hand, currentPlayer, winner, vsAI, aiPlayer } = gs;
 
   const canPlay = !winner && !(vsAI && currentPlayer === aiPlayer);
+  const mustPlayQueen = gs.moveNumber >= 6 && !gs.queenPlaced[currentPlayer];
 
   // Pre-compute all potential drop targets for DnD (independent of click selection)
   const { placementCells, moveMap, allTargets } = useMemo(() => {
@@ -261,6 +264,7 @@ function GameBoard({ gs, selected, highlights, handleHexClick, handleHandClick, 
   const statusMsg = winner === 'draw' ? 'DRAW — Both queens surrounded!'
     : winner ? `${winner.toUpperCase()} WINS!`
     : vsAI && currentPlayer === aiPlayer ? 'AI thinking...'
+    : mustPlayQueen ? `${currentPlayer.toUpperCase()}'s turn — must place Queen!`
     : `${currentPlayer.toUpperCase()}'s turn`;
   const cpColor = currentPlayer === 'black' ? '#aaa' : '#eee';
 
@@ -331,6 +335,7 @@ function GameBoard({ gs, selected, highlights, handleHexClick, handleHandClick, 
             onDrop={handleDrop}
             onHexClick={handleHexClick}
             active={isDragging || highlightSet.has(key(tq, tr))}
+            mustPlayQueen={mustPlayQueen}
           />
         ))}
 
@@ -372,6 +377,7 @@ function GameBoard({ gs, selected, highlights, handleHexClick, handleHandClick, 
                       isCurrentHand={isCurrentHand}
                       isSelected={isSelThis}
                       onHandClick={handleHandClick}
+                      mustPlayQueen={isCurrentHand && mustPlayQueen}
                     />
                   );
                 })}

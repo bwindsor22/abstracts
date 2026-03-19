@@ -84,12 +84,19 @@ function pieceMoveDests(board, q, r) {
   if (!piece) return [];
   const type = piece.type;
   if (type==='queen') {
-    return neighbours(q,r).filter(([nq,nr])=>!occupied(board,nq,nr)&&canSlide(board,q,r,nq,nr));
+    // After removing queen, destination must be adjacent to remaining hive
+    const tmp={...board}; delete tmp[key(q,r)];
+    return neighbours(q,r).filter(([nq,nr])=>!occupied(board,nq,nr)&&canSlide(board,q,r,nq,nr)
+      &&neighbours(nq,nr).some(([hq,hr])=>occupied(tmp,hq,hr)));
   }
   if (type==='beetle') {
+    const srcK=key(q,r);
+    const tmp={...board};
+    const stack=[...board[srcK]]; stack.pop();
+    if (stack.length) tmp[srcK]=stack; else delete tmp[srcK];
     return neighbours(q,r).filter(([nq,nr])=>{
-      if (occupied(board,nq,nr)) return true;
-      return canSlide(board,q,r,nq,nr);
+      if (occupied(board,nq,nr)) return true; // climbing on top: always connected
+      return canSlide(board,q,r,nq,nr)&&neighbours(nq,nr).some(([hq,hr])=>occupied(tmp,hq,hr));
     });
   }
   if (type==='grasshopper') {
