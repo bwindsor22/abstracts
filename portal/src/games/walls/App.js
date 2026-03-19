@@ -98,7 +98,7 @@ function WallSupply({ player, wallsLeft, isCurrentPlayer }) {
 }
 
 // ── Board SVG ─────────────────────────────────────────────────────────────────
-function Board({ gs, onCellClick, onWallDrop, isPlayerTurn }) {
+function Board({ gs, onCellClick, onWallDrop, isPlayerTurn, wallMode, onSlotTap }) {
   const { pawns, walls, currentPlayer, winner, vsAI, aiPlayer } = gs;
 
   const humanSide = vsAI ? (aiPlayer === 'p1' ? 'p2' : 'p1') : currentPlayer;
@@ -143,14 +143,15 @@ function Board({ gs, onCellClick, onWallDrop, isPlayerTurn }) {
         })}
       </svg>
 
-      <WallSlotOverlays gs={gs} onWallDrop={onWallDrop} svgSize={svgSize} />
+      <WallSlotOverlays gs={gs} onWallDrop={onWallDrop} svgSize={svgSize} wallMode={wallMode} onSlotTap={onSlotTap} />
     </div>
   );
 }
 
-function HWallSlot({ gs, row, col, onWallDrop }) {
+function HWallSlot({ gs, row, col, onWallDrop, wallMode, onSlotTap }) {
   const { x, y } = cellPos(row, col);
   const valid = canPlaceWall(gs, row, col, 'h');
+  const tappable = wallMode === 'h' && valid;
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: ITEM_TYPES.WALL,
@@ -162,21 +163,25 @@ function HWallSlot({ gs, row, col, onWallDrop }) {
   const wy = y + CELL - 2;
   const slotH = WALL_W + 6;
   const slotW = CELL * 2 + 2;
+  const highlighted = tappable || (isOver && canDrop);
 
   return (
-    <div ref={drop} style={{
-      position: 'absolute', left: x, top: wy - 3, width: slotW, height: slotH,
-      background: isOver && canDrop ? 'rgba(255,224,102,0.75)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : 'rgba(255,224,102,0.08)',
-      border: `1px solid ${isOver && canDrop ? '#ffe066' : isOver ? '#f55' : 'rgba(255,224,102,0.2)'}`,
-      borderRadius: 2, pointerEvents: valid ? 'auto' : 'none',
-      cursor: isOver && canDrop ? 'copy' : 'default', transition: 'background 0.1s', boxSizing: 'border-box',
-    }} />
+    <div ref={drop}
+      onClick={() => tappable && onSlotTap(row, col, 'h')}
+      style={{
+        position: 'absolute', left: x, top: wy - 3, width: slotW, height: slotH,
+        background: highlighted ? 'rgba(255,224,102,0.35)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : 'rgba(255,224,102,0.08)',
+        border: `1px solid ${highlighted ? '#ffe066' : isOver ? '#f55' : 'rgba(255,224,102,0.2)'}`,
+        borderRadius: 2, pointerEvents: (valid || tappable) ? 'auto' : 'none',
+        cursor: tappable ? 'pointer' : isOver && canDrop ? 'copy' : 'default', transition: 'background 0.1s', boxSizing: 'border-box',
+      }} />
   );
 }
 
-function VWallSlot({ gs, row, col, onWallDrop }) {
+function VWallSlot({ gs, row, col, onWallDrop, wallMode, onSlotTap }) {
   const { x, y } = cellPos(row, col);
   const valid = canPlaceWall(gs, row, col, 'v');
+  const tappable = wallMode === 'v' && valid;
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: ITEM_TYPES.WALL,
@@ -188,19 +193,22 @@ function VWallSlot({ gs, row, col, onWallDrop }) {
   const wx = x + CELL - 2;
   const slotW = WALL_W + 6;
   const slotH = CELL * 2 + 2;
+  const highlighted = tappable || (isOver && canDrop);
 
   return (
-    <div ref={drop} style={{
-      position: 'absolute', left: wx - 3, top: y, width: slotW, height: slotH,
-      background: isOver && canDrop ? 'rgba(255,224,102,0.75)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : 'rgba(255,224,102,0.08)',
-      border: `1px solid ${isOver && canDrop ? '#ffe066' : isOver ? '#f55' : 'rgba(255,224,102,0.2)'}`,
-      borderRadius: 2, pointerEvents: valid ? 'auto' : 'none',
-      cursor: isOver && canDrop ? 'copy' : 'default', transition: 'background 0.1s', boxSizing: 'border-box',
-    }} />
+    <div ref={drop}
+      onClick={() => tappable && onSlotTap(row, col, 'v')}
+      style={{
+        position: 'absolute', left: wx - 3, top: y, width: slotW, height: slotH,
+        background: highlighted ? 'rgba(255,224,102,0.35)' : isOver && !canDrop ? 'rgba(255,60,60,0.4)' : 'rgba(255,224,102,0.08)',
+        border: `1px solid ${highlighted ? '#ffe066' : isOver ? '#f55' : 'rgba(255,224,102,0.2)'}`,
+        borderRadius: 2, pointerEvents: (valid || tappable) ? 'auto' : 'none',
+        cursor: tappable ? 'pointer' : isOver && canDrop ? 'copy' : 'default', transition: 'background 0.1s', boxSizing: 'border-box',
+      }} />
   );
 }
 
-function WallSlotOverlays({ gs, onWallDrop, svgSize }) {
+function WallSlotOverlays({ gs, onWallDrop, svgSize, wallMode, onSlotTap }) {
   const { winner } = gs;
   const hidden = !!winner;
 
@@ -209,8 +217,8 @@ function WallSlotOverlays({ gs, onWallDrop, svgSize }) {
       {Array.from({ length: SIZE - 1 }, (_, row) =>
         Array.from({ length: SIZE - 1 }, (_, col) => (
           <React.Fragment key={`slots-${row}-${col}`}>
-            <HWallSlot gs={gs} row={row} col={col} onWallDrop={onWallDrop} />
-            <VWallSlot gs={gs} row={row} col={col} onWallDrop={onWallDrop} />
+            <HWallSlot gs={gs} row={row} col={col} onWallDrop={onWallDrop} wallMode={wallMode} onSlotTap={onSlotTap} />
+            <VWallSlot gs={gs} row={row} col={col} onWallDrop={onWallDrop} wallMode={wallMode} onSlotTap={onSlotTap} />
           </React.Fragment>
         ))
       )}
@@ -264,6 +272,7 @@ function StartScreen({ onStart, onBack }) {
 function GameUI({ onBack, onResult }) {
   const [gs, setGs] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [wallMode, setWallMode] = useState(null); // null | 'h' | 'v' — tap-to-place mode
   const resultReported = useRef(false);
 
   const handleStart = useCallback((opts) => {
@@ -276,7 +285,7 @@ function GameUI({ onBack, onResult }) {
     if (gs.vsAI && gs.currentPlayer === gs.aiPlayer) return;
     const validMoves = getPawnMoves(gs, gs.currentPlayer);
     const m = validMoves.find(v => v.row === row && v.col === col);
-    if (m) setGs(s => applyMove(s, m));
+    if (m) { setGs(s => applyMove(s, m)); setWallMode(null); }
   }, [gs]);
 
   const handleWallDrop = useCallback((r, c, orient) => {
@@ -284,8 +293,15 @@ function GameUI({ onBack, onResult }) {
     if (gs.vsAI && gs.currentPlayer === gs.aiPlayer) return;
     if (canPlaceWall(gs, r, c, orient)) {
       setGs(s => applyMove(s, { type: 'wall', r, c, orient }));
+      setWallMode(null);
     }
   }, [gs]);
+
+  // Tap-to-place: tap a wall slot while in wall mode
+  const handleWallSlotTap = useCallback((r, c, orient) => {
+    if (!wallMode || wallMode !== orient) return;
+    handleWallDrop(r, c, orient);
+  }, [wallMode, handleWallDrop]);
 
   // AI turn
   useEffect(() => {
@@ -329,11 +345,13 @@ function GameUI({ onBack, onResult }) {
     : `${currentPlayer === 'p1' ? 'Red' : 'Blue'}'s turn`;
 
   const isPlayerTurn = !winner && !(vsAI && currentPlayer === aiPlayer);
-  const hint = isPlayerTurn && wallsLeft[currentPlayer] > 0
-    ? 'Click a yellow cell to move, or drag a wall token onto the board'
-    : isPlayerTurn
-      ? 'Click a yellow cell to move (no walls left)'
-      : '';
+  const hint = isPlayerTurn && wallMode
+    ? 'Tap a highlighted slot to place your wall'
+    : isPlayerTurn && wallsLeft[currentPlayer] > 0
+      ? 'Tap a yellow cell to move, or select a wall orientation below'
+      : isPlayerTurn
+        ? 'Tap a yellow cell to move (no walls left)'
+        : '';
 
   return (
     <div className="game-walls" style={{ padding: '16px 12px' }}>
@@ -346,7 +364,40 @@ function GameUI({ onBack, onResult }) {
           {hint || 'Click a yellow cell to move, or drag a wall token onto the board'}
         </div>
 
-        <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} isPlayerTurn={isPlayerTurn} />
+        <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} isPlayerTurn={isPlayerTurn} wallMode={wallMode} onSlotTap={handleWallSlotTap} />
+
+        {/* Tap-to-place wall buttons (useful on mobile) */}
+        {isPlayerTurn && wallsLeft[currentPlayer] > 0 && (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ color: 'rgba(240,238,255,0.5)', fontSize: 12 }}>Place wall:</span>
+            <button
+              onClick={() => setWallMode(wallMode === 'h' ? null : 'h')}
+              style={{
+                padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: wallMode === 'h' ? 'rgba(255,224,102,0.25)' : 'rgba(255,255,255,0.08)',
+                border: `1px solid ${wallMode === 'h' ? '#ffe066' : 'rgba(255,255,255,0.15)'}`,
+                color: wallMode === 'h' ? '#ffe066' : '#c8b8e8',
+              }}>
+              ━ Horizontal
+            </button>
+            <button
+              onClick={() => setWallMode(wallMode === 'v' ? null : 'v')}
+              style={{
+                padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: wallMode === 'v' ? 'rgba(255,224,102,0.25)' : 'rgba(255,255,255,0.08)',
+                border: `1px solid ${wallMode === 'v' ? '#ffe066' : 'rgba(255,255,255,0.15)'}`,
+                color: wallMode === 'v' ? '#ffe066' : '#c8b8e8',
+              }}>
+              ┃ Vertical
+            </button>
+            {wallMode && (
+              <button onClick={() => setWallMode(null)} style={{
+                padding: '6px 10px', borderRadius: 6, fontSize: 12, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#c8b8e8',
+              }}>✕</button>
+            )}
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           <WallSupply player="p1" wallsLeft={wallsLeft} isCurrentPlayer={currentPlayer === 'p1' && !winner} />

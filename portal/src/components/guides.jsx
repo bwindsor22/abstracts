@@ -902,10 +902,6 @@ const millsGuide = [
 ];
 
 // ── BLOCKS (Blokus) ─────────────────────────────────────────────────────────────
-const bSz = 10; // cell size for blocks guide
-const bRect = (r, c, fill) => (
-  <rect key={`${r}-${c}`} x={c * bSz} y={r * bSz} width={bSz - 1} height={bSz - 1} fill={fill} rx={1} />
-);
 const blocksGuide = [
   {
     caption: 'Place polyomino pieces on a 20×20 grid. First piece must cover your corner.',

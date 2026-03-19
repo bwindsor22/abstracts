@@ -71,7 +71,7 @@ export function getAIMove(state, difficulty) {
   if (!AI_COLORS.includes(state.currentColor)) return null;
   switch (difficulty) {
     case 'easy': return getAIMoveEasy(state);
-    case 'hard': return getAIMoveMedium(state); // medium strategy for "hard" start
+    case 'hard': return getAIMoveHard(state);
     default: return getAIMoveMedium(state);
   }
 }
