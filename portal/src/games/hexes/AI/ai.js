@@ -90,7 +90,6 @@ function searchWithTimeLimit(board, maxDepth, aiPlayer, timeLimitMs) {
   const startTime = Date.now();
   let bestMove = moves[0];
   let bestVal = -Infinity;
-  let completedDepth = 0;
 
   // Iterative deepening: try depth 1, 2, 3, ... up to maxDepth
   for (let depth = 1; depth <= maxDepth; depth++) {
