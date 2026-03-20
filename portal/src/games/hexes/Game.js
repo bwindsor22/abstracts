@@ -273,7 +273,6 @@ export function evaluateAdvanced(board, player) {
 
 // Count cells of player that are on the shortest path (connected to start edge)
 function countConnectedCells(board, player) {
-  const opp = player === 'red' ? 'blue' : 'red';
   const visited = Array.from({ length: SIZE }, () => Array(SIZE).fill(false));
   const queue = [];
   // BFS from starting edge

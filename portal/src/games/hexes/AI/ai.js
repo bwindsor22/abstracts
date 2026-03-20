@@ -1,5 +1,5 @@
 // ai.js — Hex AI: easy (random), medium (depth-2 minimax), hard (depth-4 with advanced eval)
-import { evaluate, evaluateAdvanced, getAllMoves, shortestPath, SIZE, NEIGHBOURS, inBounds } from '../Game.js';
+import { evaluate, evaluateAdvanced, getAllMoves, SIZE, NEIGHBOURS, inBounds } from '../Game.js';
 
 function minimax(board, depth, alpha, beta, maximizing, aiPlayer, evalFn) {
   const score = evalFn(board, aiPlayer);
@@ -62,13 +62,11 @@ function sortMovesAdvanced(moves, board, player) {
   const scored = moves.map(([r, c]) => {
     let friendlyAdj = 0;
     let enemyAdj = 0;
-    let emptyAdj = 0;
     for (const [dr, dc] of NEIGHBOURS) {
       const nr = r + dr, nc = c + dc;
       if (!inBounds(nr, nc)) continue;
       if (board[nr][nc] === player) friendlyAdj++;
       else if (board[nr][nc] === opp) enemyAdj++;
-      else emptyAdj++;
     }
 
     // Distance from center (lower is better)
@@ -86,7 +84,6 @@ function sortMovesAdvanced(moves, board, player) {
 
 // Iterative deepening with time limit for hard mode
 function searchWithTimeLimit(board, maxDepth, aiPlayer, timeLimitMs) {
-  const opp = aiPlayer === 'red' ? 'blue' : 'red';
   const moves = sortMovesAdvanced(getAllMoves(board), board, aiPlayer);
   if (moves.length === 0) return null;
 
@@ -118,7 +115,6 @@ function searchWithTimeLimit(board, maxDepth, aiPlayer, timeLimitMs) {
     if (!aborted) {
       bestMove = depthBest;
       bestVal = depthBestVal;
-      completedDepth = depth;
       // If we found a winning move, stop searching
       if (bestVal >= 100000) break;
     } else {
