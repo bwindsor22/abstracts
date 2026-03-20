@@ -16,6 +16,7 @@ export function initState({ vsAI = false, aiPlayer = 'p1', difficulty = 'medium'
     wallsLeft: { p1: MAX_WALLS, p2: MAX_WALLS },
     currentPlayer: 'p1',
     winner: null,
+    moveCount: 0,
     vsAI, aiPlayer, difficulty,
   };
 }
@@ -126,12 +127,12 @@ export function applyMove(state, move) {
     const pawns = { ...state.pawns, [state.currentPlayer]: { row: move.row, col: move.col } };
     const goalRow = state.currentPlayer === 'p1' ? SIZE - 1 : 0;
     const winner = move.row === goalRow ? state.currentPlayer : null;
-    return { ...state, pawns, currentPlayer: winner ? state.currentPlayer : next, winner };
+    return { ...state, pawns, currentPlayer: winner ? state.currentPlayer : next, winner, moveCount: (state.moveCount || 0) + 1 };
   }
   if (move.type === 'wall') {
     const walls = { ...state.walls, [wallKey(move.r, move.c, move.orient)]: true };
     const wallsLeft = { ...state.wallsLeft, [state.currentPlayer]: state.wallsLeft[state.currentPlayer] - 1 };
-    return { ...state, walls, wallsLeft, currentPlayer: next };
+    return { ...state, walls, wallsLeft, currentPlayer: next, moveCount: (state.moveCount || 0) + 1 };
   }
   return state;
 }

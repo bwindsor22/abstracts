@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
 import NavDrawer from './components/NavDrawer';
@@ -13,6 +14,7 @@ import Profile from './views/Profile';
 import { addResult, checkAndAwardBadges } from './utils/storage';
 import { ALL_BADGES } from './data/badges';
 import Leaderboard from './views/Leaderboard';
+import BugReport from './components/BugReport';
 import {
   supabase,
   signInWithEmail,
@@ -26,19 +28,34 @@ import {
   getUsername,
 } from './utils/supabase';
 
+// Map old view IDs to URL paths
+const VIEW_PATHS = {
+  library: '/',
+  history: '/history',
+  elo: '/elo',
+  badges: '/badges',
+  profile: '/profile',
+  leaderboard: '/leaderboard',
+};
+
+// Reverse: path to view ID (for nav drawer active state)
+const PATH_TO_VIEW = Object.fromEntries(
+  Object.entries(VIEW_PATHS).map(([k, v]) => [v, k])
+);
+
 export default function App() {
-  const [view, setView] = useState('library');
-  const [viewParams, setViewParams] = useState(null);
-  const [playingGame, setPlayingGame] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [navOpen, setNavOpen] = useState(false);
   const [newBadges, setNewBadges] = useState([]);
   const [user, setUser] = useState(null);
   const [displayName, setDisplayName] = useState('Guest');
   const [authOpen, setAuthOpen] = useState(false);
-  const [authReason, setAuthReason] = useState(null); // 'game-end' | null
+  const [authReason, setAuthReason] = useState(null);
   const pendingResult = useRef(null);
 
-  // Listen for auth state changes
+  const currentView = PATH_TO_VIEW[location.pathname] || (location.pathname.startsWith('/game/') ? 'game' : 'library');
+
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -57,7 +74,6 @@ export default function App() {
         ensureProfile(newUser).catch(() => {});
         getUsername(newUser).then(setDisplayName).catch(() => {});
         syncFromCloud(newUser.id).then(() => {
-          // If there's a pending result from a game that just ended, save it now
           if (pendingResult.current) {
             const result = pendingResult.current;
             pendingResult.current = null;
@@ -75,18 +91,19 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const navigate = useCallback((v, params) => {
-    setView(v);
-    setViewParams(params || null);
-  }, []);
+  const handleNavigation = useCallback((viewId) => {
+    const path = VIEW_PATHS[viewId] || '/';
+    navigate(path);
+    setNavOpen(false);
+  }, [navigate]);
 
   const handlePlay = useCallback((game) => {
-    setPlayingGame(game);
-  }, []);
+    navigate(`/game/${game.id}`);
+  }, [navigate]);
 
   const handleBack = useCallback(() => {
-    setPlayingGame(null);
-  }, []);
+    navigate('/');
+  }, [navigate]);
 
   const handleResult = useCallback((data) => {
     const result = {
@@ -99,7 +116,6 @@ export default function App() {
     };
 
     if (user) {
-      // Signed in — save immediately
       addResult(result);
       const earned = checkAndAwardBadges(ALL_BADGES);
       if (earned.length > 0) setNewBadges(earned);
@@ -108,7 +124,6 @@ export default function App() {
         pushBadge(user.id, badge.id, Date.now()).catch(() => {});
       }
     } else {
-      // Not signed in — hold the result and prompt sign-in
       pendingResult.current = result;
       setAuthReason('game-end');
       setAuthOpen(true);
@@ -117,7 +132,6 @@ export default function App() {
 
   const handleSignIn = useCallback(async (email, password) => {
     await signInWithEmail(email, password);
-    // onAuthStateChange handles saving pendingResult
   }, []);
 
   const handleSignUp = useCallback(async (email, password, username) => {
@@ -136,7 +150,6 @@ export default function App() {
   }, [user]);
 
   const handleAuthClose = useCallback(() => {
-    // If they dismiss the sign-in prompt after a game, save result locally anyway
     if (authReason === 'game-end' && pendingResult.current) {
       addResult(pendingResult.current);
       const earned = checkAndAwardBadges(ALL_BADGES);
@@ -147,55 +160,50 @@ export default function App() {
     setAuthReason(null);
   }, [authReason]);
 
-  if (playingGame) {
-    return (
-      <GameWrapper game={playingGame} onBack={handleBack} onResult={handleResult} />
-    );
-  }
-
-  const views = {
-    library: Library,
-    history: MatchHistory,
-    elo: EloTrends,
-    badges: Badges,
-    profile: Profile,
-    leaderboard: Leaderboard,
-  };
-  const ViewComponent = views[view] || Library;
-
   return (
-    <div className="app-root">
-      <div className="fluid-glow fixed-bg" />
-      <Header onMenuOpen={() => setNavOpen(true)} onHome={() => setView('library')} />
-      <NavDrawer
-        open={navOpen}
-        onClose={() => setNavOpen(false)}
-        currentView={view}
-        onNavigate={(v) => { navigate(v); setNavOpen(false); }}
-        user={user}
-        displayName={displayName}
-        onSignInClick={() => { setNavOpen(false); setAuthOpen(true); }}
-        onSignOut={handleSignOut}
-        onImportGuest={handleImportGuest}
-      />
-      <main className="app-main">
-        <ViewComponent
-          onPlay={handlePlay}
-          onNavigate={navigate}
-          viewParams={viewParams}
-          user={user}
-        />
-      </main>
-      {newBadges.map(badge => (
-        <BadgeToast key={badge.id} badge={badge} onDismiss={() => setNewBadges(b => b.filter(x => x.id !== badge.id))} />
-      ))}
-      <AuthModal
-        open={authOpen}
-        onClose={handleAuthClose}
-        onSignIn={handleSignIn}
-        onSignUp={handleSignUp}
-        reason={authReason}
-      />
-    </div>
+    <Routes>
+      <Route path="/game/:gameId" element={
+        <GameWrapper onBack={handleBack} onResult={handleResult} />
+      } />
+      <Route path="*" element={
+        <div className="app-root">
+          <div className="fluid-glow fixed-bg" />
+          <Header onMenuOpen={() => setNavOpen(true)} />
+          <NavDrawer
+            open={navOpen}
+            onClose={() => setNavOpen(false)}
+            currentView={currentView}
+            onNavigate={handleNavigation}
+            user={user}
+            displayName={displayName}
+            onSignInClick={() => { setNavOpen(false); setAuthOpen(true); }}
+            onSignOut={handleSignOut}
+            onImportGuest={handleImportGuest}
+          />
+          <main className="app-main">
+            <Routes>
+              <Route path="/" element={<Library onPlay={handlePlay} />} />
+              <Route path="/history" element={<MatchHistory user={user} />} />
+              <Route path="/elo" element={<EloTrends user={user} />} />
+              <Route path="/badges" element={<Badges user={user} />} />
+              <Route path="/profile" element={<Profile user={user} />} />
+              <Route path="/leaderboard" element={<Leaderboard user={user} />} />
+              <Route path="*" element={<Library onPlay={handlePlay} />} />
+            </Routes>
+          </main>
+          {newBadges.map(badge => (
+            <BadgeToast key={badge.id} badge={badge} onDismiss={() => setNewBadges(b => b.filter(x => x.id !== badge.id))} />
+          ))}
+          <AuthModal
+            open={authOpen}
+            onClose={handleAuthClose}
+            onSignIn={handleSignIn}
+            onSignUp={handleSignUp}
+            reason={authReason}
+          />
+          <BugReport />
+        </div>
+      } />
+    </Routes>
   );
 }

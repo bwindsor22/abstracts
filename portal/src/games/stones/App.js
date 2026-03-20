@@ -14,9 +14,6 @@ const COLOR_PALETTE = [
   { value: '#e05555', label: 'Red'    },
   { value: '#5588e0', label: 'Blue'   },
   { value: '#22aa55', label: 'Green'  },
-  { value: '#e0a020', label: 'Gold'   },
-  { value: '#8855cc', label: 'Purple' },
-  { value: '#e06030', label: 'Orange' },
 ];
 
 function strokeFor(fill) {

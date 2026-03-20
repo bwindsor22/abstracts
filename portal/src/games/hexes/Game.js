@@ -100,13 +100,45 @@ function detectWin(board, player, lastRow, lastCol) {
   return null;
 }
 
+// ─── Binary min-heap for Dijkstra ────────────────────────────────────────────
+class MinHeap {
+  constructor() { this.data = []; }
+  push(item) {
+    this.data.push(item);
+    let i = this.data.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.data[p][0] <= this.data[i][0]) break;
+      [this.data[p], this.data[i]] = [this.data[i], this.data[p]];
+      i = p;
+    }
+  }
+  pop() {
+    const top = this.data[0];
+    const last = this.data.pop();
+    if (this.data.length > 0) {
+      this.data[0] = last;
+      let i = 0;
+      while (true) {
+        let s = i, l = 2 * i + 1, r = 2 * i + 2;
+        if (l < this.data.length && this.data[l][0] < this.data[s][0]) s = l;
+        if (r < this.data.length && this.data[r][0] < this.data[s][0]) s = r;
+        if (s === i) break;
+        [this.data[s], this.data[i]] = [this.data[i], this.data[s]];
+        i = s;
+      }
+    }
+    return top;
+  }
+  get size() { return this.data.length; }
+}
+
 // ─── Heuristic: shortest virtual path ────────────────────────────────────────
-// Dijkstra-like: cells owned by player cost 0, empty cost 1, opponent = Infinity
+// Dijkstra: cells owned by player cost 0, empty cost 1, opponent = wall
 export function shortestPath(board, player) {
   const opp = player === 'red' ? 'blue' : 'red';
   const dist = Array.from({ length: SIZE }, () => Array(SIZE).fill(Infinity));
-  // Min-heap via sorted array (small board, ok)
-  const heap = [];
+  const heap = new MinHeap();
 
   // Starting edge
   for (let i = 0; i < SIZE; i++) {
@@ -115,11 +147,12 @@ export function shortestPath(board, player) {
     const cost = board[r][c] === player ? 0 : 1;
     if (cost < dist[r][c]) { dist[r][c] = cost; heap.push([cost, r, c]); }
   }
-  heap.sort((a, b) => a[0] - b[0]);
 
-  while (heap.length > 0) {
-    const [d, r, c] = heap.shift();
+  while (heap.size > 0) {
+    const [d, r, c] = heap.pop();
     if (d > dist[r][c]) continue;
+    // Check end condition early
+    if (player === 'red' ? r === SIZE - 1 : c === SIZE - 1) return d;
     for (const [dr, dc] of NEIGHBOURS) {
       const nr = r + dr, nc = c + dc;
       if (!inBounds(nr, nc) || board[nr][nc] === opp) continue;
@@ -128,20 +161,77 @@ export function shortestPath(board, player) {
       if (nd < dist[nr][nc]) {
         dist[nr][nc] = nd;
         heap.push([nd, nr, nc]);
-        heap.sort((a, b) => a[0] - b[0]);
       }
     }
   }
 
-  // Min over ending edge
-  let best = Infinity;
-  for (let i = 0; i < SIZE; i++) {
-    const [r, c] = player === 'red' ? [SIZE - 1, i] : [i, SIZE - 1];
-    if (dist[r][c] < best) best = dist[r][c];
-  }
-  return best;
+  return Infinity;
 }
 
+// ─── Two-distance: cost allowing bridge/virtual connections ──────────────────
+// Like shortestPath but also considers "bridge" patterns (two-step connections)
+// where two friendly cells share two common empty neighbours — these act as
+// virtual connections that cost 0 instead of 1 per step.
+// BRIDGE_PAIRS: pairs of offsets that form a bridge in hex geometry
+const BRIDGE_PAIRS = [
+  [[-1, 0], [-1, 1]],   // top-left bridge
+  [[-1, 1], [0, 1]],    // top-right bridge
+  [[0, 1], [1, 0]],     // right bridge
+  [[1, 0], [1, -1]],    // bottom-right bridge
+  [[1, -1], [0, -1]],   // bottom-left bridge
+  [[0, -1], [-1, 0]],   // left bridge
+];
+
+// Extended neighbours: direct neighbours (cost depends on occupancy) +
+// bridge destinations (cost 0 if bridge pattern holds for player)
+export function shortestPathWithBridges(board, player) {
+  const opp = player === 'red' ? 'blue' : 'red';
+  const dist = Array.from({ length: SIZE }, () => Array(SIZE).fill(Infinity));
+  const heap = new MinHeap();
+
+  for (let i = 0; i < SIZE; i++) {
+    const [r, c] = player === 'red' ? [0, i] : [i, 0];
+    if (board[r][c] === opp) continue;
+    const cost = board[r][c] === player ? 0 : 1;
+    if (cost < dist[r][c]) { dist[r][c] = cost; heap.push([cost, r, c]); }
+  }
+
+  while (heap.size > 0) {
+    const [d, r, c] = heap.pop();
+    if (d > dist[r][c]) continue;
+    if (player === 'red' ? r === SIZE - 1 : c === SIZE - 1) return d;
+
+    // Direct neighbours
+    for (const [dr, dc] of NEIGHBOURS) {
+      const nr = r + dr, nc = c + dc;
+      if (!inBounds(nr, nc) || board[nr][nc] === opp) continue;
+      const cost = board[nr][nc] === player ? 0 : 1;
+      const nd = d + cost;
+      if (nd < dist[nr][nc]) { dist[nr][nc] = nd; heap.push([nd, nr, nc]); }
+    }
+
+    // Bridge connections: if current cell is owned by player, check bridge jumps
+    if (board[r][c] === player) {
+      for (const [off1, off2] of BRIDGE_PAIRS) {
+        // The bridge endpoint is at off1+off2 relative to [r,c]
+        const br = r + off1[0] + off2[0], bc = c + off1[1] + off2[1];
+        if (!inBounds(br, bc)) continue;
+        if (board[br][bc] !== player) continue; // endpoint must be ours
+        // The two "bridge carrier" cells must both be empty (not opponent)
+        const c1r = r + off1[0], c1c = c + off1[1];
+        const c2r = r + off2[0], c2c = c + off2[1];
+        if (!inBounds(c1r, c1c) || !inBounds(c2r, c2c)) continue;
+        if (board[c1r][c1c] === opp && board[c2r][c2c] === opp) continue;
+        // Virtual connection — cost 0 to reach br,bc
+        if (d < dist[br][bc]) { dist[br][bc] = d; heap.push([d, br, bc]); }
+      }
+    }
+  }
+
+  return Infinity;
+}
+
+// ─── Evaluate: basic (for medium) and advanced (for hard) ────────────────────
 export function evaluate(board, player) {
   if (!board) return 0;
   const opp = player === 'red' ? 'blue' : 'red';
@@ -150,6 +240,63 @@ export function evaluate(board, player) {
   if (myPath === 0) return 100000;
   if (oppPath === 0) return -100000;
   return oppPath - myPath;
+}
+
+// Advanced evaluation with bridge-aware two-distance + connectivity bonus
+export function evaluateAdvanced(board, player) {
+  if (!board) return 0;
+  const opp = player === 'red' ? 'blue' : 'red';
+
+  // Primary: shortest path (standard)
+  const myPath = shortestPath(board, player);
+  const oppPath = shortestPath(board, opp);
+  if (myPath === 0) return 100000;
+  if (oppPath === 0) return -100000;
+
+  // Secondary: bridge-aware two-distance
+  const myBridge = shortestPathWithBridges(board, player);
+  const oppBridge = shortestPathWithBridges(board, opp);
+
+  // Connectivity: count cells connected to both edges (strong positions)
+  const myConn = countConnectedCells(board, player);
+  const oppConn = countConnectedCells(board, opp);
+
+  // Weighted combination:
+  // - Two-distance difference is primary (×4) — drives strategic play
+  // - Standard path difference (×2) — tactical accuracy
+  // - Bridge path difference (×1.5) — rewards virtual connections
+  // - Connectivity bonus (×0.3) — slight reward for well-connected stones
+  return (oppPath - myPath) * 2
+       + (oppBridge - myBridge) * 1.5
+       + (oppConn - myConn) * -0.3;
+}
+
+// Count cells of player that are on the shortest path (connected to start edge)
+function countConnectedCells(board, player) {
+  const opp = player === 'red' ? 'blue' : 'red';
+  const visited = Array.from({ length: SIZE }, () => Array(SIZE).fill(false));
+  const queue = [];
+  // BFS from starting edge
+  for (let i = 0; i < SIZE; i++) {
+    const [r, c] = player === 'red' ? [0, i] : [i, 0];
+    if (board[r][c] === player && !visited[r][c]) {
+      visited[r][c] = true;
+      queue.push([r, c]);
+    }
+  }
+  let count = queue.length;
+  while (queue.length > 0) {
+    const [r, c] = queue.shift();
+    for (const [dr, dc] of NEIGHBOURS) {
+      const nr = r + dr, nc = c + dc;
+      if (inBounds(nr, nc) && !visited[nr][nc] && board[nr][nc] === player) {
+        visited[nr][nc] = true;
+        queue.push([nr, nc]);
+        count++;
+      }
+    }
+  }
+  return count;
 }
 
 export function getAllMoves(board) {

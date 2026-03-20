@@ -414,11 +414,11 @@ function AppInner({ onBack, onResult }) {
           })}
         </svg>
 
-        {selected.length > 0 && isPlayerTurn && (
-          <div className="selection-hint">
-            {selected.length} marble{selected.length > 1 ? 's' : ''} selected — click an arrow or drag to move
-          </div>
-        )}
+        <div className="selection-hint" style={{ visibility: selected.length > 0 && isPlayerTurn ? 'visible' : 'hidden' }}>
+          {selected.length > 0
+            ? `${selected.length} marble${selected.length > 1 ? 's' : ''} selected — click an arrow or drag to move`
+            : '\u00A0'}
+        </div>
 
         {/* Bottom controls */}
         <div className="game-controls">

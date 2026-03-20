@@ -366,8 +366,9 @@ function GameUI({ onBack, onResult }) {
         </div>
 
         {/* Wall mode buttons */}
-        {isPlayerTurn && wallsLeft[currentPlayer] > 0 && (
-          <div style={{ display: 'flex', gap: IS_TOUCH ? 10 : 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: IS_TOUCH ? 10 : 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center',
+          visibility: isPlayerTurn && wallsLeft[currentPlayer] > 0 ? 'visible' : 'hidden',
+          minHeight: IS_TOUCH ? 44 : 32 }}>
             <span style={{ color: 'rgba(240,238,255,0.5)', fontSize: IS_TOUCH ? 13 : 12 }}>Place wall:</span>
             <button
               onClick={() => setWallMode(wallMode === 'h' ? null : 'h')}
@@ -399,7 +400,6 @@ function GameUI({ onBack, onResult }) {
               }}>Cancel</button>
             )}
           </div>
-        )}
 
         <Board gs={gs} onCellClick={handleCellClick} onWallDrop={handleWallDrop} isPlayerTurn={isPlayerTurn} wallMode={wallMode} onSlotTap={handleWallSlotTap} />
 

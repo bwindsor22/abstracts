@@ -58,6 +58,7 @@ export function initState({ vsAI = false, aiPlayer = 'black', difficulty = 'medi
     resolvingPlayer: null,
     resolveStep: 'selectRow', // 'selectRow' | 'selectRing'
     winner: null,
+    moveCount: 0,
     vsAI, aiPlayer, difficulty, blitz,
   };
 }
@@ -148,7 +149,7 @@ export function applyMove(state, fromKey, toKey) {
   ringsOnBoard[owner] = ringsOnBoard[owner].filter(k => k !== fromKey);
   ringsOnBoard[owner].push(toKey);
 
-  return resolveAfterMove({ ...state, board, ringsOnBoard, markersPool: state.markersPool - 1, selectedRing: null });
+  return resolveAfterMove({ ...state, board, ringsOnBoard, markersPool: state.markersPool - 1, selectedRing: null, moveCount: (state.moveCount || 0) + 1 });
 }
 
 // ─── Row Detection ────────────────────────────────────────────────────────────

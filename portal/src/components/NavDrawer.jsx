@@ -4,6 +4,7 @@ import './NavDrawer.css';
 const NAV_ITEMS = [
   {
     id: 'library',
+    path: '/',
     title: 'Home',
     subtitle: 'Browse all games',
     icon: (
@@ -15,6 +16,7 @@ const NAV_ITEMS = [
   },
   {
     id: 'profile',
+    path: '/profile',
     title: 'Profile',
     subtitle: 'Your stats',
     icon: (
@@ -26,6 +28,7 @@ const NAV_ITEMS = [
   },
   {
     id: 'history',
+    path: '/history',
     title: 'Match History',
     subtitle: 'Recent games',
     icon: (
@@ -37,6 +40,7 @@ const NAV_ITEMS = [
   },
   {
     id: 'elo',
+    path: '/elo',
     title: 'ELO Trends',
     subtitle: 'Rating over time',
     icon: (
@@ -47,6 +51,7 @@ const NAV_ITEMS = [
   },
   {
     id: 'badges',
+    path: '/badges',
     title: 'Badges',
     subtitle: 'Achievements',
     icon: (
@@ -58,6 +63,7 @@ const NAV_ITEMS = [
   },
   {
     id: 'leaderboard',
+    path: '/leaderboard',
     title: 'Leaderboard',
     subtitle: 'Top players',
     icon: (

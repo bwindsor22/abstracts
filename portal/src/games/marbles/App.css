@@ -44,6 +44,10 @@
 }
 
 .game-marbles .difficulty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
@@ -99,12 +103,15 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   color: #f0eeff;
+  min-height: 28px;
+  line-height: 28px;
 }
 
 .game-marbles .selection-hint {
   color: rgba(240, 238, 255, 0.5);
   font-size: 13px;
   text-align: center;
+  min-height: 20px;
 }
 
 .game-marbles .game-controls {

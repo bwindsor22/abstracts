@@ -1,8 +1,11 @@
 import React, { lazy, Suspense, useState, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import { GAME_MAP } from '../data/games';
 import GameGuide from './GameGuide';
+import BugReport from './BugReport';
 import './GameWrapper.css';
 import './GameGuide.css';
 
@@ -31,23 +34,25 @@ const GAME_COMPONENTS = {
   blocks:  lazy(() => import('../games/blocks/App')),
 };
 
-export default function GameWrapper({ game, onBack, onResult }) {
+export default function GameWrapper({ onBack, onResult }) {
+  const { gameId } = useParams();
+  const game = GAME_MAP[gameId];
   const [showGuide, setShowGuide] = useState(false);
-  const GameComponent = GAME_COMPONENTS[game.id];
+  const GameComponent = GAME_COMPONENTS[gameId];
 
   const toggleGuide = useCallback(() => setShowGuide(g => !g), []);
 
-  if (!GameComponent) {
+  if (!GameComponent || !game) {
     return (
       <div className="game-wrapper-error">
-        <p>Game "{game.id}" not found.</p>
+        <p>Game "{gameId}" not found.</p>
         <button onClick={onBack}>← Back to Library</button>
       </div>
     );
   }
 
   return (
-    <DndProvider key={game.id} backend={_backend} options={_backendOptions}>
+    <DndProvider key={gameId} backend={_backend} options={_backendOptions}>
       <Suspense fallback={
         <div className="game-wrapper-loading">
           <div className="game-wrapper-spinner" />
@@ -60,7 +65,8 @@ export default function GameWrapper({ game, onBack, onResult }) {
         </div>
       </Suspense>
 
-      {/* Floating guide button */}
+      {/* Floating buttons */}
+      <BugReport />
       <button className="game-guide-fab" onClick={toggleGuide} aria-label="How to play">?</button>
 
       {/* Guide overlay */}
@@ -71,7 +77,7 @@ export default function GameWrapper({ game, onBack, onResult }) {
               <span className="game-guide-panel-title">How to Play</span>
               <button className="game-guide-panel-close" onClick={toggleGuide}>×</button>
             </div>
-            <GameGuide gameId={game.id} />
+            <GameGuide gameId={gameId} />
           </div>
         </div>
       )}

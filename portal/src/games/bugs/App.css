@@ -44,6 +44,10 @@
 }
 
 .game-bugs .difficulty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
@@ -92,11 +96,15 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   color: #f0eeff;
+  min-height: 28px;
+  line-height: 28px;
 }
 
 .game-bugs .selected-hint {
   color: #ffe066;
   font-size: 13px;
+  min-height: 20px;
+  visibility: visible;
 }
 
 .game-bugs .hand-label {

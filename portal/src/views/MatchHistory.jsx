@@ -15,8 +15,8 @@ function relativeTime(ts) {
   return `${d}d ago`;
 }
 
-export default function MatchHistory({ viewParams }) {
-  const [activeFilter, setActiveFilter] = useState(viewParams?.filter || 'all');
+export default function MatchHistory() {
+  const [activeFilter, setActiveFilter] = useState('all');
   const [replayGame, setReplayGame] = useState(null);
   const history = getHistory();
 
@@ -98,7 +98,7 @@ export default function MatchHistory({ viewParams }) {
                   <div className="match-row-name">{game.gameName || meta?.name || game.gameId}</div>
                   <div className="match-row-meta">
                     vs. {game.difficulty ? game.difficulty.charAt(0).toUpperCase() + game.difficulty.slice(1) : 'AI'}
-                    {game.moves ? ` · ${game.moves} moves` : ''}
+                    {game.moves > 0 ? ` · ${game.moves} moves` : ''}
                   </div>
                 </div>
                 <div className="match-row-result">

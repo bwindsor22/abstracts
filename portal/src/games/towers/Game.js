@@ -31,6 +31,7 @@ export function initState({ vsAI = false, aiPlayer = 'p2', difficulty = 'medium'
     movedTo: null,         // { r, c } after move, for build phase
     winner: null,
     winReason: null,
+    moveCount: 0,
     vsAI, aiPlayer, difficulty,
   };
 }
@@ -93,7 +94,7 @@ export function applyMove(state, r, c) {
 
   // Win check: moved onto level 3
   if (board[r][c].level === 3) {
-    return { ...state, board, workers, winner: state.currentPlayer, winReason: 'tower' };
+    return { ...state, board, workers, winner: state.currentPlayer, winReason: 'tower', moveCount: (state.moveCount || 0) + 1 };
   }
 
   return { ...state, board, workers, phase: 'build', movedTo: { r, c } };
@@ -136,7 +137,7 @@ export function applyBuild(state, r, c) {
   // Per rules, a player loses if they cannot legally complete BOTH actions.
   const nextWorkers = nextPlayer === 'p1' ? ['p1a', 'p1b'] : ['p2a', 'p2b'];
   const nextState = { ...state, board, phase: 'select', currentPlayer: nextPlayer,
-    selectedWorker: null, movedTo: null };
+    selectedWorker: null, movedTo: null, moveCount: (state.moveCount || 0) + 1 };
   const canCompleteTurn = nextWorkers.some(w => {
     const s1 = applySelect(nextState, w);
     if (s1.phase !== 'move') return false;

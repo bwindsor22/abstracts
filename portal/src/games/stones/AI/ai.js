@@ -49,15 +49,36 @@ function minimax(state, depth, alpha, beta, maximizing, aiPlayer) {
   }
 }
 
+// Check for immediate winning move or must-block threat
+function findUrgentMove(state, cands, aiPlayer) {
+  const opp = aiPlayer === 'black' ? 'white' : 'black';
+  // 1. Can AI win immediately?
+  for (const [r, c] of cands) {
+    const next = applyMove(state, r, c);
+    if (next.winner === aiPlayer) return [r, c];
+  }
+  // 2. Can opponent win on their next move? Block it.
+  const oppState = { ...state, currentPlayer: opp };
+  for (const [r, c] of cands) {
+    const next = applyMove(oppState, r, c);
+    if (next.winner === opp) return [r, c];
+  }
+  return null;
+}
+
 export function getAIMove(state, player, difficulty = 'medium') {
   const cands = getCandidates(state.board);
   if (cands.length === 0) return null;
   if (difficulty === 'easy') return shuffle(cands)[0];
 
-  const depth = difficulty === 'hard' ? 3 : 2;
+  // Always check for immediate wins/blocks first (even on medium)
+  const urgent = findUrgentMove(state, cands, player);
+  if (urgent) return urgent;
+
+  const depth = difficulty === 'hard' ? 4 : 2;
   // Order candidates by quick evaluation so blocking/winning moves come first
   const ordered = orderCandidates(state, cands, player);
-  const limited = ordered.slice(0, 25);
+  const limited = ordered.slice(0, difficulty === 'hard' ? 30 : 25);
 
   let bestMove = limited[0], bestVal = -Infinity;
   for (const [r, c] of limited) {

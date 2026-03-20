@@ -497,7 +497,7 @@ export default function App({ onBack, onResult }) {
       gameId: 'bugs',
       gameName: 'Bugs',
       won: gs.winner === 'black',
-      moves: gs.moveCount || 0,
+      moves: gs.moveNumber || 0,
       difficulty: gs.difficulty || 'medium',
     });
   }, [gs, onResult]);
@@ -535,13 +535,13 @@ export default function App({ onBack, onResult }) {
             handleHandClick={handleHandClick}
             handleDrop={handleDrop}
           />
-          {selected && (
-            <div className="selected-hint">
-              {selected.type === 'hand'
+          <div className="selected-hint" style={{ visibility: selected ? 'visible' : 'hidden' }}>
+            {selected
+              ? (selected.type === 'hand'
                 ? `Selected: ${selected.pieceType} — click or drag to a highlighted cell`
-                : `Selected piece — click or drag to a highlighted cell, or click another piece`}
-            </div>
-          )}
+                : `Selected piece — click or drag to a highlighted cell, or click another piece`)
+              : '\u00A0'}
+          </div>
 
           {/* Bottom controls */}
           <div className="game-controls">

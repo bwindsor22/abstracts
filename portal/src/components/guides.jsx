@@ -828,75 +828,92 @@ const millsGuide = [
     caption: 'Take turns placing pieces on the intersections.',
     svg: <Svg>
       {/* three concentric squares */}
-      <rect x={40} y={20} width={160} height={100} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <rect x={70} y={40} width={100} height={60} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <rect x={100} y={55} width={40} height={30} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={65} y={15} width={110} height={110} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={85} y={35} width={70} height={70} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={105} y={55} width={30} height={30} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
       {/* connecting lines */}
-      <line x1={120} y1={20} x2={120} y2={55} stroke={dim} strokeWidth={1.5} />
-      <line x1={120} y1={85} x2={120} y2={120} stroke={dim} strokeWidth={1.5} />
-      <line x1={40} y1={70} x2={100} y2={70} stroke={dim} strokeWidth={1.5} />
-      <line x1={140} y1={70} x2={200} y2={70} stroke={dim} strokeWidth={1.5} />
+      <line x1={120} y1={15} x2={120} y2={55} stroke={dim} strokeWidth={1.5} />
+      <line x1={120} y1={85} x2={120} y2={125} stroke={dim} strokeWidth={1.5} />
+      <line x1={65} y1={70} x2={105} y2={70} stroke={dim} strokeWidth={1.5} />
+      <line x1={135} y1={70} x2={175} y2={70} stroke={dim} strokeWidth={1.5} />
       {/* some pieces placed */}
-      <Stone cx={40} cy={20} r={8} fill={white} />
-      <Stone cx={120} cy={20} r={8} fill={dark} stroke="#333" />
-      <Stone cx={70} cy={40} r={8} fill={white} />
+      <Stone cx={65} cy={15} r={8} fill={white} />
+      <Stone cx={120} cy={15} r={8} fill={dark} stroke="#333" />
+      <Stone cx={85} cy={35} r={8} fill={white} />
       {/* new piece */}
-      <Stone cx={170} cy={40} r={8} fill={dark} stroke="#333" />
-      <circle cx={170} cy={40} r={12} fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="3 3" />
+      <Stone cx={155} cy={35} r={8} fill={dark} stroke="#333" />
+      <circle cx={155} cy={35} r={12} fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="3 3" />
     </Svg>
   },
   {
     caption: 'Form a line of 3 (a mill) to remove an opponent\'s piece.',
     svg: <Svg>
-      <rect x={40} y={20} width={160} height={100} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <rect x={70} y={40} width={100} height={60} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <line x1={120} y1={20} x2={120} y2={40} stroke={dim} strokeWidth={1.5} />
-      <line x1={40} y1={70} x2={70} y2={70} stroke={dim} strokeWidth={1.5} />
+      <rect x={65} y={15} width={110} height={110} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={85} y={35} width={70} height={70} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <line x1={120} y1={15} x2={120} y2={35} stroke={dim} strokeWidth={1.5} />
+      <line x1={65} y1={70} x2={85} y2={70} stroke={dim} strokeWidth={1.5} />
       {/* mill: 3 whites on top row */}
-      <Stone cx={40} cy={20} r={9} fill={white} />
-      <Stone cx={120} cy={20} r={9} fill={white} />
-      <Stone cx={200} cy={20} r={9} fill={white} />
-      <line x1={40} y1={8} x2={200} y2={8} stroke={yellow} strokeWidth={2} />
-      <Txt x={120} y={5} size={8} fill={yellow}>mill!</Txt>
+      <Stone cx={65} cy={15} r={9} fill={white} />
+      <Stone cx={120} cy={15} r={9} fill={white} />
+      <Stone cx={175} cy={15} r={9} fill={white} />
+      <line x1={65} y1={3} x2={175} y2={3} stroke={yellow} strokeWidth={2} />
+      <Txt x={120} y={0} size={8} fill={yellow}>mill!</Txt>
       {/* remove opponent piece */}
-      <Stone cx={70} cy={100} r={9} fill={dark} stroke="#333" />
-      <Txt x={70} y={115} size={8} fill="#ff6b6b">remove one</Txt>
-      <line x1={62} y1={92} x2={78} y2={108} stroke="#ff6b6b" strokeWidth={1.5} />
-      <line x1={78} y1={92} x2={62} y2={108} stroke="#ff6b6b" strokeWidth={1.5} />
+      <Stone cx={85} cy={105} r={9} fill={dark} stroke="#333" />
+      <Txt x={85} y={120} size={8} fill="#ff6b6b">remove one</Txt>
+      <line x1={77} y1={97} x2={93} y2={113} stroke="#ff6b6b" strokeWidth={1.5} />
+      <line x1={93} y1={97} x2={77} y2={113} stroke="#ff6b6b" strokeWidth={1.5} />
+    </Svg>
+  },
+  {
+    caption: 'Tip: You can break and reform the same mill to capture again each time!',
+    svg: <Svg>
+      <rect x={65} y={15} width={110} height={110} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <line x1={65} y1={70} x2={175} y2={70} stroke={dim} strokeWidth={1.5} />
+      {/* mill of 3 whites on left side */}
+      <Stone cx={65} cy={15} r={9} fill={white} />
+      <Stone cx={65} cy={70} r={9} fill={white} />
+      <Stone cx={65} cy={125} r={9} fill={white} />
+      {/* move arrow showing piece leaving and returning */}
+      {arrow(78, 70, 100, 50)}
+      <Txt x={100} y={42} size={7} fill={yellow}>move out</Txt>
+      {arrow(100, 58, 78, 70)}
+      <Txt x={100} y={75} size={7} fill={yellow}>move back</Txt>
+      <Txt x={170} y={60} size={8} fill="#ff6b6b">capture!</Txt>
     </Svg>
   },
   {
     caption: 'Once all pieces are placed, slide to adjacent empty spots.',
     svg: <Svg>
-      <rect x={50} y={25} width={140} height={90} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <rect x={80} y={45} width={80} height={50} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <line x1={120} y1={25} x2={120} y2={45} stroke={dim} strokeWidth={1.5} />
-      <line x1={50} y1={70} x2={80} y2={70} stroke={dim} strokeWidth={1.5} />
-      <line x1={160} y1={70} x2={190} y2={70} stroke={dim} strokeWidth={1.5} />
-      <line x1={120} y1={95} x2={120} y2={115} stroke={dim} strokeWidth={1.5} />
+      <rect x={65} y={15} width={110} height={110} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={85} y={35} width={70} height={70} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <line x1={120} y1={15} x2={120} y2={35} stroke={dim} strokeWidth={1.5} />
+      <line x1={65} y1={70} x2={85} y2={70} stroke={dim} strokeWidth={1.5} />
+      <line x1={155} y1={70} x2={175} y2={70} stroke={dim} strokeWidth={1.5} />
+      <line x1={120} y1={105} x2={120} y2={125} stroke={dim} strokeWidth={1.5} />
       {/* piece sliding */}
-      <Stone cx={80} cy={45} r={8} fill={white} />
-      {arrow(92, 45, 112, 45)}
-      <circle cx={120} cy={45} r={5} fill="none" stroke={yellow} strokeWidth={1} strokeDasharray="3 3" />
-      <Txt x={120} y={130} size={9} fill="rgba(240,238,255,0.4)">move one step to adjacent empty spot</Txt>
+      <Stone cx={85} cy={35} r={8} fill={white} />
+      {arrow(97, 35, 112, 35)}
+      <circle cx={120} cy={35} r={5} fill="none" stroke={yellow} strokeWidth={1} strokeDasharray="3 3" />
+      <Txt x={120} y={135} size={9} fill="rgba(240,238,255,0.4)">move one step to adjacent empty spot</Txt>
     </Svg>
   },
   {
     caption: 'Reduce your opponent to 2 pieces to win.',
     svg: <Svg>
       {/* small board for context */}
-      <rect x={70} y={20} width={100} height={70} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
-      <rect x={90} y={35} width={60} height={40} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={75} y={20} width={90} height={90} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
+      <rect x={95} y={40} width={50} height={50} fill="none" stroke={dim} strokeWidth={1.5} rx={2} />
       {/* your pieces */}
-      <Stone cx={70} cy={20} r={7} fill={white} />
-      <Stone cx={170} cy={20} r={7} fill={white} />
-      <Stone cx={70} cy={90} r={7} fill={white} />
-      <Stone cx={120} cy={55} r={7} fill={white} />
+      <Stone cx={75} cy={20} r={7} fill={white} />
+      <Stone cx={165} cy={20} r={7} fill={white} />
+      <Stone cx={75} cy={110} r={7} fill={white} />
+      <Stone cx={120} cy={65} r={7} fill={white} />
       {/* opponent's 2 remaining */}
-      <Stone cx={90} cy={35} r={7} fill={dark} stroke="#333" />
-      <Stone cx={150} cy={75} r={7} fill={dark} stroke="#333" />
-      <Txt x={120} y={110} size={9} fill="rgba(240,238,255,0.4)">opponent has only 2 left</Txt>
-      <Txt x={120} y={128} size={10} fill={yellow}>you win!</Txt>
+      <Stone cx={95} cy={40} r={7} fill={dark} stroke="#333" />
+      <Stone cx={145} cy={90} r={7} fill={dark} stroke="#333" />
+      <Txt x={120} y={120} size={9} fill="rgba(240,238,255,0.4)">opponent has only 2 left</Txt>
+      <Txt x={120} y={135} size={10} fill={yellow}>you win!</Txt>
     </Svg>
   },
 ];

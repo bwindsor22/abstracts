@@ -35,6 +35,7 @@ export function initState({ vsAI = false, aiPlayer = 'white', difficulty = 'medi
     captured: { black: 0, white: 0 }, // opponent marbles pushed off
     winner: null,
     selected: [],   // selected marble keys (UI)
+    moveCount: 0,
     vsAI, aiPlayer, difficulty,
   };
 }
@@ -190,7 +191,7 @@ export function applyMove(state, move) {
 
   const winner = newCaptured.black >= 6 ? 'black' : newCaptured.white >= 6 ? 'white' : null;
   const next = currentPlayer === 'black' ? 'white' : 'black';
-  return { ...state, board: newBoard, captured: newCaptured, winner, currentPlayer: winner ? currentPlayer : next, selected: [] };
+  return { ...state, board: newBoard, captured: newCaptured, winner, currentPlayer: winner ? currentPlayer : next, selected: [], moveCount: (state.moveCount || 0) + 1 };
 }
 
 // Fix: inline push needs to process the entire chain (own + opponent marbles)
@@ -242,7 +243,7 @@ export function applyMoveFixed(state, move) {
 
   const winner = newCaptured.black >= 6 ? 'black' : newCaptured.white >= 6 ? 'white' : null;
   const next = currentPlayer === 'black' ? 'white' : 'black';
-  return { ...state, board: newBoard, captured: newCaptured, winner, currentPlayer: winner ? currentPlayer : next, selected: [] };
+  return { ...state, board: newBoard, captured: newCaptured, winner, currentPlayer: winner ? currentPlayer : next, selected: [], moveCount: (state.moveCount || 0) + 1 };
 }
 
 // ─── Heuristic ────────────────────────────────────────────────────────────────

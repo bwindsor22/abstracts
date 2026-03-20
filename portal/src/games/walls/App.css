@@ -44,6 +44,10 @@
 }
 
 .game-walls .difficulty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
@@ -92,12 +96,15 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   color: #f0eeff;
+  min-height: 30px;
+  line-height: 30px;
 }
 
 .game-walls .hint-text {
   color: rgba(240, 238, 255, 0.4);
   font-size: 12px;
   text-align: center;
+  min-height: 18px;
 }
 
 .game-walls .game-controls {

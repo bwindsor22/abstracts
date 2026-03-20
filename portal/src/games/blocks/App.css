@@ -95,3 +95,42 @@
   opacity: 0.4;
   cursor: default;
 }
+
+/* ── Menu overlay ──────────────────────────────────────────── */
+.game-blocks .game-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-blocks .game-menu-panel {
+  background: rgba(26, 11, 46, 0.95);
+  border: 1px solid rgba(153, 66, 240, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 240px;
+}
+
+.game-blocks .game-menu-panel button {
+  padding: 12px 24px;
+  background: rgba(153, 66, 240, 0.1);
+  color: #f0eeff;
+  border: 1px solid rgba(153, 66, 240, 0.2);
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.game-blocks .game-menu-panel button:hover {
+  background: rgba(153, 66, 240, 0.25);
+}

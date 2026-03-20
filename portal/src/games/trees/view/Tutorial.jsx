@@ -49,7 +49,7 @@ const Cell = ({ label, shadowed = false, children, size = 52, ring = 1 }) => {
     }}>
       {children}
       {label && (
-        <span style={{ fontSize: '9px', position: 'absolute', bottom: 2, color: '#fff', fontFamily: 'sans-serif', textShadow: '0 0 3px #000' }}>
+        <span style={{ fontSize: '9px', position: 'absolute', bottom: 2, color: '#333', fontFamily: 'sans-serif', fontWeight: 'bold', textShadow: '0 1px 2px rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.7)', borderRadius: 3, padding: '0 3px' }}>
           {label}
         </span>
       )}
@@ -60,7 +60,7 @@ const Cell = ({ label, shadowed = false, children, size = 52, ring = 1 }) => {
 const Arrow = ({ label }) => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 4px', color: '#f9a825', fontSize: '20px' }}>
     →
-    {label && <span style={{ fontSize: '9px', color: '#888', fontFamily: 'sans-serif' }}>{label}</span>}
+    {label && <span style={{ fontSize: '9px', color: '#555', fontFamily: 'sans-serif', fontWeight: 'bold' }}>{label}</span>}
   </div>
 );
 
@@ -172,7 +172,7 @@ const STEPS = [
           <Arrow label="shadow" />
           <Cell shadowed label="blocked"><TreeImg type="small" faded /></Cell>
           <Arrow />
-          <Cell shadowed><span style={{ fontSize: '9px', color: '#aaa', fontFamily: 'sans-serif' }}>shadow</span></Cell>
+          <Cell shadowed><span style={{ fontSize: '9px', color: '#ddd', fontFamily: 'sans-serif', fontWeight: 'bold' }}>shadow</span></Cell>
         </Row>
         <Caption>The large tree's shadow covers 3 hexes. The small tree inside that shadow earns no LP.</Caption>
       </DiagramBox>
