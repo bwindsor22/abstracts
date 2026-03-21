@@ -335,27 +335,28 @@ const bugsGuide = [
 // ── CIRCLES (YINSH) ─────────────────────────────────────────────────────────────
 const circlesGuide = [
   {
-    caption: 'Move a ring — it leaves a marker behind and flips markers it crosses.',
+    caption: 'Move a ring: 1) place a marker where it was, 2) move the ring, 3) any markers jumped over are flipped.',
     svg: <Svg>
-      {/* BEFORE label */}
-      <Txt x={60} y={12} size={8} fill="rgba(240,238,255,0.35)">BEFORE</Txt>
-      {/* before: ring at left, two dark markers in the way */}
+      {/* Step 1: BEFORE */}
+      <Txt x={10} y={12} size={8} fill="rgba(240,238,255,0.35)" anchor="start">BEFORE</Txt>
       <circle cx={30} cy={35} r={12} fill="none" stroke={white} strokeWidth={2.5} />
+      <Txt x={30} y={52} size={6} fill="rgba(240,238,255,0.3)">ring</Txt>
       <Stone cx={60} cy={35} r={6} fill={dark} stroke="#333" />
       <Stone cx={90} cy={35} r={6} fill={dark} stroke="#333" />
       <circle cx={120} cy={35} r={4} fill="none" stroke={dim} strokeWidth={1} />
-      {/* arrow */}
-      {arrow(135, 35, 155, 65)}
-      {/* AFTER label */}
-      <Txt x={60} y={72} size={8} fill="rgba(240,238,255,0.35)">AFTER</Txt>
-      {/* after: marker left behind at ring's origin, flipped markers, ring at new spot */}
+      {/* arrow down */}
+      {arrow(120, 50, 120, 62)}
+      {/* Step 2: AFTER */}
+      <Txt x={10} y={77} size={8} fill="rgba(240,238,255,0.35)" anchor="start">AFTER</Txt>
       <Stone cx={30} cy={95} r={6} fill={white} />
-      <Txt x={30} y={110} size={7} fill="rgba(240,238,255,0.3)">left behind</Txt>
+      <Txt x={30} y={115} size={6} fill="rgba(240,238,255,0.3)">marker</Txt>
+      <Txt x={30} y={123} size={6} fill="rgba(240,238,255,0.3)">left behind</Txt>
       <Stone cx={60} cy={95} r={6} fill={white} />
-      <Txt x={75} y={88} size={7} fill={yellow}>flipped</Txt>
       <Stone cx={90} cy={95} r={6} fill={white} />
+      <line x1={53} y1={82} x2={97} y2={82} stroke={yellow} strokeWidth={1} />
+      <Txt x={75} y={79} size={6} fill={yellow}>flipped</Txt>
       <circle cx={120} cy={95} r={12} fill="none" stroke={white} strokeWidth={2.5} />
-      <Txt x={120} y={115} size={7} fill="rgba(240,238,255,0.3)">ring moved</Txt>
+      <Txt x={120} y={115} size={6} fill="rgba(240,238,255,0.3)">ring lands</Txt>
     </Svg>
   },
   {
@@ -373,7 +374,7 @@ const circlesGuide = [
     </Svg>
   },
   {
-    caption: 'Remove the 5 markers and one of your rings.',
+    caption: 'When you get 5 in a row, remove those 5 markers and one of your rings.',
     svg: <Svg>
       {/* 5 markers fading out */}
       {[0,1,2,3,4].map(i =>

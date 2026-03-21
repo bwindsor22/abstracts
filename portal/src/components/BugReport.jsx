@@ -128,7 +128,6 @@ export default function BugReport() {
                     ref={fileRef}
                     type="file"
                     accept="image/*"
-                    capture="environment"
                     className="bug-report-file-input"
                     onChange={handleFile}
                   />

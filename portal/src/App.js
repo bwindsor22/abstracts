@@ -14,7 +14,6 @@ import Profile from './views/Profile';
 import { addResult, checkAndAwardBadges } from './utils/storage';
 import { ALL_BADGES } from './data/badges';
 import Leaderboard from './views/Leaderboard';
-import BugReport from './components/BugReport';
 import {
   supabase,
   signInWithEmail,
@@ -201,7 +200,6 @@ export default function App() {
             onSignUp={handleSignUp}
             reason={authReason}
           />
-          <BugReport />
         </div>
       } />
     </Routes>

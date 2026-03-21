@@ -26,7 +26,7 @@ function getAIFilter(playerColor, ownerIndex) {
   return COLOR_FILTERS[colorKey] || COLOR_FILTERS.blue;
 }
 
-export const Piece = ({ type, id, fillContainer = false, isFromInventory = false, owner = 'p1', disabled = false }) => {
+export const Piece = ({ type, id, fillContainer = false, isFromInventory = false, isOnBoard = false, owner = 'p1', disabled = false }) => {
   const { playerColor, isMobile, selectedPiece, setSelectedPiece } = useGameState();
   const [{ isDragging }, drag, preview] = useDrag({
     type: ItemTypes.PIECE,
@@ -66,6 +66,9 @@ export const Piece = ({ type, id, fillContainer = false, isFromInventory = false
   };
 
   const handleTap = (isMobile && !disabled) ? (e) => {
+    // Board pieces: when another piece is already selected, let the click
+    // propagate to the BoardSquare so it can handle grow/upgrade actions.
+    if (isOnBoard && selectedPiece && selectedPiece !== id) return;
     e.stopPropagation();
     setSelectedPiece(selectedPiece === id ? null : id);
   } : undefined;

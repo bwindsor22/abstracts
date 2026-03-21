@@ -83,9 +83,10 @@ export function getPawnMoves(state, player) {
 // ─── Wall placement ───────────────────────────────────────────────────────────
 // Horizontal wall at (r,c,'h'): blocks passage between row r and r+1, at cols c and c+1
 // Vertical wall at (r,c,'v'): blocks passage between col c and c+1, at rows r and r+1
-export function canPlaceWall(state, r, c, orient) {
-  const { walls, wallsLeft, currentPlayer } = state;
-  if (wallsLeft[currentPlayer] <= 0) return false;
+export function canPlaceWall(state, r, c, orient, player) {
+  const { walls, wallsLeft } = state;
+  const who = player || state.currentPlayer;
+  if (wallsLeft[who] <= 0) return false;
   if (orient === 'h') {
     if (r < 0 || r >= SIZE - 1 || c < 0 || c >= SIZE - 1) return false;
     if (hasWall(walls, r, c, 'h')) return false;
@@ -99,7 +100,9 @@ export function canPlaceWall(state, r, c, orient) {
   }
   // Check both players still have a path after placing
   const testWalls = { ...walls, [wallKey(r, c, orient)]: true };
-  return hasPath(testWalls, state.pawns.p1, 8) && hasPath(testWalls, state.pawns.p2, 0);
+  if (!hasPath(testWalls, state.pawns.p1, SIZE - 1)) return false;
+  if (!hasPath(testWalls, state.pawns.p2, 0)) return false;
+  return true;
 }
 
 function hasPath(walls, { row, col }, goalRow) {
@@ -130,7 +133,12 @@ export function applyMove(state, move) {
     return { ...state, pawns, currentPlayer: winner ? state.currentPlayer : next, winner, moveCount: (state.moveCount || 0) + 1 };
   }
   if (move.type === 'wall') {
-    const walls = { ...state.walls, [wallKey(move.r, move.c, move.orient)]: true };
+    // Validate: wall must not block all paths for either player
+    const testWalls = { ...state.walls, [wallKey(move.r, move.c, move.orient)]: true };
+    if (!hasPath(testWalls, state.pawns.p1, SIZE - 1) || !hasPath(testWalls, state.pawns.p2, 0)) {
+      return state; // reject invalid wall — both players must retain a path
+    }
+    const walls = testWalls;
     const wallsLeft = { ...state.wallsLeft, [state.currentPlayer]: state.wallsLeft[state.currentPlayer] - 1 };
     return { ...state, walls, wallsLeft, currentPlayer: next, moveCount: (state.moveCount || 0) + 1 };
   }
@@ -143,8 +151,8 @@ export function getAllMoves(state, player) {
   if (state.wallsLeft[player] > 0) {
     for (let r = 0; r < SIZE - 1; r++) {
       for (let c = 0; c < SIZE - 1; c++) {
-        if (canPlaceWall(state, r, c, 'h')) moves.push({ type: 'wall', r, c, orient: 'h' });
-        if (canPlaceWall(state, r, c, 'v')) moves.push({ type: 'wall', r, c, orient: 'v' });
+        if (canPlaceWall(state, r, c, 'h', player)) moves.push({ type: 'wall', r, c, orient: 'h' });
+        if (canPlaceWall(state, r, c, 'v', player)) moves.push({ type: 'wall', r, c, orient: 'v' });
       }
     }
   }

@@ -64,12 +64,14 @@ export default function App({ onBack, onResult }) {
   const [hoverCell, setHoverCell] = useState(null);
   const [removeMode, setRemoveMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const resultReported = useRef(false);
 
   const handleStart = useCallback((opts) => {
     setGs(initState({ ...opts, aiPlayer: 'blue' }));
     setHoverCell(null);
     setRemoveMode(false);
+    setShowOverlay(false);
     resultReported.current = false;
   }, []);
 
@@ -113,6 +115,13 @@ export default function App({ onBack, onResult }) {
     }, 300);
     return () => clearTimeout(timer);
   }, [gs]);
+
+  // Delay win overlay so player can see the winning path
+  useEffect(() => {
+    if (!gs?.winner) { setShowOverlay(false); return; }
+    const timer = setTimeout(() => setShowOverlay(true), 1800);
+    return () => clearTimeout(timer);
+  }, [gs?.winner]);
 
   // Report result once
   useEffect(() => {
@@ -288,8 +297,8 @@ export default function App({ onBack, onResult }) {
         </div>
       </div>
 
-      {/* Win overlay */}
-      {winner && (
+      {/* Win overlay (delayed to let player see winning path) */}
+      {winner && showOverlay && (
         <WinOverlay
           title={vsAI ? (winner !== aiPlayer ? 'YOU WIN!' : 'AI WINS!') : `${winner === 'red' ? 'Red' : 'Blue'} wins!`}
           subtitle="Connected both sides"

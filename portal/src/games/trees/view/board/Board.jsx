@@ -99,7 +99,7 @@ const Board = ({ boardState }) => {
     return (
       <div key={i} style={squareStyle}>
         <BoardSquare x={x} y={y} bkgd={bkgd} isShadowed={isShadowed}>
-          {piece && <Piece type={piece.type} id={piece.id} owner={piece.owner || 'p1'} />}
+          {piece && <Piece type={piece.type} id={piece.id} owner={piece.owner || 'p1'} isOnBoard />}
           {lpScore > 0 && (
             <div style={{
               position: 'absolute',
