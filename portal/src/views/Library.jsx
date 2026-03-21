@@ -209,7 +209,7 @@ function PlayModal({ game, onPlay, onClose }) {
 
 // --- View Toggle ---
 const VIEWS = [
-  { key: 'complexity', label: 'Rule Difficulty' },
+  { key: 'complexity', label: 'Number of Rules' },
   { key: 'time', label: 'Date' },
   { key: 'theme', label: 'Theme' },
 ];
