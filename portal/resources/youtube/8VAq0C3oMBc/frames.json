@@ -1,0 +1,52 @@
+{
+  "url": "https://www.youtube.com/watch?v=8VAq0C3oMBc",
+  "game": "new-games",
+  "has_frames": true,
+  "captions": [
+    {
+      "timestamp_s": 0.0,
+      "frame_file": "frames/frame_0001.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 30.0,
+      "frame_file": "frames/frame_0002.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 60.0,
+      "frame_file": "frames/frame_0003.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 90.0,
+      "frame_file": "frames/frame_0004.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 120.0,
+      "frame_file": "frames/frame_0005.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 150.0,
+      "frame_file": "frames/frame_0006.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 180.0,
+      "frame_file": "frames/frame_0007.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 210.0,
+      "frame_file": "frames/frame_0008.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 240.0,
+      "frame_file": "frames/frame_0009.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    }
+  ]
+}

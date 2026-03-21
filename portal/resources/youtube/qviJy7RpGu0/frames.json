@@ -1,0 +1,27 @@
+{
+  "url": "https://www.youtube.com/watch?v=qviJy7RpGu0",
+  "game": "new-games",
+  "has_frames": true,
+  "captions": [
+    {
+      "timestamp_s": 0.0,
+      "frame_file": "frames/frame_0001.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 30.0,
+      "frame_file": "frames/frame_0002.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 60.0,
+      "frame_file": "frames/frame_0003.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    },
+    {
+      "timestamp_s": 90.0,
+      "frame_file": "frames/frame_0004.jpg",
+      "caption": "(caption failed: <urlopen error [Errno 61] Connection refused>)"
+    }
+  ]
+}

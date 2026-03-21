@@ -1,27 +1,18 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 
-// ── Omweso Game Logic ───────────────────────────────────────────────────────
-// 4×8 board: each player owns 2 rows of 8 pits
-// board[player][row][col] — row 0 = inner (facing opponent), row 1 = outer
-const COLS = 8;
-
-function initBoard() {
-  // Each player gets 32 seeds distributed: 2 seeds per pit in their 2×8 = 16 pits
-  return {
-    board: [
-      [Array(COLS).fill(2), Array(COLS).fill(2)], // P0: inner row, outer row
-      [Array(COLS).fill(2), Array(COLS).fill(2)], // P1: inner row, outer row
-    ],
-  };
-}
+// ── Oware Game Logic ────────────────────────────────────────────────────────
+// 2×6 board: Player A owns bottom row (pits 0-5), Player B owns top row (pits 6-11)
+// Board indexed: bottom [0,1,2,3,4,5], top [11,10,9,8,7,6] (displayed reversed)
+const PITS = 12;
+const HALF = 6;
 
 function initState({ vsAI = true, difficulty = 'medium' } = {}) {
   return {
-    ...initBoard(),
-    currentPlayer: 0,
+    board: Array(PITS).fill(4), // 4 seeds per pit
+    currentPlayer: 0, // 0 = Player A (bottom), 1 = Player B (top)
+    scores: [0, 0],
     winner: null,
-    captured: [0, 0], // seeds captured by each player
     vsAI,
     aiPlayer: 1,
     difficulty,
@@ -30,174 +21,172 @@ function initState({ vsAI = true, difficulty = 'medium' } = {}) {
 }
 
 function cloneState(s) {
-  return {
-    ...s,
-    board: [
-      [s.board[0][0].slice(), s.board[0][1].slice()],
-      [s.board[1][0].slice(), s.board[1][1].slice()],
-    ],
-    captured: s.captured.slice(),
-  };
+  return { ...s, board: s.board.slice(), scores: s.scores.slice() };
 }
 
-// Sowing direction: counter-clockwise around player's own 2 rows
-// Inner row (row 0): left to right (col 0..7)
-// Then outer row (row 1): right to left (col 7..0)
-// Then back to inner row...
-// Total 16 pits per player in a loop
-function nextPit(row, col) {
-  if (row === 0) {
-    // Inner row, moving right
-    if (col < COLS - 1) return [0, col + 1];
-    return [1, COLS - 1]; // wrap to outer row, right end
-  }
-  // Outer row, moving left
-  if (col > 0) return [1, col - 1];
-  return [0, 0]; // wrap back to inner row, left end
+function playerPits(player) {
+  return player === 0 ? [0,1,2,3,4,5] : [6,7,8,9,10,11];
 }
 
-// Execute a move: sow seeds from pit, with relay and capture
-// Rules:
-// 1. Pick up all seeds from chosen pit, sow counter-clockwise one per pit
-// 2. Relay: if last seed lands in a pit now containing > 1 seed, pick up all and re-sow
-// 3. Capture: if last seed lands in inner row (row 0) AND opposite opponent inner pit has seeds,
-//    capture those opponent seeds. Turn ends immediately.
-// 4. Turn ends when last seed makes a pit have exactly 1 seed (no relay, no capture)
-function sow(state, player, row, col) {
-  if (state.board[player][row][col] < 2) return null;
+function opponentPits(player) {
+  return player === 0 ? [6,7,8,9,10,11] : [0,1,2,3,4,5];
+}
+
+// Check if opponent has any seeds
+function opponentHasSeeds(board, player) {
+  return opponentPits(player).some(i => board[i] > 0);
+}
+
+// Check if a move would feed the opponent (leave them with > 0 seeds)
+function moveFeeds(state, player, pit) {
   const s = cloneState(state);
-  const opp = 1 - player;
-  let seeds = s.board[player][row][col];
-  s.board[player][row][col] = 0;
+  let seeds = s.board[pit];
+  s.board[pit] = 0;
+  let pos = pit;
+  while (seeds > 0) {
+    pos = (pos + 1) % PITS;
+    if (pos === pit) continue; // skip origin
+    s.board[pos]++;
+    seeds--;
+  }
+  // Apply captures to see remaining state
+  const oppPits = opponentPits(player);
+  let p = pos;
+  while (oppPits.includes(p) && (s.board[p] === 2 || s.board[p] === 3)) {
+    s.board[p] = 0;
+    p = (p - 1 + PITS) % PITS;
+  }
+  return oppPits.some(i => s.board[i] > 0);
+}
 
-  let r = row, c = col;
+function getLegalMoves(state, player) {
+  const pits = playerPits(player);
+  const movable = pits.filter(i => state.board[i] > 0);
+  if (movable.length === 0) return [];
 
-  // Sow-relay loop
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    // Sow seeds one by one
-    while (seeds > 0) {
-      [r, c] = nextPit(r, c);
-      s.board[player][r][c]++;
-      seeds--;
-    }
+  // If opponent has seeds, any non-empty pit is legal
+  if (opponentHasSeeds(state.board, player)) {
+    // But if a move would starve opponent, only allow it if ALL moves starve
+    const feeding = movable.filter(pit => moveFeeds(state, player, pit));
+    if (feeding.length > 0) return feeding;
+    return movable; // all moves starve, so all are allowed
+  }
 
-    // Check capture: last seed in inner row + opponent inner row opposite has seeds
-    if (r === 0) {
-      const oppCol = COLS - 1 - c;
-      if (s.board[opp][0][oppCol] > 0) {
-        // Capture opponent's inner row seeds at that column
-        s.captured[player] += s.board[opp][0][oppCol];
-        s.board[opp][0][oppCol] = 0;
-        break; // turn ends after capture
-      }
-    }
+  // Opponent has no seeds — must feed if possible
+  const feeding = movable.filter(pit => moveFeeds(state, player, pit));
+  if (feeding.length > 0) return feeding;
+  return []; // can't feed → no legal moves → game ends
+}
 
-    // Check relay: if last pit now has > 1 seed, pick up and re-sow
-    if (s.board[player][r][c] > 1) {
-      seeds = s.board[player][r][c];
-      s.board[player][r][c] = 0;
-      // continue the loop to sow again
-    } else {
-      break; // pit has exactly 1 seed, turn ends
+function applyMove(state, pit) {
+  const player = state.currentPlayer;
+  const legal = getLegalMoves(state, player);
+  if (!legal.includes(pit)) return null;
+
+  const s = cloneState(state);
+  let seeds = s.board[pit];
+  s.board[pit] = 0;
+  let pos = pit;
+
+  // Sow counter-clockwise (increasing index), skip origin
+  while (seeds > 0) {
+    pos = (pos + 1) % PITS;
+    if (pos === pit) continue;
+    s.board[pos]++;
+    seeds--;
+  }
+
+  // Capture: if last seed lands in opponent's row and pit now has 2 or 3
+  const oppPits = opponentPits(player);
+  if (oppPits.includes(pos) && (s.board[pos] === 2 || s.board[pos] === 3)) {
+    // Capture backward chain
+    let p = pos;
+    while (oppPits.includes(p) && (s.board[p] === 2 || s.board[p] === 3)) {
+      s.scores[player] += s.board[p];
+      s.board[p] = 0;
+      p = (p - 1 + PITS) % PITS;
     }
   }
 
+  const opp = 1 - player;
   s.currentPlayer = opp;
   s.moveCount++;
 
-  // Check game over: next player has no legal moves (no pit with >= 2)
-  const nextHasMove = s.board[opp][0].some(v => v >= 2) || s.board[opp][1].some(v => v >= 2);
-  if (!nextHasMove) {
-    s.winner = player; // current player wins
+  // Check game end
+  const oppLegal = getLegalMoves(s, opp);
+  if (oppLegal.length === 0) {
+    // Remaining seeds go to their owner
+    for (let i = 0; i < PITS; i++) {
+      const owner = i < HALF ? 0 : 1;
+      s.scores[owner] += s.board[i];
+      s.board[i] = 0;
+    }
+    if (s.scores[0] > s.scores[1]) s.winner = 0;
+    else if (s.scores[1] > s.scores[0]) s.winner = 1;
+    else s.winner = 'draw';
   }
 
   return s;
 }
 
-// Animation frames: generate per-seed-drop intermediate states
-function sowSteps(state, player, row, col) {
-  if (state.board[player][row][col] < 2) return null;
+// Animation frames
+function sowSteps(state, pit) {
+  const player = state.currentPlayer;
+  const legal = getLegalMoves(state, player);
+  if (!legal.includes(pit)) return null;
+
   const s = cloneState(state);
-  const opp = 1 - player;
-  let seeds = s.board[player][row][col];
-  s.board[player][row][col] = 0;
+  let seeds = s.board[pit];
+  s.board[pit] = 0;
+  let pos = pit;
 
-  const cloneBoard = () => [
-    [s.board[0][0].slice(), s.board[0][1].slice()],
-    [s.board[1][0].slice(), s.board[1][1].slice()],
-  ];
-  const frames = [{ board: cloneBoard(), captured: s.captured.slice(), highlight: null }];
+  const frames = [{ board: s.board.slice(), scores: s.scores.slice(), highlight: null }];
 
-  let r = row, c = col;
+  while (seeds > 0) {
+    pos = (pos + 1) % PITS;
+    if (pos === pit) continue;
+    s.board[pos]++;
+    seeds--;
+    frames.push({ board: s.board.slice(), scores: s.scores.slice(), highlight: pos });
+  }
 
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    while (seeds > 0) {
-      [r, c] = nextPit(r, c);
-      s.board[player][r][c]++;
-      seeds--;
-      frames.push({ board: cloneBoard(), captured: s.captured.slice(), highlight: { player, row: r, col: c } });
+  // Capture
+  const oppPits = opponentPits(player);
+  if (oppPits.includes(pos) && (s.board[pos] === 2 || s.board[pos] === 3)) {
+    let p = pos;
+    while (oppPits.includes(p) && (s.board[p] === 2 || s.board[p] === 3)) {
+      s.scores[player] += s.board[p];
+      s.board[p] = 0;
+      p = (p - 1 + PITS) % PITS;
     }
-
-    // Capture check
-    if (r === 0) {
-      const oppCol = COLS - 1 - c;
-      if (s.board[opp][0][oppCol] > 0) {
-        s.captured[player] += s.board[opp][0][oppCol];
-        s.board[opp][0][oppCol] = 0;
-        frames.push({ board: cloneBoard(), captured: s.captured.slice(), highlight: { type: 'capture', player, col: oppCol } });
-        break;
-      }
-    }
-
-    // Relay check
-    if (s.board[player][r][c] > 1) {
-      seeds = s.board[player][r][c];
-      s.board[player][r][c] = 0;
-      frames.push({ board: cloneBoard(), captured: s.captured.slice(), highlight: null });
-    } else {
-      break;
-    }
+    frames.push({ board: s.board.slice(), scores: s.scores.slice(), highlight: 'capture' });
   }
 
   return frames;
 }
 
-function getAllMoves(state, player) {
-  const moves = [];
-  for (let row = 0; row < 2; row++) {
-    for (let col = 0; col < COLS; col++) {
-      if (state.board[player][row][col] >= 2) moves.push({ row, col });
-    }
-  }
-  return moves;
-}
-
 // ── AI ──────────────────────────────────────────────────────────────────────
 function evaluate(state) {
-  // AI is player 1: maximize own seeds + captures, minimize opponent's
-  const p1seeds = state.board[1][0].reduce((a, b) => a + b, 0) + state.board[1][1].reduce((a, b) => a + b, 0);
-  const p0seeds = state.board[0][0].reduce((a, b) => a + b, 0) + state.board[0][1].reduce((a, b) => a + b, 0);
-  return (state.captured[1] - state.captured[0]) * 3 + (p1seeds - p0seeds);
+  return (state.scores[1] - state.scores[0]) * 3;
 }
 
 function minimax(state, depth, alpha, beta, maximizing) {
   if (state.winner !== null || depth === 0) return { score: evaluate(state), move: null };
   const player = maximizing ? 1 : 0;
-  const moves = getAllMoves(state, player);
+  const moves = getLegalMoves(state, player);
   if (moves.length === 0) return { score: evaluate(state), move: null };
 
   let best = { score: maximizing ? -Infinity : Infinity, move: moves[0] };
-  for (const m of moves) {
-    const next = sow(state, player, m.row, m.col);
+  for (const pit of moves) {
+    const fakeState = { ...cloneState(state), currentPlayer: player };
+    const next = applyMove(fakeState, pit);
     if (!next) continue;
     const result = minimax(next, depth - 1, alpha, beta, !maximizing);
     if (maximizing) {
-      if (result.score > best.score) best = { score: result.score, move: m };
+      if (result.score > best.score) best = { score: result.score, move: pit };
       alpha = Math.max(alpha, best.score);
     } else {
-      if (result.score < best.score) best = { score: result.score, move: m };
+      if (result.score < best.score) best = { score: result.score, move: pit };
       beta = Math.min(beta, best.score);
     }
     if (beta <= alpha) break;
@@ -206,43 +195,10 @@ function minimax(state, depth, alpha, beta, maximizing) {
 }
 
 function getAIMove(state, difficulty) {
-  const depths = { easy: 2, medium: 4, hard: 7 };
-  const depth = depths[difficulty] || 4;
+  const depths = { easy: 2, medium: 5, hard: 9 };
+  const depth = depths[difficulty] || 5;
   const { move } = minimax(state, depth, -Infinity, Infinity, true);
   return move;
-}
-
-// ── Start screen ────────────────────────────────────────────────────────────
-function StartScreen({ onStart, onBack }) {
-  const [difficulty, setDifficulty] = useState('medium');
-  return (
-    <div className="sowing-start">
-      <h1>SOWING</h1>
-      <p className="start-desc">An ancient seed-sowing strategy game</p>
-      <p className="start-rule">
-        Pick a pit with 2+ seeds on your side to sow counter-clockwise.<br />
-        Capture opponent seeds when your last seed lands on your inner row<br />
-        opposite a non-empty pit.
-      </p>
-      <div className="difficulty-row">
-        <label>Difficulty:</label>
-        {['easy', 'medium', 'hard'].map(d => (
-          <button key={d} onClick={() => setDifficulty(d)}
-            className={`diff-btn${difficulty === d ? ' active' : ''}`}>
-            {d}
-          </button>
-        ))}
-      </div>
-      <button onClick={() => onStart({ vsAI: true, difficulty })} className="btn-primary">
-        Start Game
-      </button>
-      {onBack && (
-        <div style={{ marginTop: 16 }}>
-          <button onClick={onBack} className="diff-btn">← Home</button>
-        </div>
-      )}
-    </div>
-  );
 }
 
 // ── Seed rendering ──────────────────────────────────────────────────────────
@@ -280,82 +236,97 @@ function SeedCluster({ count, size }) {
   );
 }
 
-// ── Board component ─────────────────────────────────────────────────────────
-function SowingBoard({ state, onPitClick, isPlayerTurn, animFrame }) {
-  const board = animFrame ? animFrame.board : state.board;
-  const hl = animFrame ? animFrame.highlight : null;
-  const disabled = !!animFrame;
+// ── Start screen ────────────────────────────────────────────────────────────
+function StartScreen({ onStart, onBack }) {
+  const [difficulty, setDifficulty] = useState('medium');
+  return (
+    <div className="sowing-start">
+      <h1>SOWING</h1>
+      <p className="start-desc">A classical West African Mancala game</p>
+      <p className="start-rule">
+        Sow seeds counter-clockwise from any pit on your side.<br />
+        Capture when your last seed makes an opponent pit have 2 or 3 seeds.<br />
+        You must feed your opponent if you can.
+      </p>
+      <div className="difficulty-row">
+        <label>Difficulty:</label>
+        {['easy', 'medium', 'hard'].map(d => (
+          <button key={d} onClick={() => setDifficulty(d)}
+            className={`diff-btn${difficulty === d ? ' active' : ''}`}>
+            {d}
+          </button>
+        ))}
+      </div>
+      <button onClick={() => onStart({ vsAI: true, difficulty })} className="btn-primary">
+        Start Game
+      </button>
+      {onBack && (
+        <div style={{ marginTop: 16 }}>
+          <button onClick={onBack} className="diff-btn">← Home</button>
+        </div>
+      )}
+    </div>
+  );
+}
 
-  const renderPit = (player, row, col, clickable) => {
-    const seeds = board[player][row][col];
-    const isHl = hl && !hl.type && hl.player === player && hl.row === row && hl.col === col;
-    const isCaptureHl = hl && hl.type === 'capture' && (
-      (hl.player !== player && hl.col === col) // opponent's pits getting captured
-    );
-    const canClick = clickable && !disabled && seeds >= 2;
+// ── Board component ─────────────────────────────────────────────────────────
+function OwareBoard({ state, onPitClick, isPlayerTurn, animFrame }) {
+  const board = animFrame ? animFrame.board : state.board;
+  const highlight = animFrame ? animFrame.highlight : null;
+  const disabled = !!animFrame;
+  const legal = isPlayerTurn && !disabled ? getLegalMoves(state, 0) : [];
+  const legalSet = new Set(legal);
+
+  const renderPit = (pit, clickable) => {
+    const seeds = board[pit];
+    const isHl = highlight === pit;
+    const canClick = clickable && legalSet.has(pit);
     return (
       <button
-        key={`${row}-${col}`}
-        className={`pit${canClick ? ' active' : ''}${isHl || isCaptureHl ? ' pit-highlight' : ''}${isCaptureHl ? ' pit-capture' : ''}`}
+        key={pit}
+        className={`oware-pit${canClick ? ' active' : ''}${isHl ? ' pit-highlight' : ''}`}
         disabled={!canClick}
-        onClick={() => canClick && onPitClick(row, col)}
+        onClick={() => canClick && onPitClick(pit)}
       >
-        <SeedCluster count={seeds} size={38} />
+        <SeedCluster count={seeds} size={48} />
       </button>
     );
   };
 
-  // Board layout: 4 rows of 8
-  // Top: AI outer (row 1), AI inner (row 0) — both reversed for visual mirroring
-  // Bottom: Player inner (row 0), Player outer (row 1)
   return (
-    <div className="omweso-board">
-      <div className="board-label">AI</div>
-      <div className="board-grid">
-        {/* AI outer row (row 1) — displayed reversed */}
-        <div className="pit-row">
-          {Array.from({ length: COLS }, (_, c) => renderPit(1, 1, COLS - 1 - c, false))}
+    <div className="oware-board">
+      <div className="oware-store">
+        <div className="oware-store-label">AI</div>
+        <div className="oware-store-count">{animFrame ? animFrame.scores[1] : state.scores[1]}</div>
+      </div>
+      <div className="oware-rows">
+        {/* Top row: AI pits 11,10,9,8,7,6 (displayed right to left) */}
+        <div className="oware-pit-row">
+          {[11,10,9,8,7,6].map(pit => renderPit(pit, false))}
         </div>
-        {/* AI inner row (row 0) — displayed reversed */}
-        <div className="pit-row">
-          {Array.from({ length: COLS }, (_, c) => renderPit(1, 0, COLS - 1 - c, false))}
-        </div>
-        <div className="board-divider" />
-        {/* Player inner row (row 0) */}
-        <div className="pit-row">
-          {Array.from({ length: COLS }, (_, c) => renderPit(0, 0, c, isPlayerTurn))}
-        </div>
-        {/* Player outer row (row 1) */}
-        <div className="pit-row">
-          {Array.from({ length: COLS }, (_, c) => renderPit(0, 1, c, isPlayerTurn))}
+        {/* Bottom row: Player pits 0,1,2,3,4,5 */}
+        <div className="oware-pit-row">
+          {[0,1,2,3,4,5].map(pit => renderPit(pit, isPlayerTurn))}
         </div>
       </div>
-      <div className="board-label">You</div>
+      <div className="oware-store">
+        <div className="oware-store-label">You</div>
+        <div className="oware-store-count">{animFrame ? animFrame.scores[0] : state.scores[0]}</div>
+      </div>
     </div>
   );
 }
 
 // ── Main App ────────────────────────────────────────────────────────────────
-function snapshot(s) {
-  return {
-    board: [[s.board[0][0].slice(), s.board[0][1].slice()], [s.board[1][0].slice(), s.board[1][1].slice()]],
-    captured: s.captured.slice(),
-    currentPlayer: s.currentPlayer,
-  };
-}
-
 export default function App({ onBack, onResult }) {
   const [state, setState] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [animFrame, setAnimFrame] = useState(null);
   const resultReported = useRef(false);
-  const snapshots = useRef([]);
   const animating = useRef(false);
 
   const handleStart = useCallback((opts) => {
-    const s = initState(opts);
-    snapshots.current = [snapshot(s)];
-    setState(s);
+    setState(initState(opts));
     setAnimFrame(null);
     animating.current = false;
     resultReported.current = false;
@@ -371,22 +342,21 @@ export default function App({ onBack, onResult }) {
         setAnimFrame(null);
         animating.current = false;
         setState(finalState);
-        snapshots.current.push(snapshot(finalState));
         return;
       }
       setAnimFrame(frames[i]);
-      setTimeout(step, 100);
+      setTimeout(step, 120);
     }
-    setTimeout(step, 100);
+    setTimeout(step, 120);
   }, []);
 
-  const handlePitClick = useCallback((row, col) => {
+  const handlePitClick = useCallback((pit) => {
     if (animating.current) return;
     setState(s => {
       if (!s || s.winner !== null || s.currentPlayer !== 0) return s;
-      const frames = sowSteps(s, 0, row, col);
+      const frames = sowSteps(s, pit);
       if (!frames) return s;
-      const finalState = sow(s, 0, row, col);
+      const finalState = applyMove(s, pit);
       if (!finalState) return s;
       animateSow(frames, finalState);
       return s;
@@ -397,10 +367,10 @@ export default function App({ onBack, onResult }) {
   useEffect(() => {
     if (!state || state.winner !== null || state.currentPlayer !== state.aiPlayer || animating.current) return;
     const timer = setTimeout(() => {
-      const move = getAIMove(state, state.difficulty);
-      if (!move) return;
-      const frames = sowSteps(state, state.aiPlayer, move.row, move.col);
-      const finalState = sow(state, state.aiPlayer, move.row, move.col);
+      const pit = getAIMove(state, state.difficulty);
+      if (pit === null || pit === undefined) return;
+      const frames = sowSteps(state, pit);
+      const finalState = applyMove(state, pit);
       if (!frames || !finalState) return;
       animateSow(frames, finalState);
     }, 400);
@@ -417,7 +387,6 @@ export default function App({ onBack, onResult }) {
       won: state.winner === 0,
       moves: state.moveCount,
       difficulty: state.difficulty,
-      snapshots: snapshots.current,
     });
   }, [state?.winner, onResult]);
 
@@ -429,15 +398,12 @@ export default function App({ onBack, onResult }) {
     );
   }
 
-  const { currentPlayer, winner, captured } = state;
+  const { currentPlayer, winner, scores } = state;
   const isPlayerTurn = !winner && currentPlayer === 0;
-
-  const p0total = state.board[0][0].reduce((a, b) => a + b, 0) + state.board[0][1].reduce((a, b) => a + b, 0);
-  const p1total = state.board[1][0].reduce((a, b) => a + b, 0) + state.board[1][1].reduce((a, b) => a + b, 0);
 
   const statusMsg = winner !== null
     ? (winner === 'draw' ? 'DRAW!' : winner === 0 ? 'YOU WIN!' : 'AI WINS!')
-    : currentPlayer === 1 ? 'AI thinking...' : 'Your turn — pick a pit with 2+ seeds';
+    : currentPlayer === 1 ? 'AI thinking...' : 'Your turn — pick a pit';
 
   return (
     <div className="game-sowing">
@@ -446,12 +412,7 @@ export default function App({ onBack, onResult }) {
           {statusMsg}
         </div>
 
-        <SowingBoard state={state} onPitClick={handlePitClick} isPlayerTurn={isPlayerTurn} animFrame={animFrame} />
-
-        <div className="score-summary">
-          <span>You: <b>{p0total}</b> seeds · <b>{captured[0]}</b> captured</span>
-          <span>AI: <b>{p1total}</b> seeds · <b>{captured[1]}</b> captured</span>
-        </div>
+        <OwareBoard state={state} onPitClick={handlePitClick} isPlayerTurn={isPlayerTurn} animFrame={animFrame} />
 
         <div className="game-controls">
           <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
@@ -463,10 +424,10 @@ export default function App({ onBack, onResult }) {
           <div className="winner-banner">
             <div className="winner-label">{winner === 0 ? 'YOU WIN!' : winner === 'draw' ? 'DRAW!' : 'AI WINS!'}</div>
             <div className="winner-reason">
-              Captured: You {captured[0]} — AI {captured[1]}
+              You {scores[0]} — AI {scores[1]}
             </div>
             <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-              <button className="ctrl-btn" onClick={() => { handleStart({ vsAI: true, difficulty: state.difficulty }); }}>New Game</button>
+              <button className="ctrl-btn" onClick={() => handleStart({ vsAI: true, difficulty: state.difficulty })}>New Game</button>
               {onBack && <button className="ctrl-btn" onClick={onBack}>Home</button>}
             </div>
           </div>

@@ -32,6 +32,9 @@ const GAME_COMPONENTS = {
   sowing:  lazy(() => import('../games/sowing/App')),
   mills:   lazy(() => import('../games/mills/App')),
   blocks:  lazy(() => import('../games/blocks/App')),
+  fives:   lazy(() => import('../games/fives/App')),
+  omweso:  lazy(() => import('../games/omweso/App')),
+  flips:   lazy(() => import('../games/flips/App')),
 };
 
 export default function GameWrapper({ onBack, onResult }) {

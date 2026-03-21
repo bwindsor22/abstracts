@@ -1,4 +1,4 @@
-.game-sowing {
+.game-omweso {
   min-height: 100vh;
   background: #191022;
   color: #f0eeff;
@@ -9,20 +9,20 @@
   padding: 20px;
 }
 
-.sowing-start {
+.omweso-start {
   text-align: center;
   max-width: 400px;
 }
-.sowing-start h1 {
+.omweso-start h1 {
   font-size: 32px;
   letter-spacing: 0.15em;
   margin-bottom: 8px;
 }
-.sowing-start .start-desc {
+.omweso-start .start-desc {
   color: rgba(240,238,255,0.6);
   margin-bottom: 4px;
 }
-.sowing-start .start-rule {
+.omweso-start .start-rule {
   font-size: 13px;
   color: rgba(240,238,255,0.4);
   margin-bottom: 20px;
@@ -70,7 +70,7 @@
 .btn-primary:hover { background: rgba(153,66,240,0.4); }
 
 /* Layout */
-.sowing-layout {
+.omweso-layout {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,48 +82,42 @@
   letter-spacing: 0.05em;
 }
 
-/* Oware 2×6 board */
-.oware-board {
+/* Omweso 4×8 board */
+.omweso-board {
   display: flex;
-  align-items: stretch;
-  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   background: rgba(42,31,69,0.5);
   border: 2px solid rgba(153,66,240,0.2);
   border-radius: 20px;
   padding: 12px 14px;
 }
-.oware-store {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 48px;
-  gap: 4px;
-}
-.oware-store-label {
-  font-size: 10px;
+.board-label {
+  font-size: 11px;
   color: rgba(240,238,255,0.4);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
-.oware-store-count {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffe066;
-}
-.oware-rows {
+.board-grid {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
-.oware-pit-row {
+.board-divider {
+  height: 2px;
+  background: rgba(153,66,240,0.3);
+  margin: 2px 0;
+  border-radius: 1px;
+}
+.pit-row {
   display: flex;
-  gap: 4px;
+  gap: 3px;
 }
 
-.oware-pit {
-  width: 50px;
-  height: 50px;
+.pit {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: 1px solid rgba(153,66,240,0.25);
   background: rgba(26,11,46,0.8);
@@ -135,18 +129,22 @@
   padding: 2px;
   transition: background 0.2s, border-color 0.2s;
 }
-.oware-pit.active {
+.pit.active {
   cursor: pointer;
   border-color: rgba(153,66,240,0.5);
 }
-.oware-pit.active:hover {
+.pit.active:hover {
   background: rgba(153,66,240,0.2);
   border-color: #9942f0;
 }
-.oware-pit:disabled { cursor: default; }
-.oware-pit.pit-highlight {
+.pit:disabled { cursor: default; }
+.pit.pit-highlight {
   background: rgba(255,224,102,0.15);
   border-color: #ffe066;
+}
+.pit.pit-capture {
+  background: rgba(255,80,80,0.15);
+  border-color: #ff6b6b;
 }
 
 .score-summary {

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { GAMES } from '../data/games';
+import { GAMES, GAME_MAP } from '../data/games';
 import GameGuide from '../components/GameGuide';
 import './Library.css';
 
@@ -22,11 +22,146 @@ function GameCard({ game, onClick }) {
       )}
       <GameIcon icon={game.icon} className="library-card-icon" />
       <span className="library-card-name">{game.name}</span>
-      <span className="library-card-subtitle">{game.subtitle}</span>
+      <span className="library-card-subtitle">{game.realName}</span>
     </button>
   );
 }
 
+function Section({ title, tag, games, onCardClick }) {
+  if (!games || games.length === 0) return null;
+  return (
+    <section className="library-section">
+      <div className="library-section-header">
+        <h2 className="library-section-title">{title}</h2>
+        {tag && <span className="library-section-tag">{tag}</span>}
+      </div>
+      <div className="library-grid">
+        {games.map(game => (
+          <GameCard key={game.id} game={game} onClick={onCardClick} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SubSection({ title, games, onCardClick }) {
+  if (!games || games.length === 0) return null;
+  return (
+    <div className="library-subsection">
+      <div className="library-subsection-label">{title}</div>
+      <div className="library-grid">
+        {games.map(game => (
+          <GameCard key={game.id} game={game} onClick={onCardClick} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// --- View: Time ---
+function TimeView({ onCardClick }) {
+  const modern = GAMES.filter(g => g.category === 'modern');
+  const classic = GAMES.filter(g => g.category === 'classic');
+  const heritage = GAMES.filter(g => g.category === 'heritage');
+  const ancient = GAMES.filter(g => g.category === 'ancient');
+  return (
+    <>
+      <Section title="Modern Marvels" tag="1990–PRESENT" games={modern} onCardClick={onCardClick} />
+      <Section title="Timeless Classics" tag="1940–1990" games={classic} onCardClick={onCardClick} />
+      <Section title="Heritage Games" tag="1650s–1880s" games={heritage} onCardClick={onCardClick} />
+      <Section title="Ancient Foundations" tag="PRE-1940" games={ancient} onCardClick={onCardClick} />
+    </>
+  );
+}
+
+// --- View: Complexity ---
+function ComplexityView({ onCardClick }) {
+  const low = GAMES.filter(g => g.complexity === 'low');
+  const medium = GAMES.filter(g => g.complexity === 'medium');
+  const high = GAMES.filter(g => g.complexity === 'high');
+  return (
+    <>
+      <Section title="Pick Up & Play" tag="LOW" games={low} onCardClick={onCardClick} />
+      <Section title="A Few Rules to Learn" tag="MEDIUM" games={medium} onCardClick={onCardClick} />
+      <Section title="Deep Systems" tag="HIGH" games={high} onCardClick={onCardClick} />
+    </>
+  );
+}
+
+// --- View: Theme ---
+// Thematic trunks showing how games relate and evolve
+const THEME_TRUNKS = [
+  {
+    title: 'Board Influence',
+    tagline: 'Shape the board, control the flow',
+    subs: [
+      { label: 'Alignment', ids: ['fives', 'pairs'] },
+      { label: 'Connection', ids: ['hexes', 'bridges'] },
+      { label: 'Flipping', ids: ['flips', 'circles'] },
+    ],
+  },
+  {
+    title: 'Piece Systems',
+    tagline: 'The pieces define the world',
+    ids: ['bugs', 'trees'],
+  },
+  {
+    title: 'Structural Building',
+    tagline: 'Stack, build, and climb to victory',
+    ids: ['stacks', 'towers'],
+  },
+  {
+    title: 'Constraint & Blocking',
+    tagline: 'Control space by limiting your opponent',
+    ids: ['mills', 'walls', 'blocks'],
+  },
+  {
+    title: 'Resource Cycles',
+    tagline: 'Master loops, timing, and growth',
+    ids: ['sowing', 'omweso'],
+  },
+  {
+    title: 'Displacement',
+    tagline: 'Move groups, push opponents, dominate space',
+    ids: ['marbles'],
+  },
+];
+
+function resolveIds(ids) {
+  return (ids || []).map(id => GAME_MAP[id]).filter(Boolean);
+}
+
+function ThemeView({ onCardClick }) {
+  return (
+    <>
+      {THEME_TRUNKS.map(trunk => {
+        const hasSubs = trunk.subs && trunk.subs.length > 0;
+        const flatGames = hasSubs ? [] : resolveIds(trunk.ids);
+        return (
+          <section className="library-section" key={trunk.title}>
+            <div className="library-section-header">
+              <h2 className="library-section-title">{trunk.title}</h2>
+              <span className="library-section-tag-theme">{trunk.tagline}</span>
+            </div>
+            {hasSubs ? (
+              trunk.subs.map(sub => (
+                <SubSection key={sub.label} title={sub.label} games={resolveIds(sub.ids)} onCardClick={onCardClick} />
+              ))
+            ) : (
+              <div className="library-grid">
+                {flatGames.map(game => (
+                  <GameCard key={game.id} game={game} onClick={onCardClick} />
+                ))}
+              </div>
+            )}
+          </section>
+        );
+      })}
+    </>
+  );
+}
+
+// --- Play Modal ---
 function PlayModal({ game, onPlay, onClose }) {
   const handleOverlayClick = useCallback((e) => {
     if (e.target === e.currentTarget) onClose();
@@ -71,12 +206,33 @@ function PlayModal({ game, onPlay, onClose }) {
   );
 }
 
+// --- View Toggle ---
+const VIEWS = [
+  { key: 'time', label: 'Date' },
+  { key: 'complexity', label: 'Complexity' },
+  { key: 'theme', label: 'Theme' },
+];
+
+function ViewToggle({ active, onChange }) {
+  return (
+    <div className="library-view-toggle">
+      {VIEWS.map(v => (
+        <button
+          key={v.key}
+          className={`library-view-toggle-btn${active === v.key ? ' active' : ''}`}
+          onClick={() => onChange(v.key)}
+        >
+          {v.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// --- Main Library ---
 export default function Library({ onPlay }) {
   const [selectedGame, setSelectedGame] = useState(null);
-
-  const modern = GAMES.filter(g => g.category === 'modern');
-  const classic = GAMES.filter(g => g.category === 'classic');
-  const ancient = GAMES.filter(g => g.category === 'ancient');
+  const [view, setView] = useState('time');
 
   const handlePlay = useCallback((game) => {
     setSelectedGame(null);
@@ -85,47 +241,11 @@ export default function Library({ onPlay }) {
 
   return (
     <div className="library">
-      {modern.length > 0 && (
-        <section className="library-section">
-          <div className="library-section-header">
-            <h2 className="library-section-title">Modern Marvels</h2>
-            <span className="library-section-tag">1990–PRESENT</span>
-          </div>
-          <div className="library-grid">
-            {modern.map(game => (
-              <GameCard key={game.id} game={game} onClick={setSelectedGame} />
-            ))}
-          </div>
-        </section>
-      )}
+      <ViewToggle active={view} onChange={setView} />
 
-      {classic.length > 0 && (
-        <section className="library-section">
-          <div className="library-section-header">
-            <h2 className="library-section-title">Timeless Classics</h2>
-            <span className="library-section-tag">1940–1990</span>
-          </div>
-          <div className="library-grid">
-            {classic.map(game => (
-              <GameCard key={game.id} game={game} onClick={setSelectedGame} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {ancient.length > 0 && (
-        <section className="library-section">
-          <div className="library-section-header">
-            <h2 className="library-section-title">Ancient Foundations</h2>
-            <span className="library-section-tag">PRE-1940</span>
-          </div>
-          <div className="library-grid">
-            {ancient.map(game => (
-              <GameCard key={game.id} game={game} onClick={setSelectedGame} />
-            ))}
-          </div>
-        </section>
-      )}
+      {view === 'time' && <TimeView onCardClick={setSelectedGame} />}
+      {view === 'complexity' && <ComplexityView onCardClick={setSelectedGame} />}
+      {view === 'theme' && <ThemeView onCardClick={setSelectedGame} />}
 
       {selectedGame && (
         <PlayModal

@@ -769,38 +769,70 @@ const pit = (cx, cy, count, highlight) => (
 
 const sowingGuide = [
   {
-    caption: 'Pick up all seeds (2+) from any pit on your side.',
+    caption: 'Pick up all seeds from any pit on your side (bottom row).',
     svg: <Svg>
-      {/* player's 2 rows (inner + outer), 4 pits each shown */}
-      <Txt x={120} y={18} size={8} fill="rgba(240,238,255,0.3)">your two rows</Txt>
-      {[0,1,2,3].map(c => pit(50+c*40, 50, 2))}
-      {[0,1,2,3].map(c => pit(50+c*40, 80, c===1 ? 0 : 2, c===1))}
-      {/* picked up */}
-      <circle cx={90} cy={80} r={13} fill="none" stroke={yellow} strokeWidth={2} />
-      {arrow(90, 95, 90, 115)}
-      <Txt x={90} y={125} size={9} fill={yellow}>pick up 2</Txt>
+      <Txt x={120} y={15} size={8} fill="rgba(240,238,255,0.3)">opponent's row</Txt>
+      {[0,1,2,3,4,5].map(c => pit(25+c*38, 35, 4))}
+      <Txt x={120} y={62} size={8} fill="rgba(240,238,255,0.3)">your row</Txt>
+      {[0,1,2,3,4,5].map(c => pit(25+c*38, 80, c===1 ? 0 : 4, c===1))}
+      <circle cx={63} cy={80} r={16} fill="none" stroke={yellow} strokeWidth={2} />
+      <Txt x={63} y={115} size={9} fill={yellow}>pick up 4</Txt>
     </Svg>
   },
   {
-    caption: 'Sow one seed per pit, counter-clockwise around your rows.',
+    caption: 'Sow one seed per pit, counter-clockwise around the board.',
     svg: <Svg>
-      <Txt x={120} y={15} size={8} fill="rgba(240,238,255,0.3)">outer row</Txt>
-      {/* outer row - left to right is actually right to left for sowing */}
-      {[0,1,2,3,4,5].map(c => pit(25+c*38, 38, c===0 ? 3 : c===5 ? 3 : 2))}
-      <Txt x={120} y={62} size={8} fill="rgba(240,238,255,0.3)">inner row</Txt>
-      {[0,1,2,3,4,5].map(c => pit(25+c*38, 80, c===2 ? 0 : c===3 ? 3 : c===4 ? 3 : 2, c===2))}
-      {/* sow direction arrows */}
-      <path d="M 101,80 L 63,80 L 63,50 L 25,50 L 25,38" fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="4 3" />
-      {arrow(63, 80, 63, 50, '#ffe066')}
-      <Txt x={120} y={115} size={8} fill={yellow}>↺ counter-clockwise</Txt>
+      <Txt x={120} y={15} size={8} fill="rgba(240,238,255,0.3)">opponent ← ← ←</Txt>
+      {[0,1,2,3,4,5].map(c => pit(25+c*38, 35, [4,4,4,4,5,5][c]))}
+      <Txt x={120} y={62} size={8} fill="rgba(240,238,255,0.3)">you → → →</Txt>
+      {[0,1,2,3,4,5].map(c => pit(25+c*38, 80, [4,0,5,5,4,4][c], c===1))}
+      <path d="M 63,80 L 101,80 L 139,80 L 177,80 L 215,80 L 215,35 L 177,35" fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="4 3" />
+      <Txt x={120} y={115} size={8} fill={yellow}>↺ counter-clockwise loop</Txt>
     </Svg>
   },
   {
-    caption: 'Last seed in a 2+ pit? Pick up and keep sowing (relay).',
+    caption: 'Capture: last seed lands in opponent\'s row making 2 or 3 — take them!',
+    svg: <Svg>
+      <Txt x={120} y={12} size={8} fill="rgba(240,238,255,0.3)">opponent's row</Txt>
+      {[0,1,2,3,4,5].map(c => pit(25+c*38, 35, [4,4,3,2,1,4][c], c===2 || c===3))}
+      <Txt x={120} y={62} size={8} fill="rgba(240,238,255,0.3)">your row</Txt>
+      {[0,1,2,3,4,5].map(c => pit(25+c*38, 80, [4,0,4,4,4,4][c]))}
+      {arrow(101, 55, 101, 45)}
+      {arrow(139, 55, 139, 45)}
+      <Txt x={120} y={115} size={9} fill={yellow}>capture backward while 2 or 3!</Txt>
+    </Svg>
+  },
+  {
+    caption: 'You must feed your opponent — don\'t leave them with zero seeds if you can help it.',
+    svg: <Svg>
+      <Txt x={120} y={30} size={11}>feeding rule</Txt>
+      <Txt x={120} y={55} size={9} fill="rgba(240,238,255,0.6)">if opponent has no seeds</Txt>
+      <Txt x={120} y={73} size={9} fill="rgba(240,238,255,0.6)">you must play a move that gives them some</Txt>
+      <Txt x={120} y={95} size={9} fill="rgba(240,238,255,0.4)">if no move can feed → any move is allowed</Txt>
+      <Txt x={120} y={118} size={9} fill={yellow}>most seeds captured wins!</Txt>
+    </Svg>
+  },
+];
+
+// ── OMWESO ──────────────────────────────────────────────────────────────────────
+const omwesoGuide = [
+  {
+    caption: 'Pick a pit with 2+ seeds from your two rows. Sow counter-clockwise.',
+    svg: <Svg>
+      <Txt x={120} y={12} size={8} fill="rgba(240,238,255,0.3)">your two rows</Txt>
+      {[0,1,2,3].map(c => pit(50+c*40, 32, 2))}
+      {[0,1,2,3].map(c => pit(50+c*40, 62, c===1 ? 0 : 2, c===1))}
+      <circle cx={90} cy={62} r={16} fill="none" stroke={yellow} strokeWidth={2} />
+      {arrow(90, 78, 90, 95)}
+      <Txt x={90} y={108} size={9} fill={yellow}>pick up 2</Txt>
+      <Txt x={120} y={128} size={8} fill="rgba(240,238,255,0.4)">sow only within your own rows</Txt>
+    </Svg>
+  },
+  {
+    caption: 'Relay: if your last seed makes a pit with 2+, pick up and keep sowing.',
     svg: <Svg>
       {[0,1,2,3,4].map(c => pit(35+c*42, 45, [0,3,1,2,2][c], c===1))}
       {[0,1,2,3,4].map(c => pit(35+c*42, 85, [2,2,0,2,2][c]))}
-      {/* last seed landed in pit with 3 → relay */}
       <circle cx={77} cy={45} r={16} fill="none" stroke={yellow} strokeWidth={2} strokeDasharray="4 3" />
       <Txt x={77} y={25} size={8} fill={yellow}>3 seeds → relay!</Txt>
       {arrow(77, 60, 77, 75)}
@@ -808,17 +840,27 @@ const sowingGuide = [
     </Svg>
   },
   {
-    caption: 'Last seed on your inner row? Capture opponent\'s opposite seeds.',
+    caption: 'Capture: last seed on your inner row + opponent has seeds opposite → take them!',
     svg: <Svg>
-      <Txt x={120} y={12} size={8} fill="rgba(240,238,255,0.3)">opponent's inner row</Txt>
-      {[0,1,2,3,4].map(c => pit(35+c*42, 32, [2,2,4,2,2][c], c===2))}
-      <line x1={20} y1={55} x2={220} y2={55} stroke="rgba(153,66,240,0.3)" strokeWidth={1.5} />
-      <Txt x={120} y={68} size={8} fill="rgba(240,238,255,0.3)">your inner row</Txt>
-      {[0,1,2,3,4].map(c => pit(35+c*42, 85, [2,2,1,2,2][c], c===2))}
-      {/* capture arrow */}
-      {arrow(119, 75, 119, 45)}
-      <Txt x={170} y={55} size={8} fill={yellow}>capture 4!</Txt>
-      <Txt x={120} y={120} size={9} fill="rgba(240,238,255,0.4)">seeds removed from opponent's pit</Txt>
+      <Txt x={120} y={12} size={8} fill="rgba(240,238,255,0.3)">opponent's rows</Txt>
+      {[0,1,2,3,4].map(c => pit(35+c*42, 32, [2,2,3,2,2][c], c===2))}
+      {[0,1,2,3,4].map(c => pit(35+c*42, 55, [2,2,2,2,2][c], c===2))}
+      <line x1={20} y1={72} x2={220} y2={72} stroke="rgba(153,66,240,0.3)" strokeWidth={1.5} />
+      <Txt x={120} y={82} size={8} fill="rgba(240,238,255,0.3)">your inner row</Txt>
+      {[0,1,2,3,4].map(c => pit(35+c*42, 98, [2,2,1,2,2][c], c===2))}
+      {arrow(119, 88, 119, 65)}
+      <Txt x={185} y={72} size={8} fill={yellow}>capture!</Txt>
+      <Txt x={120} y={128} size={8} fill="rgba(240,238,255,0.4)">captured seeds continue the relay</Txt>
+    </Svg>
+  },
+  {
+    caption: 'Game ends when a player has no pits with 2+ seeds. Opponent wins.',
+    svg: <Svg>
+      <Txt x={120} y={30} size={11}>4 × 8 board</Txt>
+      <Txt x={120} y={55} size={9} fill="rgba(240,238,255,0.6)">each player owns 2 rows of 8 pits</Txt>
+      <Txt x={120} y={73} size={9} fill="rgba(240,238,255,0.6)">relay sowing keeps your turn going</Txt>
+      <Txt x={120} y={91} size={9} fill="rgba(240,238,255,0.6)">captures happen mid-turn, not at end</Txt>
+      <Txt x={120} y={118} size={9} fill={yellow}>starve your opponent to win!</Txt>
     </Svg>
   },
 ];
@@ -1000,6 +1042,139 @@ const blocksGuide = [
   },
 ];
 
+// ── FIVES (Gomoku) ──────────────────────────────────────────────────────────────
+const fivesGuide = [
+  {
+    caption: 'Place stones on intersections, one per turn. Black goes first.',
+    svg: <Svg>
+      {/* grid: x = 30+i*36 → 30,66,102,138,174,210; y = 15+i*22 → 15,37,59,81,103,125 */}
+      {[0,1,2,3,4,5].map(i => <React.Fragment key={i}>
+        <line x1={30+i*36} y1={15} x2={30+i*36} y2={125} stroke={dim} strokeWidth={1} />
+        <line x1={30} y1={15+i*22} x2={210} y2={15+i*22} stroke={dim} strokeWidth={1} />
+      </React.Fragment>)}
+      <Stone cx={102} cy={59} r={10} fill={dark} stroke="#333" />
+      <Stone cx={138} cy={37} r={10} fill={white} />
+      {/* new stone being placed */}
+      <Stone cx={66} cy={59} r={10} fill={dark} stroke="#333" />
+      <circle cx={66} cy={59} r={14} fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="3 3" />
+    </Svg>
+  },
+  {
+    caption: 'First to connect 5 stones in a row wins — horizontal, vertical, or diagonal.',
+    svg: <Svg>
+      {[0,1,2,3,4,5].map(i => <React.Fragment key={i}>
+        <line x1={30+i*36} y1={15} x2={30+i*36} y2={125} stroke={dim} strokeWidth={1} />
+        <line x1={30} y1={15+i*22} x2={210} y2={15+i*22} stroke={dim} strokeWidth={1} />
+      </React.Fragment>)}
+      {/* five in a row horizontally */}
+      {[0,1,2,3,4].map(i =>
+        <Stone key={i} cx={30+i*36} cy={59} r={10} fill={white} />
+      )}
+      <line x1={20} y1={72} x2={200} y2={72} stroke={yellow} strokeWidth={2} />
+      <Txt x={120} y={105} size={10} fill={yellow}>five in a row!</Txt>
+    </Svg>
+  },
+  {
+    caption: 'Diagonal lines count too — watch both directions.',
+    svg: <Svg>
+      {[0,1,2,3,4,5].map(i => <React.Fragment key={i}>
+        <line x1={30+i*36} y1={15} x2={30+i*36} y2={125} stroke={dim} strokeWidth={1} />
+        <line x1={30} y1={15+i*22} x2={210} y2={15+i*22} stroke={dim} strokeWidth={1} />
+      </React.Fragment>)}
+      {/* diagonal win */}
+      {[0,1,2,3,4].map(i =>
+        <Stone key={i} cx={30+i*36} cy={15+i*22} r={10} fill={dark} stroke="#333" />
+      )}
+      <line x1={22} y1={7} x2={182} y2={117} stroke={yellow} strokeWidth={1.5} strokeDasharray="4 3" />
+      <Txt x={190} y={105} size={9} fill={yellow}>win!</Txt>
+    </Svg>
+  },
+  {
+    caption: 'No captures, no special moves — pure placement strategy on a 13×13 grid.',
+    svg: <Svg>
+      <Txt x={120} y={35} size={11}>simple rules</Txt>
+      <Txt x={120} y={58} size={9} fill="rgba(240,238,255,0.6)">13 × 13 intersection grid</Txt>
+      <Txt x={120} y={76} size={9} fill="rgba(240,238,255,0.6)">stones cannot be moved once placed</Txt>
+      <Txt x={120} y={94} size={9} fill="rgba(240,238,255,0.6)">no captures or removals</Txt>
+      <Txt x={120} y={118} size={9} fill={yellow}>be the first to get 5 in a row!</Txt>
+    </Svg>
+  },
+];
+
+// ── FLIPS (Othello) ─────────────────────────────────────────────────────────────
+const green = '#0d6b3a';
+
+const flipsGuide = [
+  {
+    caption: 'Start with 4 discs in the center. Black moves first.',
+    svg: <Svg>
+      {/* 4x4 portion of board */}
+      {[0,1,2,3,4].map(i => <React.Fragment key={i}>
+        <line x1={60+i*30} y1={20} x2={60+i*30} y2={120} stroke="rgba(0,0,0,0.3)" strokeWidth={1} />
+        <line x1={60} y1={20+i*25} x2={180} y2={20+i*25} stroke="rgba(0,0,0,0.3)" strokeWidth={1} />
+      </React.Fragment>)}
+      {/* board bg */}
+      <rect x={60} y={20} width={120} height={100} fill={green} rx={2} opacity={0.3} />
+      {/* initial 4 discs */}
+      <Stone cx={90} cy={57} r={10} fill={white} />
+      <Stone cx={120} cy={57} r={10} fill={dark} stroke="#333" />
+      <Stone cx={90} cy={82} r={10} fill={dark} stroke="#333" />
+      <Stone cx={120} cy={82} r={10} fill={white} />
+      <Txt x={30} y={70} size={8} fill="rgba(240,238,255,0.5)" anchor="middle">start</Txt>
+    </Svg>
+  },
+  {
+    caption: 'Place a disc to sandwich opponent pieces between yours — they flip to your color.',
+    svg: <Svg>
+      <rect x={30} y={25} width={180} height={30} fill={green} rx={2} opacity={0.3} />
+      {/* row of discs: white - black - black - [new white] */}
+      <Stone cx={55} cy={40} r={11} fill={white} />
+      <Stone cx={90} cy={40} r={11} fill={dark} stroke="#333" />
+      <Stone cx={125} cy={40} r={11} fill={dark} stroke="#333" />
+      <Stone cx={160} cy={40} r={11} fill={white} />
+      <circle cx={160} cy={40} r={15} fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="3 3" />
+      {/* arrows showing flip */}
+      {arrow(145, 40, 133, 40)}
+      {arrow(70, 40, 82, 40)}
+      {/* after flip */}
+      <rect x={30} y={75} width={180} height={30} fill={green} rx={2} opacity={0.3} />
+      <Stone cx={55} cy={90} r={11} fill={white} />
+      <Stone cx={90} cy={90} r={11} fill={white} />
+      <Stone cx={125} cy={90} r={11} fill={white} />
+      <Stone cx={160} cy={90} r={11} fill={white} />
+      <Txt x={120} y={120} size={9} fill={yellow}>all flipped!</Txt>
+    </Svg>
+  },
+  {
+    caption: 'You can flip in any direction — horizontal, vertical, or diagonal, all at once.',
+    svg: <Svg>
+      {/* center disc with radiating lines */}
+      <Stone cx={120} cy={70} r={12} fill={white} />
+      <circle cx={120} cy={70} r={16} fill="none" stroke={yellow} strokeWidth={1.5} strokeDasharray="3 3" />
+      {/* 8 direction arrows */}
+      {[[0,-1],[0,1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]].map(([dx,dy],i) =>
+        <line key={i} x1={120+dx*20} y1={70+dy*20} x2={120+dx*40} y2={70+dy*40}
+          stroke="rgba(255,224,102,0.4)" strokeWidth={1.5} markerEnd="url(#ah)" />
+      )}
+      {/* opponent disc in one direction getting flipped */}
+      <Stone cx={120+40} cy={70-40} r={9} fill={dark} stroke="#333" />
+      <Stone cx={120-40} cy={70} r={9} fill={dark} stroke="#333" />
+      <Stone cx={120} cy={70+40} r={9} fill={dark} stroke="#333" />
+      <Txt x={120} y={130} size={8} fill="rgba(240,238,255,0.5)">flip all directions at once</Txt>
+    </Svg>
+  },
+  {
+    caption: 'No legal move? You pass. Game ends when the board is full or no one can move.',
+    svg: <Svg>
+      <Txt x={120} y={30} size={11}>end of game</Txt>
+      <Txt x={120} y={55} size={9} fill="rgba(240,238,255,0.6)">every move must flip at least one disc</Txt>
+      <Txt x={120} y={73} size={9} fill="rgba(240,238,255,0.6)">no valid move = pass your turn</Txt>
+      <Txt x={120} y={91} size={9} fill="rgba(240,238,255,0.6)">board full or both pass = game over</Txt>
+      <Txt x={120} y={118} size={9} fill={yellow}>most discs on the board wins!</Txt>
+    </Svg>
+  },
+];
+
 // ── Export all guides ───────────────────────────────────────────────────────────
 export const GUIDES = {
   hexes: hexesGuide,
@@ -1016,4 +1191,7 @@ export const GUIDES = {
   sowing: sowingGuide,
   mills: millsGuide,
   blocks: blocksGuide,
+  fives: fivesGuide,
+  omweso: omwesoGuide,
+  flips: flipsGuide,
 };
