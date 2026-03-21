@@ -3,7 +3,7 @@
 export const GAMES = [
   // Modern Marvels
   { id: 'trees',   name: 'Trees',   realName: 'Photosynthesis', subtitle: 'Arboreal Logic',     icon: 'forest',               port: 3009, category: 'modern',  complexity: 'high' },
-  { id: 'circles', name: 'Circles', realName: 'YINSH',          subtitle: 'Infinite Loop',      icon: 'radio_button_checked',  port: 3003, category: 'modern',  complexity: 'high' },
+  { id: 'circles', name: 'Circles', realName: 'YINSH',          subtitle: 'Infinite Loop',      icon: 'radio_button_checked',  port: 3003, category: 'modern',  complexity: 'medium' },
   { id: 'walls',   name: 'Walls',   realName: 'Quoridor',       subtitle: 'Defensive Stance',   icon: 'view_kanban',           port: 3010, category: 'modern',  complexity: 'low' },
   { id: 'bugs',    name: 'Bugs',    realName: 'Hive',            subtitle: 'Swarm Tactics',      icon: 'bug_report',            port: 3002, category: 'modern',  complexity: 'high' },
   { id: 'stacks',  name: 'Stacks',  realName: 'Tak',             subtitle: 'Vertical Advantage', icon: 'layers',                port: 3006, category: 'modern',  complexity: 'high' },
@@ -21,7 +21,7 @@ export const GAMES = [
   // Ancient Foundations
   { id: 'sowing',  name: 'Sowing',  realName: 'Oware',           subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient', complexity: 'medium' },
   { id: 'mills',   name: 'Mills',   realName: 'Nine Men\'s Morris', subtitle: 'Trap & Capture',  icon: 'token',                 port: 3012, category: 'ancient', complexity: 'low' },
-  { id: 'knights', name: 'Knights', realName: 'Chess',           subtitle: 'Royal Warfare',      icon: 'security',              port: 3017, category: 'ancient', complexity: 'medium' },
+  { id: 'knights', name: 'Knights', realName: 'Chess',           subtitle: 'Royal Warfare',      icon: 'security',              port: 3017, category: 'ancient', complexity: 'high' },
   { id: 'go',      name: 'Stones',  realName: 'Go',              subtitle: 'Territory & Influence', icon: 'target',              port: 3018, category: 'ancient', complexity: 'high' },
 ];
 
