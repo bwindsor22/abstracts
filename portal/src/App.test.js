@@ -9,6 +9,6 @@ test('renders the library with game cards', () => {
       <App />
     </MemoryRouter>
   );
-  expect(screen.getByText('Modern Marvels')).toBeInTheDocument();
-  expect(screen.getByText('Timeless Classics')).toBeInTheDocument();
+  expect(screen.getByText('Pick Up & Play')).toBeInTheDocument();
+  expect(screen.getByText('Deep Systems')).toBeInTheDocument();
 });
