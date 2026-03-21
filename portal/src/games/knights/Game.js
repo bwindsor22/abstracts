@@ -4,7 +4,7 @@
 export const SIZE = 8;
 
 // Piece encoding: 'wK','wQ','wR','wB','wN','wP','bK','bQ','bR','bB','bN','bP'
-const PIECE_VALUES = { P: 100, N: 320, B: 330, R: 500, Q: 900, K: 20000 };
+export const PIECE_VALUES = { P: 100, N: 320, B: 330, R: 500, Q: 900, K: 20000 };
 
 // Piece-square tables (from white's perspective, flip for black)
 const PST = {
@@ -93,6 +93,7 @@ export function initState({ vsAI = true, aiPlayer = 'b', difficulty = 'medium' }
     winner: null,
     vsAI, aiPlayer, difficulty,
     lastMove: null, // { from: [r,c], to: [r,c] }
+    captured: { w: [], b: [] }, // pieces captured BY each color
   };
 }
 
@@ -345,8 +346,21 @@ export function applyMove(state, move) {
     newEP = [epRow, fc];
   }
 
+  // Track captured piece
+  const newCaptured = { w: [...state.captured.w], b: [...state.captured.b] };
+  let capturedPiece = null;
+  if (move.flag === 'ep') {
+    const capRow = turn === 'w' ? tr + 1 : tr - 1;
+    capturedPiece = board[capRow][tc];
+  } else if (board[tr][tc] !== null) {
+    capturedPiece = board[tr][tc];
+  }
+  if (capturedPiece) {
+    newCaptured[turn].push(capturedPiece);
+  }
+
   // Half-move clock
-  const isCapture = board[tr][tc] !== null || move.flag === 'ep';
+  const isCapture = capturedPiece !== null;
   const isPawn = typeOf(piece) === 'P';
   const newHalfMoves = (isCapture || isPawn) ? 0 : state.halfMoves + 1;
 
@@ -359,6 +373,7 @@ export function applyMove(state, move) {
     halfMoves: newHalfMoves,
     moveCount: state.moveCount + 1,
     lastMove: { from: move.from, to: move.to },
+    captured: newCaptured,
   };
 
   // Check for game end

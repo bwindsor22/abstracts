@@ -21,7 +21,7 @@ export const GAMES = [
   // Ancient Foundations
   { id: 'sowing',  name: 'Sowing',  realName: 'Oware',           subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient', complexity: 'medium' },
   { id: 'mills',   name: 'Mills',   realName: 'Nine Men\'s Morris', subtitle: 'Trap & Capture',  icon: 'token',                 port: 3012, category: 'ancient', complexity: 'low' },
-  { id: 'knights', name: 'Knights', realName: 'Chess',           subtitle: 'Royal Warfare',      icon: 'security',              port: 3017, category: 'ancient', complexity: 'high' },
+  { id: 'knights', name: 'Knights', realName: 'Chess',           subtitle: 'Royal Warfare',      icon: 'security',              port: 3017, category: 'ancient', complexity: 'medium' },
   { id: 'go',      name: 'Stones',  realName: 'Go',              subtitle: 'Territory & Influence', icon: 'target',              port: 3018, category: 'ancient', complexity: 'high' },
 ];
 

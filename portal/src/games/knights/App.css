@@ -109,6 +109,34 @@
   color: #f0eeff;
 }
 
+.game-knights .captured-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 2px 4px;
+}
+
+.game-knights .captured-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+}
+
+.game-knights .captured-piece {
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+.game-knights .material-advantage {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(240, 238, 255, 0.7);
+  background: rgba(153, 66, 240, 0.15);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
 .game-knights .game-controls {
   display: flex;
   gap: 12px;

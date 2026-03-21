@@ -1176,12 +1176,27 @@ const flipsGuide = [
 ];
 
 // ── Knights (Chess) guide ────────────────────────────────────────────────────
+// Helper: draw a mini chess grid
+const chessCell = 20;
+function ChessGrid({ ox, oy, cols, rows }) {
+  const cells = [];
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      const light = (r + c) % 2 === 0;
+      cells.push(
+        <rect key={`${r},${c}`} x={ox + c * chessCell} y={oy + r * chessCell}
+          width={chessCell} height={chessCell}
+          fill={light ? 'rgba(232,220,200,0.6)' : 'rgba(160,120,80,0.6)'} />
+      );
+    }
+  return <>{cells}</>;
+}
+
 const knightsGuide = [
   {
     caption: 'Each player starts with 16 pieces: king, queen, 2 rooks, 2 bishops, 2 knights, 8 pawns.',
     svg: <Svg>
       <Txt x={120} y={20} size={11}>the pieces</Txt>
-      {/* Show pieces in a row */}
       <Txt x={30} y={55} size={22}>♔</Txt>
       <Txt x={60} y={55} size={22}>♕</Txt>
       <Txt x={90} y={55} size={22}>♖</Txt>
@@ -1199,43 +1214,57 @@ const knightsGuide = [
     </Svg>
   },
   {
-    caption: 'Pawns move forward 1 (or 2 from start). They capture diagonally. Reaching the back rank promotes to queen.',
+    caption: 'The knight moves in an L-shape (2+1 squares) and can jump over other pieces.',
     svg: <Svg>
-      <Txt x={60} y={20} size={11}>pawn moves</Txt>
-      <Txt x={60} y={60} size={24}>♙</Txt>
-      {arrow(60, 48, 60, 25)}
-      {arrow(60, 48, 40, 30)}
-      {arrow(60, 48, 80, 30)}
-      <Txt x={40} y={28} size={7} fill="rgba(240,238,255,0.5)">capture</Txt>
-      <Txt x={80} y={28} size={7} fill="rgba(240,238,255,0.5)">capture</Txt>
-      <Txt x={180} y={20} size={11}>promotion</Txt>
-      <Txt x={180} y={50} size={20}>♙</Txt>
-      {arrow(180, 55, 180, 75)}
-      <Txt x={180} y={90} size={20}>♕</Txt>
-      <Txt x={120} y={130} size={8} fill="rgba(240,238,255,0.5)">en passant: capture a pawn that just double-moved</Txt>
+      <Txt x={80} y={12} size={11}>knight moves</Txt>
+      {/* 5x5 grid centered on knight */}
+      <ChessGrid ox={30} oy={20} cols={5} rows={5} />
+      {/* Knight in center */}
+      <Txt x={30 + 2*chessCell + chessCell/2} y={20 + 2*chessCell + chessCell/2 + 2} size={18}>♘</Txt>
+      {/* L-shape targets highlighted */}
+      {[[0,1],[0,3],[1,0],[1,4],[3,0],[3,4],[4,1],[4,3]].map(([r,c], i) =>
+        <rect key={i} x={30 + c*chessCell + 2} y={20 + r*chessCell + 2}
+          width={chessCell - 4} height={chessCell - 4} rx={3}
+          fill="rgba(153,66,240,0.45)" />
+      )}
+      {/* Right side: explanation */}
+      <Txt x={175} y={35} size={9} fill="rgba(240,238,255,0.7)">2 squares in one</Txt>
+      <Txt x={175} y={48} size={9} fill="rgba(240,238,255,0.7)">direction, then 1</Txt>
+      <Txt x={175} y={61} size={9} fill="rgba(240,238,255,0.7)">square sideways</Txt>
+      <Txt x={175} y={85} size={8} fill="rgba(240,238,255,0.5)">only piece that can</Txt>
+      <Txt x={175} y={97} size={8} fill="rgba(240,238,255,0.5)">jump over others</Txt>
+      <Txt x={120} y={130} size={8} fill="rgba(240,238,255,0.5)">other pieces: queen=rook+bishop, rook=straight, bishop=diagonal</Txt>
     </Svg>
   },
   {
-    caption: 'The knight moves in an L-shape and can jump over pieces. The king moves 1 square in any direction.',
+    caption: 'Castling: king moves 2 squares toward a rook, rook jumps to the other side. Only if neither has moved and king isn\'t in check.',
     svg: <Svg>
-      <Txt x={70} y={15} size={11}>knight</Txt>
-      <Txt x={70} y={75} size={24}>♘</Txt>
-      {/* L-shape targets */}
-      <circle cx={40} cy={35} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={100} cy={35} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={30} cy={55} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={110} cy={55} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={30} cy={95} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={110} cy={95} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={40} cy={115} r={5} fill="rgba(153,66,240,0.5)" />
-      <circle cx={100} cy={115} r={5} fill="rgba(153,66,240,0.5)" />
-      <Txt x={180} y={15} size={11}>castling</Txt>
-      <Txt x={155} y={50} size={18}>♔</Txt>
-      {arrow(165, 52, 195, 52)}
-      <Txt x={205} y={50} size={18}>♖</Txt>
-      <Txt x={180} y={75} size={8} fill="rgba(240,238,255,0.5)">king + rook swap</Txt>
-      <Txt x={180} y={90} size={7} fill="rgba(240,238,255,0.5)">only if neither has moved</Txt>
-      <Txt x={180} y={102} size={7} fill="rgba(240,238,255,0.5)">and king is not in check</Txt>
+      <Txt x={120} y={12} size={11}>castling</Txt>
+      {/* Before: kingside */}
+      <Txt x={30} y={28} size={8} fill="rgba(240,238,255,0.5)">before</Txt>
+      <ChessGrid ox={15} oy={34} cols={4} rows={1} />
+      <Txt x={15 + chessCell/2} y={34 + chessCell/2 + 2} size={14}>♔</Txt>
+      <Txt x={15 + 3*chessCell + chessCell/2} y={34 + chessCell/2 + 2} size={14}>♖</Txt>
+      {/* After: kingside */}
+      <Txt x={150} y={28} size={8} fill="rgba(240,238,255,0.5)">after</Txt>
+      <ChessGrid ox={135} oy={34} cols={4} rows={1} />
+      <Txt x={135 + 2*chessCell + chessCell/2} y={34 + chessCell/2 + 2} size={14}>♔</Txt>
+      <Txt x={135 + 1*chessCell + chessCell/2} y={34 + chessCell/2 + 2} size={14}>♖</Txt>
+      {arrow(95, 44, 115, 44)}
+      <Txt x={120} y={68} size={8} fill={yellow}>kingside castle (short)</Txt>
+      {/* Before: queenside */}
+      <Txt x={30} y={80} size={8} fill="rgba(240,238,255,0.5)">before</Txt>
+      <ChessGrid ox={10} oy={86} cols={5} rows={1} />
+      <Txt x={10 + chessCell/2} y={86 + chessCell/2 + 2} size={14}>♖</Txt>
+      <Txt x={10 + 4*chessCell + chessCell/2} y={86 + chessCell/2 + 2} size={14}>♔</Txt>
+      {/* After: queenside */}
+      <Txt x={155} y={80} size={8} fill="rgba(240,238,255,0.5)">after</Txt>
+      <ChessGrid ox={130} oy={86} cols={5} rows={1} />
+      <Txt x={130 + 2*chessCell + chessCell/2} y={86 + chessCell/2 + 2} size={14}>♔</Txt>
+      <Txt x={130 + 3*chessCell + chessCell/2} y={86 + chessCell/2 + 2} size={14}>♖</Txt>
+      {arrow(110, 96, 120, 96)}
+      <Txt x={120} y={120} size={8} fill={yellow}>queenside castle (long)</Txt>
+      <Txt x={120} y={134} size={7} fill="rgba(240,238,255,0.5)">no pieces between king and rook, king not passing through check</Txt>
     </Svg>
   },
   {
@@ -1294,27 +1323,77 @@ const goGuide = [
   {
     caption: 'Ko rule: you cannot immediately recapture a single stone that just captured yours.',
     svg: <Svg>
-      <Txt x={120} y={20} size={11}>ko rule</Txt>
-      <Stone cx={80} cy={60} r={9} fill="#f5f5f0" stroke="#999" />
-      <Stone cx={100} cy={45} r={9} fill="#222" stroke="#555" />
-      <Stone cx={100} cy={75} r={9} fill="#222" stroke="#555" />
-      <circle cx={100} cy={60} r={5} fill="none" stroke="#ff4444" strokeWidth={2} />
-      <line x1={95} y1={55} x2={105} y2={65} stroke="#ff4444" strokeWidth={2} />
-      <Stone cx={120} cy={60} r={9} fill="#222" stroke="#555" />
-      <Txt x={100} y={100} size={7} fill="rgba(240,238,255,0.5)">can't retake here</Txt>
-      <Txt x={100} y={112} size={7} fill="rgba(240,238,255,0.5)">until next turn</Txt>
-      <Txt x={120} y={130} size={8} fill="rgba(240,238,255,0.5)">prevents infinite capture loops</Txt>
+      <Txt x={120} y={12} size={11}>ko rule</Txt>
+      {/* Show a proper ko shape: Black just captured at center, White can't retake immediately */}
+      {/* Mini grid for context */}
+      {Array.from({length: 4}, (_, i) => (
+        <g key={`kl-${i}`}>
+          <line x1={40+i*20} y1={28} x2={40+i*20} y2={88} stroke="rgba(0,0,0,0.15)" strokeWidth={0.5} />
+          <line x1={40} y1={28+i*20} x2={100} y2={28+i*20} stroke="rgba(0,0,0,0.15)" strokeWidth={0.5} />
+        </g>
+      ))}
+      {/* Ko position: Black surrounded white at (60,48), white needs 3 around to capture back */}
+      <Stone cx={60} cy={28} r={7} fill="#222" stroke="#555" />
+      <Stone cx={40} cy={48} r={7} fill="#222" stroke="#555" />
+      <Stone cx={60} cy={68} r={7} fill="#222" stroke="#555" />
+      <Stone cx={80} cy={48} r={7} fill="#f5f5f0" stroke="#999" />
+      <Stone cx={80} cy={28} r={7} fill="#f5f5f0" stroke="#999" />
+      <Stone cx={80} cy={68} r={7} fill="#f5f5f0" stroke="#999" />
+      <Stone cx={100} cy={48} r={7} fill="#222" stroke="#555" />
+      {/* The contested point — black just captured here */}
+      <circle cx={60} cy={48} r={4} fill="#222" stroke="#ffe066" strokeWidth={1.5} />
+      {/* X on the ko point white can't retake */}
+      <circle cx={80} cy={48} r={3} fill="none" stroke="#ff4444" strokeWidth={0} />
+      <Txt x={70} y={95} size={8} fill={yellow}>black just captured here</Txt>
+      {/* Explanation on right */}
+      <Txt x={170} y={32} size={9} fill="rgba(240,238,255,0.7)">white cannot</Txt>
+      <Txt x={170} y={45} size={9} fill="rgba(240,238,255,0.7)">immediately retake</Txt>
+      <Txt x={170} y={58} size={9} fill="rgba(240,238,255,0.7)">the stone at the</Txt>
+      <Txt x={170} y={71} size={9} fill="rgba(240,238,255,0.7)">marked point</Txt>
+      <Txt x={170} y={90} size={8} fill="rgba(240,238,255,0.5)">must play elsewhere</Txt>
+      <Txt x={170} y={103} size={8} fill="rgba(240,238,255,0.5)">first, then can retake</Txt>
+      <Txt x={120} y={128} size={8} fill="rgba(240,238,255,0.5)">prevents infinite back-and-forth capture loops</Txt>
     </Svg>
   },
   {
     caption: 'Both players pass to end the game. Score = your stones + territory you surround. White gets 6.5 komi.',
     svg: <Svg>
-      <Txt x={120} y={20} size={11}>scoring</Txt>
-      <Txt x={120} y={48} size={9} fill="rgba(240,238,255,0.6)">stones on the board</Txt>
-      <Txt x={120} y={62} size={9} fill="rgba(240,238,255,0.6)">+ empty points you surround</Txt>
-      <Txt x={120} y={82} size={9} fill={yellow}>= your score</Txt>
-      <Txt x={120} y={105} size={8} fill="rgba(240,238,255,0.5)">white gets 6.5 bonus (komi) for going second</Txt>
-      <Txt x={120} y={125} size={8} fill="rgba(240,238,255,0.5)">press PASS when you have no good moves left</Txt>
+      <Txt x={120} y={12} size={11}>territory scoring</Txt>
+      {/* Mini board showing territory */}
+      {Array.from({length: 5}, (_, i) => (
+        <g key={`tl-${i}`}>
+          <line x1={30+i*20} y1={28} x2={30+i*20} y2={108} stroke="rgba(0,0,0,0.15)" strokeWidth={0.5} />
+          <line x1={30} y1={28+i*20} x2={110} y2={28+i*20} stroke="rgba(0,0,0,0.15)" strokeWidth={0.5} />
+        </g>
+      ))}
+      {/* Black territory on left side */}
+      <Stone cx={50} cy={28} r={7} fill="#222" stroke="#555" />
+      <Stone cx={50} cy={48} r={7} fill="#222" stroke="#555" />
+      <Stone cx={50} cy={68} r={7} fill="#222" stroke="#555" />
+      <Stone cx={50} cy={88} r={7} fill="#222" stroke="#555" />
+      {/* Territory markers for black */}
+      <rect x={26} y={24} width={16} height={16} rx={2} fill="rgba(100,100,255,0.2)" />
+      <rect x={26} y={44} width={16} height={16} rx={2} fill="rgba(100,100,255,0.2)" />
+      <rect x={26} y={64} width={16} height={16} rx={2} fill="rgba(100,100,255,0.2)" />
+      <rect x={26} y={84} width={16} height={16} rx={2} fill="rgba(100,100,255,0.2)" />
+      {/* White territory on right side */}
+      <Stone cx={70} cy={28} r={7} fill="#f5f5f0" stroke="#999" />
+      <Stone cx={70} cy={48} r={7} fill="#f5f5f0" stroke="#999" />
+      <Stone cx={70} cy={68} r={7} fill="#f5f5f0" stroke="#999" />
+      <Stone cx={70} cy={88} r={7} fill="#f5f5f0" stroke="#999" />
+      {/* Territory markers for white */}
+      <rect x={82} y={24} width={16} height={16} rx={2} fill="rgba(255,200,100,0.2)" />
+      <rect x={82} y={44} width={16} height={16} rx={2} fill="rgba(255,200,100,0.2)" />
+      <rect x={82} y={64} width={16} height={16} rx={2} fill="rgba(255,200,100,0.2)" />
+      <rect x={82} y={84} width={16} height={16} rx={2} fill="rgba(255,200,100,0.2)" />
+      <rect x={102} y={24} width={8} height={76} rx={2} fill="rgba(255,200,100,0.15)" />
+      {/* Labels */}
+      <Txt x={155} y={32} size={9} fill="rgba(240,238,255,0.7)">stones on board</Txt>
+      <Txt x={155} y={48} size={9} fill="rgba(240,238,255,0.7)">+ surrounded</Txt>
+      <Txt x={155} y={64} size={9} fill="rgba(240,238,255,0.7)">  empty points</Txt>
+      <Txt x={155} y={84} size={9} fill={yellow}>= your score</Txt>
+      <Txt x={155} y={102} size={8} fill="rgba(240,238,255,0.5)">white gets +6.5 komi</Txt>
+      <Txt x={120} y={125} size={8} fill="rgba(240,238,255,0.5)">both players pass when no good moves remain — game ends</Txt>
     </Svg>
   },
 ];

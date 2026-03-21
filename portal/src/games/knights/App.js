@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 import WinOverlay from '../../components/WinOverlay';
-import { initState, applyMove, getLegalMoves, isInCheck, moveKey } from './Game';
+import { initState, applyMove, getLegalMoves, isInCheck, moveKey, PIECE_VALUES } from './Game';
 import { getAIMove } from './AI/ai';
 
 const CELL = 56;
@@ -16,6 +16,29 @@ const PIECE_CHARS = {
   wK: '♔', wQ: '♕', wR: '♖', wB: '♗', wN: '♘', wP: '♙',
   bK: '♚', bQ: '♛', bR: '♜', bB: '♝', bN: '♞', bP: '♟',
 };
+
+// Capture display order (most valuable first)
+const CAPTURE_ORDER = ['Q', 'R', 'B', 'N', 'P'];
+
+function materialValue(capturedList) {
+  return capturedList.reduce((sum, p) => sum + (PIECE_VALUES[p[1]] || 0), 0);
+}
+
+function CapturedPieces({ captured, color, advantage }) {
+  const pieces = [...captured].sort((a, b) => {
+    const ai = CAPTURE_ORDER.indexOf(a[1]), bi = CAPTURE_ORDER.indexOf(b[1]);
+    return ai - bi;
+  });
+  const chars = color === 'w' ? PIECE_CHARS : PIECE_CHARS;
+  return (
+    <div className="captured-row">
+      <span className="captured-pieces">
+        {pieces.map((p, i) => <span key={i} className="captured-piece">{PIECE_CHARS[p]}</span>)}
+      </span>
+      {advantage > 0 && <span className="material-advantage">+{advantage}</span>}
+    </div>
+  );
+}
 
 function cellCenter(r, c) {
   return { x: PAD + c * CELL + CELL / 2, y: PAD + r * CELL + CELL / 2 };
@@ -71,11 +94,13 @@ export default function App({ onBack, onResult }) {
   const [gs, setGs] = useState(null);
   const [selected, setSelected] = useState(null); // [r, c]
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const resultReported = useRef(false);
 
   const handleStart = useCallback((opts) => {
     setGs(initState(opts));
     setSelected(null);
+    setShowOverlay(false);
     resultReported.current = false;
   }, []);
 
@@ -124,6 +149,13 @@ export default function App({ onBack, onResult }) {
     return () => clearTimeout(timer);
   }, [gs]);
 
+  // Show overlay after delay so player can see the final position
+  useEffect(() => {
+    if (!gs?.winner) return;
+    const timer = setTimeout(() => setShowOverlay(true), 2000);
+    return () => clearTimeout(timer);
+  }, [gs?.winner]);
+
   // Report result
   useEffect(() => {
     if (!gs?.winner || resultReported.current) return;
@@ -148,14 +180,23 @@ export default function App({ onBack, onResult }) {
     );
   }
 
-  const { board, turn, winner, aiPlayer, lastMove } = gs;
+  const { board, turn, winner, aiPlayer, lastMove, captured } = gs;
   const playerColor = aiPlayer === 'b' ? 'w' : 'b';
   const lastFrom = lastMove ? `${lastMove.from[0]},${lastMove.from[1]}` : null;
   const lastTo = lastMove ? `${lastMove.to[0]},${lastMove.to[1]}` : null;
 
+  // Material advantage (in pawns, rounded)
+  const wMaterial = materialValue(captured.w);
+  const bMaterial = materialValue(captured.b);
+  const diffPawns = Math.round((wMaterial - bMaterial) / 100);
+  const wAdvantage = diffPawns > 0 ? diffPawns : 0;
+  const bAdvantage = diffPawns < 0 ? -diffPawns : 0;
+
   const statusMsg = winner
     ? winner === 'draw' ? 'DRAW!'
-    : winner === playerColor ? 'YOU WIN!' : 'AI WINS!'
+    : winner === playerColor
+      ? 'YOU WIN — Checkmate!'
+      : isInCheck(board, winner === 'w' ? 'b' : 'w') ? 'CHECKMATE' : 'AI WINS!'
     : turn === aiPlayer
     ? 'AI thinking...'
     : inCheck ? 'CHECK! Your move' : 'Your move';
@@ -166,6 +207,9 @@ export default function App({ onBack, onResult }) {
         <div className="status-bar" style={{ color: winner ? '#ffe066' : inCheck ? '#ff6644' : '#f0eeff' }}>
           {statusMsg}
         </div>
+
+        {/* Black's captured pieces (pieces white has taken) */}
+        <CapturedPieces captured={captured.w} color="w" advantage={wAdvantage} />
 
         <svg width={BOARD_SIZE} height={BOARD_SIZE} viewBox={`0 0 ${BOARD_SIZE} ${BOARD_SIZE}`}
           style={{ display: 'block', maxWidth: '100%' }}>
@@ -224,21 +268,27 @@ export default function App({ onBack, onResult }) {
           ))}
         </svg>
 
+        {/* White's captured pieces (pieces black has taken) */}
+        <CapturedPieces captured={captured.b} color="b" advantage={bAdvantage} />
+
         <div className="game-controls">
+          {winner && !showOverlay && (
+            <button className="ctrl-btn" onClick={() => setShowOverlay(true)}>CONTINUE</button>
+          )}
           <button className="ctrl-btn" onClick={() => setMenuOpen(true)}>MENU</button>
         </div>
       </div>
 
-      {winner && winner !== 'draw' && (
+      {showOverlay && winner && winner !== 'draw' && (
         <WinOverlay
           title={winner === playerColor ? 'YOU WIN!' : 'AI WINS!'}
-          subtitle={winner === playerColor ? 'Checkmate!' : 'Checkmate'}
+          subtitle="Checkmate"
           onNewGame={() => setGs(null)}
           onHome={onBack}
         />
       )}
 
-      {winner === 'draw' && (
+      {showOverlay && winner === 'draw' && (
         <WinOverlay
           title="DRAW!"
           subtitle="Stalemate"
