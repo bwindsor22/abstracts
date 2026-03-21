@@ -69,7 +69,7 @@ function TimeView({ onCardClick }) {
       <Section title="Modern Marvels" tag="1990–PRESENT" games={modern} onCardClick={onCardClick} />
       <Section title="Timeless Classics" tag="1940–1990" games={classic} onCardClick={onCardClick} />
       <Section title="Heritage Games" tag="1650s–1880s" games={heritage} onCardClick={onCardClick} />
-      <Section title="Ancient Foundations" tag="PRE-1940" games={ancient} onCardClick={onCardClick} />
+      <Section title="Ancient Foundations" tag="~2000 BC – 600 AD" games={ancient} onCardClick={onCardClick} />
     </>
   );
 }
@@ -98,12 +98,13 @@ const THEME_TRUNKS = [
       { label: 'Alignment', ids: ['fives', 'pairs'] },
       { label: 'Connection', ids: ['hexes', 'bridges'] },
       { label: 'Flipping', ids: ['flips', 'circles'] },
+      { label: 'Territory', ids: ['go'] },
     ],
   },
   {
     title: 'Piece Systems',
     tagline: 'The pieces define the world',
-    ids: ['bugs', 'trees'],
+    ids: ['bugs', 'trees', 'knights'],
   },
   {
     title: 'Structural Building',
@@ -208,8 +209,8 @@ function PlayModal({ game, onPlay, onClose }) {
 
 // --- View Toggle ---
 const VIEWS = [
-  { key: 'time', label: 'Date' },
   { key: 'complexity', label: 'Complexity' },
+  { key: 'time', label: 'Date' },
   { key: 'theme', label: 'Theme' },
 ];
 
@@ -232,7 +233,7 @@ function ViewToggle({ active, onChange }) {
 // --- Main Library ---
 export default function Library({ onPlay }) {
   const [selectedGame, setSelectedGame] = useState(null);
-  const [view, setView] = useState('time');
+  const [view, setView] = useState('complexity');
 
   const handlePlay = useCallback((game) => {
     setSelectedGame(null);

@@ -16,11 +16,13 @@ export const GAMES = [
   { id: 'pairs',   name: 'Pairs',   realName: 'Pente',           subtitle: 'Ancient Grounding',  icon: 'toll',               port: 3007, category: 'classic', complexity: 'low' },
   // Heritage Games
   { id: 'fives',   name: 'Fives',   realName: 'Gomoku',          subtitle: 'Line of Victory',    icon: 'grid_on',               port: 3014, category: 'heritage', complexity: 'low' },
-  { id: 'omweso',  name: 'Loops',   realName: 'Omweso',          subtitle: 'Royal Strategy',     icon: 'all_inclusive',              port: 3016, category: 'heritage', complexity: 'medium' },
+  { id: 'omweso',  name: 'Loops',   realName: 'Omweso',          subtitle: 'Royal Strategy',     icon: 'all_inclusive',              port: 3016, category: 'heritage', complexity: 'high' },
   { id: 'flips',   name: 'Flips',   realName: 'Othello',         subtitle: 'Outflank & Conquer', icon: 'contrast',              port: 3015, category: 'heritage', complexity: 'low' },
   // Ancient Foundations
-  { id: 'sowing',  name: 'Sowing',  realName: 'Oware',           subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient', complexity: 'low' },
+  { id: 'sowing',  name: 'Sowing',  realName: 'Oware',           subtitle: 'Seed & Harvest',     icon: 'grain',                 port: 3011, category: 'ancient', complexity: 'medium' },
   { id: 'mills',   name: 'Mills',   realName: 'Nine Men\'s Morris', subtitle: 'Trap & Capture',  icon: 'token',                 port: 3012, category: 'ancient', complexity: 'low' },
+  { id: 'knights', name: 'Knights', realName: 'Chess',           subtitle: 'Royal Warfare',      icon: 'security',              port: 3017, category: 'ancient', complexity: 'high' },
+  { id: 'go',      name: 'Stones',  realName: 'Go',              subtitle: 'Territory & Influence', icon: 'target',              port: 3018, category: 'ancient', complexity: 'high' },
 ];
 
 export const GAME_MAP = Object.fromEntries(GAMES.map(g => [g.id, g]));
