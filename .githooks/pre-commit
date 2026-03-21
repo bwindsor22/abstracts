@@ -1,0 +1,32 @@
+#!/bin/bash
+# Pre-commit hook: run eslint on staged JS/JSX files in portal/
+# Catches unused variables and other lint errors before they break Vercel
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^portal/src/.*\.(js|jsx)$')
+
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+echo "Running eslint on staged files..."
+
+# Run eslint from the portal directory
+cd portal
+
+PASS=true
+for FILE in $STAGED_FILES; do
+  # Strip the portal/ prefix
+  REL_FILE="${FILE#portal/}"
+  npx eslint "$REL_FILE" --quiet 2>/dev/null
+  if [ $? -ne 0 ]; then
+    PASS=false
+  fi
+done
+
+if ! $PASS; then
+  echo ""
+  echo "ESLint found errors. Fix them before committing."
+  exit 1
+fi
+
+exit 0
