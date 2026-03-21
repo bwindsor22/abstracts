@@ -298,7 +298,6 @@ function rawApply(board, move, castling, enPassant, turn) {
 // Get all legal moves for the current player
 export function getLegalMoves(state) {
   const { board, turn, castling, enPassant } = state;
-  const opp = turn === 'w' ? 'b' : 'w';
   const allMoves = [];
   for (let r = 0; r < 8; r++)
     for (let c = 0; c < 8; c++)
@@ -424,8 +423,6 @@ export function evaluate(state, player) {
   }
   // Mobility bonus
   const myMoves = getLegalMoves(state).length;
-  const oppState = { ...state, turn: state.turn === 'w' ? 'b' : 'w' };
-  // Don't compute opponent moves for performance — approximate
   score += (state.turn === player ? myMoves : -myMoves) * 2;
 
   return score;

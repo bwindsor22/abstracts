@@ -1,5 +1,5 @@
 // ai.js — Go AI using shared MCTS engine
-import { getLegalMoves as goGetLegalMoves, applyMove, applyPass, isLegal, evaluate, SIZE } from '../Game.js';
+import { getLegalMoves as goGetLegalMoves, applyMove, applyPass, evaluate } from '../Game.js';
 import { mctsSearch } from '../../../AI/mcts.js';
 
 // MCTS game interface for Go

@@ -1,5 +1,5 @@
 // ai.js — Chess AI (minimax with alpha-beta, piece-square tables)
-import { getLegalMoves, applyMove, evaluate, moveKey } from '../Game.js';
+import { getLegalMoves, applyMove, evaluate } from '../Game.js';
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {

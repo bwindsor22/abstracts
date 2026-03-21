@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './App.css';
 import WinOverlay from '../../components/WinOverlay';
-import { initState, applyMove, getLegalMoves, isInCheck, moveKey, PIECE_VALUES } from './Game';
+import { initState, applyMove, getLegalMoves, isInCheck, PIECE_VALUES } from './Game';
 import { getAIMove } from './AI/ai';
 
 const CELL = 56;
@@ -29,7 +29,6 @@ function CapturedPieces({ captured, color, advantage }) {
     const ai = CAPTURE_ORDER.indexOf(a[1]), bi = CAPTURE_ORDER.indexOf(b[1]);
     return ai - bi;
   });
-  const chars = color === 'w' ? PIECE_CHARS : PIECE_CHARS;
   return (
     <div className="captured-row">
       <span className="captured-pieces">
@@ -38,10 +37,6 @@ function CapturedPieces({ captured, color, advantage }) {
       {advantage > 0 && <span className="material-advantage">+{advantage}</span>}
     </div>
   );
-}
-
-function cellCenter(r, c) {
-  return { x: PAD + c * CELL + CELL / 2, y: PAD + r * CELL + CELL / 2 };
 }
 
 function StartScreen({ onStart, onBack }) {
