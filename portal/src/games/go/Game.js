@@ -4,8 +4,9 @@
 export const SIZE = 9;
 
 export function initState({ vsAI = true, aiPlayer = 'white', difficulty = 'medium' } = {}) {
+  const board = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
   return {
-    board: Array.from({ length: SIZE }, () => Array(SIZE).fill(null)),
+    board,
     turn: 'black', // black goes first
     captures: { black: 0, white: 0 }, // stones captured by each player
     ko: null, // [r, c] that is forbidden due to ko
@@ -14,7 +15,7 @@ export function initState({ vsAI = true, aiPlayer = 'white', difficulty = 'mediu
     moveCount: 0,
     vsAI, aiPlayer, difficulty,
     lastMove: null, // [r, c] or 'pass'
-    history: [], // board hashes for superko (simplified)
+    history: [boardHash(board)], // board position hashes for positional superko
   };
 }
 
@@ -57,30 +58,35 @@ function boardHash(board) {
   return h;
 }
 
-// Check if a move is legal (not suicide, not ko)
+// Check if a move is legal (not suicide, not ko, not superko)
 export function isLegal(state, r, c) {
   if (!inBounds(r, c) || state.board[r][c] !== null) return false;
   if (state.ko && state.ko[0] === r && state.ko[1] === c) return false;
 
-  // Try placing the stone
+  // Try placing the stone and resolve captures on the temp board
   const board = state.board.map(row => [...row]);
   board[r][c] = state.turn;
   const opp = state.turn === 'black' ? 'white' : 'black';
 
-  // Check if it captures something
-  let captures = 0;
+  // Remove captured opponent groups from temp board
   for (const [dr, dc] of NEIGHBORS) {
     const nr = r + dr, nc = c + dc;
     if (inBounds(nr, nc) && board[nr][nc] === opp) {
       const group = getGroup(board, nr, nc);
-      if (group.liberties.size === 0) captures += group.stones.length;
+      if (group.liberties.size === 0) {
+        for (const [sr, sc] of group.stones) board[sr][sc] = null;
+      }
     }
   }
 
-  // If no captures, check if own group has liberties (suicide check)
-  if (captures === 0) {
-    const ownGroup = getGroup(board, r, c);
-    if (ownGroup.liberties.size === 0) return false;
+  // Suicide check: after captures are removed, does our group have liberties?
+  const ownGroup = getGroup(board, r, c);
+  if (ownGroup.liberties.size === 0) return false;
+
+  // Positional superko: reject if this board position has occurred before
+  if (state.history.length > 0) {
+    const hash = boardHash(board);
+    if (state.history.includes(hash)) return false;
   }
 
   return true;
